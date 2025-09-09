@@ -5,7 +5,7 @@ pkgrel=1
 pkgdesc="High-performance drop-in replacement for mpvpaper using GStreamer backend"
 arch=('x86_64')
 url="https://github.com/Nomadcxx/gSlapper"
-license=('GPL3')
+license=('MIT')
 depends=(
     'gstreamer'
     'gst-plugins-base'
@@ -68,6 +68,6 @@ package() {
     # Create mpvpaper compatibility symlink
     ln -s /usr/bin/gslapper "$pkgdir/usr/bin/mpvpaper"
     
-    # Install license (update path if different)
-    # install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    # Install license
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
