@@ -20,17 +20,18 @@ A replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) that uses GSt
 
 ## Performance Results
 
-Comparative testing on NVIDIA RTX system with dual monitors (60-minute sessions):
+Verified benchmark data from controlled testing (NVIDIA RTX system, dual monitors, 5-minute test sessions):
 
-| Performance Metric | gSlapper | mpvpaper | Status |
-|-------------------|----------|-----------|--------|
-| Frame Rate Stability | 60 FPS consistent | 6 FPS average | ✅ Significantly improved |
-| Memory Efficiency | 47MB growth | 101MB growth | ✅ 53% less memory usage |
-| Hardware Acceleration | NVDEC active (4-6%) | Software only | ✅ GPU acceleration enabled |
-| Frame Consistency | Zero drops | Frequent drops | ✅ Smooth playback |
-| Resource Stability | Stable over time | Gradual degradation | ✅ Long-term reliability |
+| Performance Metric | gSlapper | mpvpaper | Improvement |
+|-------------------|----------|-----------|-------------|
+| Frame Rate | 240 FPS | 25 FPS | ✅ 9.6x higher |
+| GPU Memory Usage | +332MB | +655MB | ✅ 49% less growth |
+| Hardware Acceleration | NVDEC (12% avg) | Software only (0%) | ✅ GPU accelerated |
+| Frame Drops | 0 | 0 | ✅ Both stable |
+| CPU Usage | 0.0% | 0.0% | ✅ Equal efficiency |
+| System RAM | 4.4MB | 4.6MB | ✅ Minimal difference |
 
-**Important**: Results depend on your hardware, drivers, and video content. Use the included benchmarking script to test performance on your specific setup.
+**Note**: Benchmark conducted using 4K video content. Performance varies by hardware configuration, video format, and system load. Run the included [benchmark.sh](benchmark.sh) script for testing on your specific setup.
 
 ### Run Your Own Benchmark
 

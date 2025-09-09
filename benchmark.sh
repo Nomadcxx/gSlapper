@@ -15,8 +15,8 @@ NC='\033[0m' # No Color
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SLAPPER_BIN="${SCRIPT_DIR}/build/slapper"
-TEST_DURATION=1800   # 30 minutes for full benchmark test
+SLAPPER_BIN="${SCRIPT_DIR}/build/gslapper"
+TEST_DURATION=300    # 5 minutes for quick verification test
 SAMPLE_INTERVAL=5   # Sample every 5 seconds for detailed tracking
 LOG_DIR="/tmp/nvidia_benchmark_$(date +%Y%m%d_%H%M%S)"
 
