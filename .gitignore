@@ -1,0 +1,64 @@
+# Build directories
+build/
+build-*/
+builddir/
+
+# Meson files
+*.wrap
+.wrap-db/
+meson-logs/
+meson-private/
+
+# Compiled binaries
+gslapper
+gslapper-holder
+
+# Object files
+*.o
+*.so
+*.so.*
+*.a
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Temporary files
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.cbp
+*.depend
+*.layout
+
+# Package build files
+pkg/
+src/
+*.pkg.tar.xz
+*.pkg.tar.zst
+
+# Log files
+*.log
+*.out
+error*.log
+
+# Test files
+test_*.mp4
+test_*.mkv
+adorable-black-kitten*
+
+# Backup files
+*.bak
+*.backup
+
+# Generated protocol files
+*-protocol.c
+*-client-protocol.h
