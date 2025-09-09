@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="gSlapper.png" alt="gSlapper Logo" width="200"/>
+  <img src="gSlapper.png" alt="gSlapper Logo" width="400"/>
 </div>
 
 # gSlapper
@@ -32,6 +32,8 @@ Based on our testing setup (NVIDIA RTX system, dual monitors, 60-minute test):
 **Note**: Performance may vary based on your hardware configuration, video files, and system setup. We encourage running your own benchmarks using the included script.
 
 ### Run Your Own Benchmark
+
+Use the included [benchmark.sh](benchmark.sh) script:
 
 ```bash
 # Run 5-minute benchmark (recommended for quick testing)
@@ -166,30 +168,20 @@ Works on Hyprland, Sway, and wlroots-based compositors.
 
 ### Technical Differences from mpvpaper
 
-**Core Architecture Changes:**
-gSlapper replaces libmpv with GStreamer as the multimedia backend. This fundamental change addresses several critical issues:
+**Core Change**: gSlapper replaces libmpv with GStreamer, solving critical issues:
 
-**libmpv + Wayland + NVIDIA Problems:**
-- **Memory Leak Issues**: libmpv's Wayland implementation has documented memory leaks on NVIDIA systems, particularly with EGL context management during extended playback sessions
-- **Resource Cleanup**: Poor cleanup of GPU decoder resources leads to memory accumulation over time
-- **Multi-Monitor Instability**: libmpv struggles with multiple EGL contexts across different monitors, causing crashes and resource conflicts
+**Problems with libmpv**:
+- Memory leaks on NVIDIA Wayland systems
+- Poor GPU decoder resource cleanup
+- Multi-monitor instability and crashes
 
-**GStreamer Advantages:**
-- **Native Wayland Support**: GStreamer has mature, well-tested Wayland integration with proper EGL lifecycle management
-- **NVIDIA Hardware Acceleration**: Direct NVDEC/NVENC integration without the problematic libmpv abstraction layer
-- **Resource Management**: Explicit resource control with proper cleanup hooks and memory management
-- **Multi-Monitor Architecture**: Each output gets independent pipeline management, preventing cross-contamination
+**GStreamer Benefits**:
+- Mature Wayland integration with proper EGL lifecycle management
+- Direct NVIDIA hardware acceleration (NVDEC/NVENC)
+- Independent pipeline management per monitor
+- Predictable memory allocation patterns
 
-**Technical Implementation:**
-- **Pipeline Architecture**: Uses GStreamer's playbin element with custom video sink for direct EGL rendering
-- **Threading Model**: Separates multimedia processing from Wayland event handling, preventing deadlocks
-- **Memory Management**: Explicit EGL context lifecycle management with proper cleanup on surface destruction
-- **Hardware Acceleration**: Direct GStreamer plugin selection for optimal codec and acceleration path selection
-
-**Why This Solves NVIDIA Issues:**
-- **Driver Integration**: GStreamer's NVIDIA plugins are actively maintained and optimized for Wayland
-- **Memory Patterns**: Predictable allocation/deallocation patterns prevent the accumulation issues seen with libmpv
-- **Context Management**: Proper EGL context sharing between monitors without resource conflicts
+**Result**: Eliminates the resource accumulation and stability issues that plague libmpv on NVIDIA systems.
 
 ## License
 
