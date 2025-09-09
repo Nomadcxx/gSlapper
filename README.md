@@ -1,9 +1,6 @@
 <div align="center">
   <img src="gSlapper.png" alt="gSlapper Logo" width="200"/>
 </div>
-
-# gSlapper
-
 A replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) that uses GStreamer instead of libmpv as the backend. gSlapper maintains command-line interface compatibility while addressing memory leak issues on Wayland systems, particularly with NVIDIA drivers and multi-monitor setups.
 
 ## Why gSlapper?
@@ -30,22 +27,6 @@ Based on our testing setup (NVIDIA RTX system, dual monitors, 60-minute test):
 | GPU Decoder Usage | 4-6% | 0% (software) | Hardware accelerated |
 
 **Note**: Performance may vary based on your hardware configuration, video files, and system setup. We encourage running your own benchmarks using the included script.
-
-### Run Your Own Benchmark
-
-```bash
-# Run 5-minute benchmark (recommended for quick testing)
-./benchmark.sh -t 300
-
-# Run full 30-minute benchmark (comprehensive testing)
-./benchmark.sh -t 1800
-```
-
-The script will:
-- Test both gSlapper and mpvpaper with identical settings
-- Generate detailed performance comparison reports
-
-**Requirements**: Both gSlapper and mpvpaper must be installed.
 
 ## Installation
 
@@ -190,6 +171,20 @@ gSlapper replaces libmpv with GStreamer as the multimedia backend. This fundamen
 - **Driver Integration**: GStreamer's NVIDIA plugins are actively maintained and optimized for Wayland
 - **Memory Patterns**: Predictable allocation/deallocation patterns prevent the accumulation issues seen with libmpv
 - **Context Management**: Proper EGL context sharing between monitors without resource conflicts
+
+### Run Your Own Benchmark
+
+```bash
+# Run full 30-minute benchmark (comprehensive testing)
+./benchmark.sh -t 1800
+```
+
+The script will:
+- Test both gSlapper and mpvpaper with identical settings
+- Generate detailed performance comparison reports
+
+**Requirements**: Both gSlapper and mpvpaper must be installed.
+
 
 ## License
 
