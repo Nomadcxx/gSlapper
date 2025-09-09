@@ -173,11 +173,12 @@ Works on Hyprland, Sway, and wlroots-based compositors.
 - Poor GPU decoder resource cleanup
 - Multi-monitor instability and crashes
 
-**GStreamer Benefits**:
-- Mature Wayland integration with proper EGL lifecycle management
-- Direct NVIDIA hardware acceleration (NVDEC/NVENC)
-- Independent pipeline management per monitor
-- Predictable memory allocation patterns
+**gSlapper and GStreamer Benefits**:
+- **gSlapper's Architecture**: Custom video sink with direct EGL rendering integration
+- **GStreamer Foundation**: Mature Wayland integration with proper EGL lifecycle management
+- **gSlapper's NVIDIA Integration**: Optimized pipeline configuration for NVDEC/NVENC hardware acceleration
+- **gSlapper's Multi-Monitor Design**: Independent pipeline management per monitor preventing resource conflicts
+- **Combined Result**: Predictable memory allocation patterns eliminating accumulation issues
 
 **Result**: Eliminates the resource accumulation and stability issues that plague libmpv on NVIDIA systems.
 
