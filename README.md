@@ -1,11 +1,11 @@
 # gSlapper
 
-A replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) that uses GStreamer instead of libmpv as the backend. gSlapper maintains command-line interface compatibility with [mpvpaper](https://github.com/GhostNaN/mpvpaper) while addressing memory leak issues on Wayland systems, particularly with NVIDIA drivers and multi-monitor setups.
+A replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) that uses GStreamer instead of libmpv as the backend. gSlapper maintains command-line interface compatibility while addressing memory leak issues on Wayland systems, particularly with NVIDIA drivers and multi-monitor setups.
 
 ## Why gSlapper?
 
 ### NVIDIA Wayland Compatibility
-- **Memory Leak Resolution**: Addresses memory leaks that can occur with [mpvpaper](https://github.com/GhostNaN/mpvpaper) on NVIDIA Wayland systems during extended use
+- **Memory Leak Resolution**: Addresses memory leaks that can occur on NVIDIA Wayland systems during extended use
 - **GPU Resource Management**: Improved cleanup of GPU decoder resources
 - **Hardware Acceleration**: GStreamer integration for NVIDIA GPU utilization
 
@@ -18,7 +18,7 @@ A replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) that uses GSt
 
 Based on our testing setup (NVIDIA RTX system, dual monitors, 60-minute test):
 
-| Metric | gSlapper | [mpvpaper](https://github.com/GhostNaN/mpvpaper) | Improvement |
+| Metric | gSlapper | mpvpaper | Improvement |
 |--------|----------|-----------|-------------|
 | Average FPS | 60.0 | 6.2 | ~10x better |
 | Frame Drops | 0 | Frequent | Eliminated |
@@ -29,29 +29,19 @@ Based on our testing setup (NVIDIA RTX system, dual monitors, 60-minute test):
 
 ### Run Your Own Benchmark
 
-We've included a comprehensive benchmarking script to test performance on your setup:
-
 ```bash
 # Run 5-minute benchmark (recommended for quick testing)
 ./benchmark.sh -t 300
 
 # Run full 30-minute benchmark (comprehensive testing)
 ./benchmark.sh -t 1800
-
-# Benchmark specific video file
-./benchmark.sh -t 300 -v /path/to/your/video.mp4
 ```
 
-The script will automatically:
-- Test both gSlapper and [mpvpaper](https://github.com/GhostNaN/mpvpaper) with the same settings
-- Monitor CPU, GPU usage, memory consumption, and frame rates
-- Generate a CSV report with detailed metrics
-- Provide a performance comparison summary
+The script will:
+- Test both gSlapper and mpvpaper with identical settings
+- Generate detailed performance comparison reports
 
-**Requirements for benchmarking:**
-- Both gSlapper and [mpvpaper](https://github.com/GhostNaN/mpvpaper) installed
-- NVIDIA GPU (for GPU metrics)
-- Test video file (script includes sample if none provided)
+**Requirements**: Both gSlapper and mpvpaper must be installed.
 
 ## Installation
 
@@ -70,40 +60,81 @@ sudo ninja -C build install
 ```
 
 ## Dependencies
-- GStreamer 1.0 (gstreamer-1.0, gstreamer-video-1.0, gstreamer-gl-1.0)
-- Wayland libraries (wayland-client, wayland-egl, wayland-protocols)
-- EGL/GLES libraries
-- Meson build system
+
+You will need to install:
+- **gstreamer**: Core multimedia framework
+- **gst-plugins-base**: Essential GStreamer plugins
+- **gst-plugins-good**: Additional codec support
+- **gst-plugins-bad**: Advanced codec support (optional but recommended)
+
+On Arch Linux:
+```bash
+sudo pacman -S gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad
+```
+
+On Ubuntu/Debian:
+```bash
+sudo apt install gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad
+```
 
 ## Usage
 
-gSlapper is a **replacement** for [mpvpaper](https://github.com/GhostNaN/mpvpaper). You can replace `mpvpaper` with `gslapper` in your existing scripts and configurations.
-
 ### Basic Usage
 ```bash
-# Same syntax as mpvpaper
+# Display video on specific monitor
+gslapper DP-1 /path/to/video.mp4
+
+# Verbose output with background fork
+gslapper -vs DP-1 /path/to/video.mp4
+
+# Loop video with proper scaling (panscan=1.0 fills screen while maintaining aspect ratio)
 gslapper -vs -o "loop panscan=1.0" DP-1 /path/to/video.mp4
-gslapper -vs -o "loop panscan=1.0" DP-3 /path/to/video.mp4
 ```
 
-### Multi-Monitor Example
+### Multi-Monitor Examples
 ```bash
-# Apply video wallpaper to all monitors
+# Apply same video to all monitors
 gslapper -vs -o "loop panscan=1.0" '*' /path/to/video.mp4
 
-# Apply to specific monitors
+# Different videos per monitor
 gslapper -vs -o "loop panscan=1.0" DP-1 /path/to/main_display.mp4 &
 gslapper -vs -o "loop panscan=1.0" DP-3 /path/to/side_display.mp4 &
+
+# Apply to multiple specific monitors
+gslapper -vs DP-1,DP-3 /path/to/video.mp4
+```
+
+### Layer Examples
+```bash
+# Run on background layer (default)
+gslapper -l background DP-1 /path/to/video.mp4
+
+# Run on bottom layer (above background)
+gslapper -l bottom DP-1 /path/to/video.mp4
+
+# Run on top layer (above windows)
+gslapper -l top DP-1 /path/to/video.mp4
+```
+
+### Advanced GStreamer Options
+```bash
+# Disable audio completely
+gslapper -o "no-audio loop" DP-1 /path/to/video.mp4
+
+# Custom scaling and positioning
+gslapper -o "loop panscan=0.5" DP-1 /path/to/video.mp4
+
+# Hardware acceleration hints
+gslapper -o "loop hardware-acceleration" DP-1 /path/to/video.mp4
 ```
 
 ### Command Line Options
-All [mpvpaper](https://github.com/GhostNaN/mpvpaper) command line options are supported:
-- `-v, -vv`: Verbose output levels
-- `-s`: Fork into background
-- `-l`: Layer (background, bottom, top, overlay)
+- `-v, -vv`: Verbose output (use -vv for maximum verbosity)
+- `-s`: Fork into background (daemon mode)
+- `-l LAYER`: Specify layer (background, bottom, top, overlay)
 - `-o "OPTIONS"`: Pass options to GStreamer backend
-- `-p`: Stop other instances
-- `--help`: Show help information
+- `-p`: Stop other instances before starting
+- `--help`: Show comprehensive help information
 
 ## Features
 
@@ -119,55 +150,42 @@ All [mpvpaper](https://github.com/GhostNaN/mpvpaper) command line options are su
 - **Extensive Format Support**: Supports all formats available in your GStreamer installation
 - **Plugin Ecosystem**: Access to the full GStreamer plugin ecosystem
 
-### Resource Management
-- **Memory Leak Prevention**: Improved cleanup of GPU and system memory resources
-- **EGL Context Lifecycle**: OpenGL context management for stable rendering
-- **Process Monitoring**: Built-in monitoring system prevents resource accumulation
-
 ## Configuration
 
-gSlapper uses the same configuration files as [mpvpaper](https://github.com/GhostNaN/mpvpaper):
+gSlapper uses the same configuration files as mpvpaper:
 - `~/.config/mpvpaper/pauselist`: Applications that pause video playback
 - `~/.config/mpvpaper/stoplist`: Applications that stop video playback
 
-## Troubleshooting
-
-### NVIDIA Issues
-If experiencing issues on NVIDIA systems:
-```bash
-# Enable GStreamer debug output
-GST_DEBUG=2 gslapper [options]
-
-# Check NVIDIA driver status
-nvidia-smi
-
-# Verify Wayland EGL support
-eglinfo | grep -i nvidia
-```
-
-### Wayland Compositor Compatibility
-Tested and working with:
-- Hyprland
-- Sway  
-- wlroots-based compositors
+Works on Hyprland, Sway, and wlroots-based compositors.
 
 ## Development
 
-### Building from Source
-```bash
-# Configure debug build
-meson setup build --buildtype=debug
-ninja -C build
+### Technical Differences from mpvpaper
 
-# Run with debug output
-GST_DEBUG=2 ./build/gslapper [options]
-```
+**Core Architecture Changes:**
+gSlapper replaces libmpv with GStreamer as the multimedia backend. This fundamental change addresses several critical issues:
 
-### Architecture
-- **Main Process**: Wayland client with layer shell integration
-- **GStreamer Pipeline**: Hardware-accelerated video decoding and rendering
-- **Holder Process**: Background monitoring and process management
-- **EGL Integration**: OpenGL rendering backend for video output
+**libmpv + Wayland + NVIDIA Problems:**
+- **Memory Leak Issues**: libmpv's Wayland implementation has documented memory leaks on NVIDIA systems, particularly with EGL context management during extended playback sessions
+- **Resource Cleanup**: Poor cleanup of GPU decoder resources leads to memory accumulation over time
+- **Multi-Monitor Instability**: libmpv struggles with multiple EGL contexts across different monitors, causing crashes and resource conflicts
+
+**GStreamer Advantages:**
+- **Native Wayland Support**: GStreamer has mature, well-tested Wayland integration with proper EGL lifecycle management
+- **NVIDIA Hardware Acceleration**: Direct NVDEC/NVENC integration without the problematic libmpv abstraction layer
+- **Resource Management**: Explicit resource control with proper cleanup hooks and memory management
+- **Multi-Monitor Architecture**: Each output gets independent pipeline management, preventing cross-contamination
+
+**Technical Implementation:**
+- **Pipeline Architecture**: Uses GStreamer's playbin element with custom video sink for direct EGL rendering
+- **Threading Model**: Separates multimedia processing from Wayland event handling, preventing deadlocks
+- **Memory Management**: Explicit EGL context lifecycle management with proper cleanup on surface destruction
+- **Hardware Acceleration**: Direct GStreamer plugin selection for optimal codec and acceleration path selection
+
+**Why This Solves NVIDIA Issues:**
+- **Driver Integration**: GStreamer's NVIDIA plugins are actively maintained and optimized for Wayland
+- **Memory Patterns**: Predictable allocation/deallocation patterns prevent the accumulation issues seen with libmpv
+- **Context Management**: Proper EGL context sharing between monitors without resource conflicts
 
 ## License
 
@@ -175,20 +193,10 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Contributing
 
-Contributions are welcome! Please ensure:
-- Maintain [mpvpaper](https://github.com/GhostNaN/mpvpaper) command-line compatibility
-- Test on both NVIDIA and AMD systems
-- Verify multi-monitor functionality
-- Include appropriate test cases
+Contributions are welcome! Please maintain command-line compatibility and test on both NVIDIA and AMD systems.
 
 ## Acknowledgments
 
-We gratefully acknowledge the following projects and developers:
-
 - **[mpvpaper](https://github.com/GhostNaN/mpvpaper)** - The original video wallpaper application that inspired gSlapper. Created by GhostNaN and contributors.
-- **[GStreamer](https://gstreamer.freedesktop.org/)** - The powerful multimedia framework that powers gSlapper's backend. Developed by the GStreamer team and community.
-- **[Clapper](https://github.com/Rafostar/clapper)** - Inspiration for GStreamer integration patterns and Wayland video rendering approaches. Created by Rafostar.
-- **Wayland Protocol Developers** - For the layer shell protocol and EGL integration that enables seamless wallpaper rendering.
-- **NVIDIA and Mesa Teams** - For graphics driver development that enables hardware-accelerated video processing.
-
-gSlapper builds upon the excellent work of these projects and their maintainers. Without their contributions to the open source ecosystem, gSlapper would not be possible.
+- **[GStreamer](https://gstreamer.freedesktop.org/)** - The powerful multimedia framework that powers gSlapper's backend.
+- **[Clapper](https://github.com/Rafostar/clapper)** - Inspiration for GStreamer integration patterns and Wayland video rendering approaches.
