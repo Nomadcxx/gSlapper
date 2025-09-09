@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="gSlapper.png" alt="gSlapper Logo" width="200"/>
+</div>
+
 # gSlapper
 
 A replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) that uses GStreamer instead of libmpv as the backend. gSlapper maintains command-line interface compatibility while addressing memory leak issues on Wayland systems, particularly with NVIDIA drivers and multi-monitor setups.
