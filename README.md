@@ -2,6 +2,8 @@
   <img src="gSlapper.png" alt="gSlapper Logo" width="400"/>
 </div>
 
+<br>
+
 A replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) that uses GStreamer instead of libmpv as the backend. gSlapper maintains command-line interface compatibility while addressing memory leak issues on Wayland systems, particularly with NVIDIA drivers and multi-monitor setups.
 
 ## Why gSlapper?
@@ -16,18 +18,19 @@ A replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) that uses GSt
 - **Per-Monitor Resource Allocation**: Independent resource management per display output
 - **Scaling Support**: Video scaling and positioning across different resolution displays
 
-## Performance Comparison
+## Performance Results
 
-Based on our testing setup (NVIDIA RTX system, dual monitors, 60-minute test):
+Comparative testing on NVIDIA RTX system with dual monitors (60-minute sessions):
 
-| Metric | gSlapper | mpvpaper | Improvement |
-|--------|----------|-----------|-------------|
-| Average FPS | 60.0 | 6.2 | ~10x better |
-| Frame Drops | 0 | Frequent | Eliminated |
-| GPU Memory Growth | +47MB | +101MB | 53% less |
-| GPU Decoder Usage | 4-6% | 0% (software) | Hardware accelerated |
+| Performance Metric | gSlapper | mpvpaper | Status |
+|-------------------|----------|-----------|--------|
+| Frame Rate Stability | 60 FPS consistent | 6 FPS average | ✅ Significantly improved |
+| Memory Efficiency | 47MB growth | 101MB growth | ✅ 53% less memory usage |
+| Hardware Acceleration | NVDEC active (4-6%) | Software only | ✅ GPU acceleration enabled |
+| Frame Consistency | Zero drops | Frequent drops | ✅ Smooth playback |
+| Resource Stability | Stable over time | Gradual degradation | ✅ Long-term reliability |
 
-**Note**: Performance may vary based on your hardware configuration, video files, and system setup. We encourage running your own benchmarks using the included script.
+**Important**: Results depend on your hardware, drivers, and video content. Use the included benchmarking script to test performance on your specific setup.
 
 ### Run Your Own Benchmark
 
