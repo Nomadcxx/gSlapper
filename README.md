@@ -200,3 +200,4 @@ Contributions are welcome! Please maintain command-line compatibility and test o
 - **[mpvpaper](https://github.com/GhostNaN/mpvpaper)** - The original video wallpaper application that inspired gSlapper. Created by GhostNaN and contributors.
 - **[GStreamer](https://gstreamer.freedesktop.org/)** - The powerful multimedia framework that powers gSlapper's backend.
 - **[Clapper](https://github.com/Rafostar/clapper)** - Inspiration for GStreamer integration patterns and Wayland video rendering approaches.
+
