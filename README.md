@@ -20,7 +20,7 @@ A replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) that uses GSt
 
 ## Performance Results
 
-Verified benchmark data from comprehensive testing (NVIDIA RTX system, dual monitors, 1-hour test sessions):
+Verified benchmark data from testing (NVIDIA RTX system, dual monitors, 1-hour test sessions):
 
 | Performance Metric | gSlapper | mpvpaper | Improvement |
 |-------------------|----------|-----------|-------------|
@@ -32,7 +32,7 @@ Verified benchmark data from comprehensive testing (NVIDIA RTX system, dual moni
 | CPU Usage | 0.0% | 0.0% | ✅ Equal efficiency |
 | System RAM | 4.4MB | 5.4MB | ✅ 19% less usage |
 
-**Note**: Extended testing shows both applications allocate memory at startup then remain stable - no memory leaks detected. Benchmark conducted using 4K video content ([benchmark-test-video.mp4](benchmark-test-video.mp4)). Performance varies by hardware configuration, video format, and system load. Run the included [benchmark.sh](benchmark.sh) script for testing on your specific setup.
+**Note**: Extended testing shows both applications allocate memory at startup then remain stable - no memory leaks detected. Benchmark conducted using this video ([benchmark-test-video.mp4](benchmark-test-video.mp4)). Performance varies by hardware configuration, video format, and system load so run your own test [benchmark.sh](benchmark.sh) on your specific setup.
 
 ### Run Your Own Benchmark
 
@@ -48,7 +48,7 @@ Use the included [benchmark.sh](benchmark.sh) script:
 
 The script will:
 - Test both gSlapper and mpvpaper with identical settings
-- Generate detailed performance comparison reports
+- Generate comparison reports
 
 **Requirements**: Both gSlapper and mpvpaper must be installed.
 
@@ -132,9 +132,6 @@ gslapper -o "no-audio loop" DP-1 /path/to/video.mp4
 
 # Custom scaling and positioning
 gslapper -o "loop panscan=0.5" DP-1 /path/to/video.mp4
-
-# Hardware acceleration hints
-gslapper -o "loop hardware-acceleration" DP-1 /path/to/video.mp4
 ```
 
 ### Command Line Options
@@ -156,8 +153,8 @@ gslapper -o "loop hardware-acceleration" DP-1 /path/to/video.mp4
 ### GStreamer Backend Advantages
 - **Automatic Codec Selection**: Intelligent codec detection and hardware acceleration
 - **Robust Pipeline Management**: Advanced error handling and state recovery
-- **Extensive Format Support**: Supports all formats available in your GStreamer installation
-- **Plugin Ecosystem**: Access to the full GStreamer plugin ecosystem
+- **Extensive Format Support**: Supports formats available in your GStreamer installation
+- **Plugin Ecosystem**: Access to the GStreamer plugin ecosystem
 
 ## Configuration
 
