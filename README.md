@@ -20,17 +20,17 @@ A replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) that uses GSt
 
 ## Performance Results
 
-Verified benchmark data from comprehensive testing (NVIDIA RTX system, dual monitors, 30-minute test sessions):
+Verified benchmark data from comprehensive testing (NVIDIA RTX system, dual monitors, 1-hour test sessions):
 
 | Performance Metric | gSlapper | mpvpaper | Improvement |
 |-------------------|----------|-----------|-------------|
-| Frame Rate | 235.9 FPS | 23.4 FPS | ✅ 10.1x higher |
-| Working GPU Memory | 1667.5MB | 1896.8MB | ✅ 12% less usage |
+| Frame Rate | 236.2 FPS | 23.5 FPS | ✅ 10.1x higher |
+| Working GPU Memory | 1668.0MB | 1887.9MB | ✅ 12% less usage |
 | Memory Stability | Stable after 5min | Stable after 5min | ✅ Both stable (no leaks) |
-| Hardware Acceleration | NVDEC (12.7% avg) | Software only (0%) | ✅ GPU accelerated |
+| Hardware Acceleration | NVDEC (12.8% avg) | Software only (0%) | ✅ GPU accelerated |
 | Frame Drops | 0 | 0 | ✅ Both stable |
 | CPU Usage | 0.0% | 0.0% | ✅ Equal efficiency |
-| System RAM | 4.4MB | 5.0MB | ✅ 10% less usage |
+| System RAM | 4.4MB | 5.4MB | ✅ 19% less usage |
 
 **Note**: Extended testing shows both applications allocate memory at startup then remain stable - no memory leaks detected. Benchmark conducted using 4K video content. Performance varies by hardware configuration, video format, and system load. Run the included [benchmark.sh](benchmark.sh) script for testing on your specific setup.
 
@@ -42,8 +42,8 @@ Use the included [benchmark.sh](benchmark.sh) script:
 # Run 5-minute benchmark (recommended for quick testing)
 ./benchmark.sh -t 300
 
-# Run full 30-minute benchmark (comprehensive testing)
-./benchmark.sh -t 1800
+# Run full 1-hour benchmark (comprehensive testing)
+./benchmark.sh -t 3600
 ```
 
 The script will:
