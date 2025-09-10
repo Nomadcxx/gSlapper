@@ -104,24 +104,38 @@ install_project() {
     # Install binaries
     ninja -C build install
     
-    # Create mpvpaper compatibility symlink if installing system-wide
-    if [[ $EUID -eq 0 ]]; then
-        if [ ! -e "/usr/bin/mpvpaper" ]; then
-            ln -sf /usr/bin/gslapper /usr/bin/mpvpaper
-            print_success "Created mpvpaper compatibility symlink"
+    print_success "Installation completed successfully"
+}
+
+# Optional mpvpaper compatibility symlink
+create_mpvpaper_symlink() {
+    print_info "Would you like to create a mpvpaper compatibility symlink? (y/N)"
+    read -r response
+    
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        if [[ $EUID -eq 0 ]]; then
+            if [ ! -e "/usr/bin/mpvpaper" ]; then
+                ln -sf /usr/bin/gslapper /usr/bin/mpvpaper
+                print_success "Created mpvpaper compatibility symlink at /usr/bin/mpvpaper"
+                print_info "You can now use 'mpvpaper' command to run gSlapper"
+            else
+                print_warning "mpvpaper already exists at /usr/bin/mpvpaper"
+                print_info "Use 'gslapper' command instead, or remove existing mpvpaper first"
+            fi
         else
-            print_warning "mpvpaper already exists, skipping symlink creation"
+            if [ ! -e "$HOME/.local/bin/mpvpaper" ]; then
+                ln -sf "$HOME/.local/bin/gslapper" "$HOME/.local/bin/mpvpaper"
+                print_success "Created mpvpaper compatibility symlink at ~/.local/bin/mpvpaper"
+                print_info "You can now use 'mpvpaper' command to run gSlapper"
+            else
+                print_warning "mpvpaper already exists in ~/.local/bin"
+                print_info "Use 'gslapper' command instead, or remove existing mpvpaper first"
+            fi
         fi
     else
-        if [ ! -e "$HOME/.local/bin/mpvpaper" ]; then
-            ln -sf "$HOME/.local/bin/gslapper" "$HOME/.local/bin/mpvpaper"
-            print_success "Created mpvpaper compatibility symlink in ~/.local/bin"
-        else
-            print_warning "mpvpaper already exists in ~/.local/bin, skipping symlink creation"
-        fi
+        print_info "Skipped mpvpaper symlink creation"
+        print_info "Use 'gslapper' command to run the application"
     fi
-    
-    print_success "Installation completed successfully"
 }
 
 # Test installation
@@ -151,11 +165,12 @@ print_usage() {
     echo "  gslapper -vs -o \"loop panscan=1.0\" DP-1 /path/to/video.mp4"
     echo "  gslapper -vs -o \"loop panscan=1.0\" '*' /path/to/video.mp4"
     echo
-    print_info "gSlapper is a drop-in replacement for mpvpaper with better:"
-    echo "  • NVIDIA Wayland compatibility"
-    echo "  • Multi-monitor support"
+    print_info "gSlapper is available alongside mpvpaper, offering:"
+    echo "  • Better NVIDIA Wayland compatibility"
+    echo "  • Improved multi-monitor support"
     echo "  • Memory leak prevention"
-    echo "  • Hardware acceleration"
+    echo "  • Enhanced hardware acceleration"
+    echo "  • 10x better performance (236 FPS vs 23 FPS)"
     echo
     print_info "For more information, see: README.md"
 }
@@ -170,6 +185,11 @@ main() {
     build_project
     install_project
     test_installation
+    
+    echo
+    create_mpvpaper_symlink
+    
+    echo
     print_usage
     
     print_success "Installation completed successfully!"
