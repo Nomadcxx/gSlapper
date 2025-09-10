@@ -32,7 +32,7 @@ Verified benchmark data from comprehensive testing (NVIDIA RTX system, dual moni
 | CPU Usage | 0.0% | 0.0% | ✅ Equal efficiency |
 | System RAM | 4.4MB | 5.4MB | ✅ 19% less usage |
 
-**Note**: Extended testing shows both applications allocate memory at startup then remain stable - no memory leaks detected. Benchmark conducted using 4K video content. Performance varies by hardware configuration, video format, and system load. Run the included [benchmark.sh](benchmark.sh) script for testing on your specific setup.
+**Note**: Extended testing shows both applications allocate memory at startup then remain stable - no memory leaks detected. Benchmark conducted using 4K video content ([benchmark-test-video.mp4](benchmark-test-video.mp4)). Performance varies by hardware configuration, video format, and system load. Run the included [benchmark.sh](benchmark.sh) script for testing on your specific setup.
 
 ### Run Your Own Benchmark
 
@@ -40,10 +40,10 @@ Use the included [benchmark.sh](benchmark.sh) script:
 
 ```bash
 # Run 5-minute benchmark (recommended for quick testing)
-./benchmark.sh -t 300
+./benchmark.sh benchmark-test-video.mp4 -t 300
 
 # Run full 1-hour benchmark (comprehensive testing)
-./benchmark.sh -t 3600
+./benchmark.sh benchmark-test-video.mp4 -t 3600
 ```
 
 The script will:
