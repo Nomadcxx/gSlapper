@@ -130,8 +130,14 @@ gslapper -l top DP-1 /path/to/video.mp4
 # Disable audio completely
 gslapper -o "no-audio loop" DP-1 /path/to/video.mp4
 
-# Custom scaling and positioning
+# Custom scaling with panscan (0.0-1.0)
 gslapper -o "loop panscan=0.5" DP-1 /path/to/video.mp4
+
+# Display video at original resolution (may be clipped if larger than display)
+gslapper -o "original" DP-1 /path/to/video.mp4
+
+# Combine options
+gslapper -o "loop original no-audio" DP-1 /path/to/video.mp4
 ```
 
 ### Command Line Options
@@ -139,6 +145,10 @@ gslapper -o "loop panscan=0.5" DP-1 /path/to/video.mp4
 - `-s`: Fork into background (daemon mode)
 - `-l LAYER`: Specify layer (background, bottom, top, overlay)
 - `-o "OPTIONS"`: Pass options to GStreamer backend
+  - `panscan=X`: Scale video by factor X (0.0-1.0)
+  - `original`: Display video at actual pixel dimensions
+  - `no-audio`: Disable audio playback
+  - `loop`: Enable seamless video looping
 - `-p`: Stop other instances before starting
 - `--help`: Show comprehensive help information
 
@@ -149,12 +159,14 @@ gslapper -o "loop panscan=0.5" DP-1 /path/to/video.mp4
 - **Multi-Output Support**: Native handling of multiple monitors with independent video streams
 - **Layer Shell Integration**: Uses wlr-layer-shell protocol for proper wallpaper rendering
 - **Background Process Management**: Automatic process monitoring and revival capabilities
+- **Advanced Scaling Options**: Panscan and original resolution display modes
 
 ### GStreamer Backend Advantages
 - **Automatic Codec Selection**: Intelligent codec detection and hardware acceleration
 - **Robust Pipeline Management**: Advanced error handling and state recovery
 - **Extensive Format Support**: Supports formats available in your GStreamer installation
 - **Plugin Ecosystem**: Access to the GStreamer plugin ecosystem
+- **Advanced Scaling Control**: Precise video scaling with panscan and original resolution modes
 
 ## Configuration
 

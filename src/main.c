@@ -106,6 +106,7 @@ static int frame_rate_cap = 30; // Default 30 FPS
 static int frames_skipped = 0; // Track skipped frames for adaptive skipping
 static char *video_path;
 static char *gst_options = "";
+static float panscan_value = 1.0f;  // Default to full size (no scaling)
 
 static EGLConfig egl_config;
 static EGLDisplay *egl_display;
@@ -423,6 +424,81 @@ static GLuint create_shader_program() {
     return program;
 }
 
+// Update vertex data based on video dimensions and scaling options
+static void update_vertex_data(struct display_output *output) {
+    if (vao == 0 || vbo == 0) {
+        return; // VAO/VBO not initialized yet
+    }
+    
+    // Only update if we have valid video dimensions
+    if (video_frame_data.width <= 0 || video_frame_data.height <= 0) {
+        return;
+    }
+    
+    float scale_x, scale_y;
+    
+    if (panscan_value == -1.0f) {
+        // Original resolution mode - display video at its actual pixel dimensions
+        // Calculate the scale needed to show actual pixels (accounting for display scaling)
+        scale_x = (float)video_frame_data.width / (float)output->width;
+        scale_y = (float)video_frame_data.height / (float)output->height;
+        
+        // If video is smaller than display, show at actual size (don't scale up)
+        // If video is larger than display, it will be clipped (which is expected)
+        
+        if (VERBOSE == 2) {
+            cflp_info("Original resolution mode: video=%dx%d, display=%dx%d, scale_x=%.3f, scale_y=%.3f", 
+                     video_frame_data.width, video_frame_data.height, output->width, output->height, scale_x, scale_y);
+        }
+    } else {
+        // Normal panscan mode
+        scale_x = panscan_value;
+        scale_y = panscan_value;
+        
+        // Adjust for aspect ratio to maintain proper proportions
+        float video_aspect = (float)video_frame_data.width / (float)video_frame_data.height;
+        float display_aspect = (float)output->width / (float)output->height;
+        
+        if (video_aspect > display_aspect) {
+            // Video is wider than display (letterbox situation)
+            scale_y = scale_y * (display_aspect / video_aspect);
+        } else {
+            // Video is taller than display (pillarbox situation)
+            scale_x = scale_x * (video_aspect / display_aspect);
+        }
+        
+        if (VERBOSE == 2) {
+            cflp_info("Panscan mode: panscan=%.2f, scale_x=%.3f, scale_y=%.3f", 
+                     panscan_value, scale_x, scale_y);
+        }
+    }
+    
+    // Clamp scaling to valid range
+    if (scale_x < 0.1f) scale_x = 0.1f;
+    if (scale_x > 10.0f) scale_x = 10.0f;
+    if (scale_y < 0.1f) scale_y = 0.1f;
+    if (scale_y > 10.0f) scale_y = 10.0f;
+    
+    // Create vertices with calculated scaling (centered)
+    float vertices[] = {
+        // Position (x, y)  // Texture coords (s, t)
+        -scale_x, -scale_y,  0.0f, 1.0f,  // bottom-left
+         scale_x, -scale_y,  1.0f, 1.0f,  // bottom-right
+         scale_x,  scale_y,  1.0f, 0.0f,  // top-right
+        -scale_x,  scale_y,  0.0f, 0.0f   // top-left
+    };
+    
+    // Update vertex buffer data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR) {
+        cflp_warning("OpenGL error in vertex update: 0x%x", error);
+    }
+}
+
 static void render(struct display_output *output) {
     // If using waylandsink, we don't need EGL rendering - waylandsink handles it
     if (using_waylandsink) {
@@ -544,20 +620,11 @@ static void render(struct display_output *output) {
         
         // Create VAO and VBO if needed
         if (vao == 0) {
-            float vertices[] = {
-                // Position (x, y)  // Texture coords (s, t)
-                -1.0f, -1.0f,      0.0f, 1.0f,  // bottom-left
-                 1.0f, -1.0f,      1.0f, 1.0f,  // bottom-right
-                 1.0f,  1.0f,      1.0f, 0.0f,  // top-right
-                -1.0f,  1.0f,      0.0f, 0.0f   // top-left
-            };
-            
             glGenVertexArrays(1, &vao);
             glGenBuffers(1, &vbo);
             
             glBindVertexArray(vao);
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
             
             // Position attribute
             glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
@@ -572,6 +639,9 @@ static void render(struct display_output *output) {
             if (VERBOSE)  // Keep this as it's a one-time message
                 cflp_info("Created VAO %u and VBO %u", vao, vbo);
         }
+        
+        // Update vertex data based on current video dimensions and scaling options
+        update_vertex_data(output);
         
         // Use shader program
         glUseProgram(shader_program);
@@ -1056,6 +1126,43 @@ static void apply_gst_options() {
         // Loop is handled by seeking to beginning on EOS
         if (VERBOSE)
             cflp_info("Looping enabled");
+    }
+    
+    // Handle original resolution option
+    if (strstr(gst_options, "original") != NULL) {
+        panscan_value = -1.0f; // Special value to indicate original resolution mode
+        if (VERBOSE)
+            cflp_info("Original resolution mode enabled");
+    }
+    
+    // Handle panscan option (only if not using original resolution)
+    if (panscan_value != -1.0f && strstr(gst_options, "panscan") != NULL) {
+        // Extract the panscan value from the options string
+        char *panscan_str = strstr(gst_options, "panscan=");
+        if (panscan_str) {
+            // Move pointer to the value part (after "panscan=")
+            panscan_str += 8; // Length of "panscan="
+            float new_panscan = atof(panscan_str);
+            if (new_panscan >= 0.0f && new_panscan <= 1.0f) {
+                panscan_value = new_panscan;
+                if (VERBOSE)
+                    cflp_info("Panscan value set to: %.2f", panscan_value);
+            } else {
+                cflp_warning("Invalid panscan value (%.2f), using default (1.0)", new_panscan);
+                panscan_value = 1.0f;
+            }
+        } else {
+            // Handle case where "panscan" is present but no value is specified
+            if (VERBOSE)
+                cflp_info("Panscan option detected without value, using default (1.0)");
+        }
+    }
+    
+    // If neither panscan nor original is specified, use default value of 1.0
+    if (panscan_value != -1.0f && strstr(gst_options, "panscan") == NULL) {
+        panscan_value = 1.0f;
+        if (VERBOSE)
+            cflp_info("Using default panscan value: 1.0");
     }
 }
 
