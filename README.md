@@ -6,14 +6,6 @@
 
 A drop-in replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) using GStreamer instead of libmpv. Fixes memory leaks on NVIDIA Wayland systems and provides better multi-monitor support.
 
-## Why gSlapper?
-
-- Fixes memory leaks on NVIDIA Wayland systems
-- 10x better frame rate (236 FPS vs 23 FPS)
-- Better multi-monitor stability
-- Hardware acceleration with proper resource cleanup
-- 100% command-line compatible with mpvpaper
-
 ## Performance
 
 Benchmark results (NVIDIA RTX, dual monitors, 1-hour test):
