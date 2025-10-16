@@ -52,26 +52,35 @@ sudo apt install gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugi
 gslapper DP-1 /path/to/video.mp4
 
 # With looping and scaling
-gslapper -vs -o "loop panscan=1.0" DP-1 /path/to/video.mp4
+gslapper -v -o "loop panscan=0.8" DP-1 /path/to/video.mp4
+
+# Stretch to fill (ignore aspect ratio)
+gslapper -v -o "loop stretch" DP-1 /path/to/video.mp4
+
+# Original resolution (1:1 pixel mapping)
+gslapper -v -o "loop original" DP-1 /path/to/video.mp4
 
 # All monitors
-gslapper -vs -o "loop panscan=1.0" '*' /path/to/video.mp4
+gslapper -v -o "loop" '*' /path/to/video.mp4
 
 # Different videos per monitor
-gslapper -vs -o "loop" DP-1 /path/to/video1.mp4 &
-gslapper -vs -o "loop" DP-3 /path/to/video2.mp4 &
+gslapper -o "loop" DP-1 /path/to/video1.mp4 &
+gslapper -o "loop" DP-3 /path/to/video2.mp4 &
 ```
 
 ### Options
 
-- `-v, -vv` - Verbose output
-- `-s` - Fork to background
+- `-v, -vv` - Verbose output (use -vv for more detail)
+- `-f` - Fork to background
+- `-p` - Auto-pause when wallpaper is hidden
+- `-s` - Auto-stop when wallpaper is hidden
 - `-l LAYER` - Shell layer (background, bottom, top, overlay)
-- `-o "OPTIONS"` - GStreamer options:
+- `-o "OPTIONS"` - Video options (space-separated):
   - `loop` - Seamless video looping
-  - `panscan=X` - Scale video (0.0-1.0)
-  - `original` - Display at native resolution
-  - `no-audio` - Disable audio
+  - `panscan=X` - Scale video (0.0-1.0, default 1.0 = fit to screen)
+  - `stretch` - Stretch to fill screen (ignore aspect ratio)
+  - `original` - Display at native resolution (1:1 pixel mapping)
+  - `no-audio` - Disable audio playback
 
 ## Configuration
 
