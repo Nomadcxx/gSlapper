@@ -61,3 +61,13 @@ adorable-black-kitten*
 # Generated protocol files
 *-protocol.c
 *-client-protocol.h
+
+# Development/internal files
+.cache/
+.ssh/
+AGENTS.md
+PROJECT_SUMMARY.md
+CLAUDE.md
+opencode.json
+.SRCINFO
+gslapper-*.tar.gz

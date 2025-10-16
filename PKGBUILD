@@ -1,8 +1,8 @@
-# Maintainer: [Your Name] <[your-email]>
+# Maintainer: Nomadcxx <noovie@gmail.com>
 pkgname=gslapper
-pkgver=1.0.0
+pkgver=1.2.0
 pkgrel=1
-pkgdesc="High-performance drop-in replacement for mpvpaper using GStreamer backend"
+pkgdesc="High-performance drop-in replacement for mpvpaper using GStreamer backend with panscan and original resolution features"
 arch=('x86_64')
 url="https://github.com/Nomadcxx/gSlapper"
 license=('MIT')
@@ -31,7 +31,7 @@ optdepends=(
 provides=('mpvpaper')
 conflicts=('mpvpaper')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/Nomadcxx/gSlapper/archive/v$pkgver.tar.gz")
-sha256sums=('SKIP')  # Update with actual checksum
+sha256sums=('f16a7f641d14379166d37eb112093d2fbd9cc084616fadf2031e9f830278348c')
 
 prepare() {
     cd "$pkgname-$pkgver"
