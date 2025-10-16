@@ -1,6 +1,6 @@
 # Maintainer: Nomadcxx <noovie@gmail.com>
 pkgname=gslapper
-pkgver=1.2.0
+pkgver=1.2.1
 pkgrel=1
 pkgdesc="mpvpaper replacement using GStreamer backend"
 arch=('x86_64')
@@ -28,10 +28,8 @@ optdepends=(
     'nvidia-utils: NVIDIA hardware acceleration'
     'mesa-vdpau: AMD/Intel hardware acceleration'
 )
-provides=('mpvpaper')
-conflicts=('mpvpaper')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/Nomadcxx/gSlapper/archive/v$pkgver.tar.gz")
-sha256sums=('9b5a372383734c554acb0c14426a8c24f7d1d670edf280945d364a178e021af1')
+sha256sums=('bd043205a43e6031b54ed655bec2536857ad5b143d93c7c4b5e84573e990933c')
 
 prepare() {
     cd "$pkgname-$pkgver"
@@ -58,16 +56,13 @@ check() {
 
 package() {
     cd "$pkgname-$pkgver"
-    
+
     # Install the main application
     meson install -C build --destdir "$pkgdir"
-    
+
     # Install documentation
     install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
-    
-    # Create mpvpaper compatibility symlink
-    ln -s /usr/bin/gslapper "$pkgdir/usr/bin/mpvpaper"
-    
+
     # Install license
     install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
