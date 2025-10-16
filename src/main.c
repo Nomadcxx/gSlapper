@@ -107,6 +107,7 @@ static int frames_skipped = 0; // Track skipped frames for adaptive skipping
 static char *video_path;
 static char *gst_options = "";
 static float panscan_value = 1.0f;  // Default to full size (no scaling)
+static bool stretch_mode = false;  // Stretch to fill without maintaining aspect ratio
 
 static EGLConfig egl_config;
 static EGLDisplay *egl_display;
@@ -427,13 +428,20 @@ static GLuint create_shader_program() {
 // Update vertex data based on video dimensions and scaling options
 static void update_vertex_data(struct display_output *output) {
     if (vao == 0 || vbo == 0) {
+        if (VERBOSE)
+            cflp_info("VAO/VBO not initialized yet (vao=%u, vbo=%u)", vao, vbo);
         return; // VAO/VBO not initialized yet
     }
     
     // Only update if we have valid video dimensions
     if (video_frame_data.width <= 0 || video_frame_data.height <= 0) {
+        if (VERBOSE)
+            cflp_info("Invalid video dimensions (%dx%d)", video_frame_data.width, video_frame_data.height);
         return;
     }
+    
+    if (VERBOSE)
+        cflp_info("Updating vertex data with panscan_value=%.2f", panscan_value);
     
     float scale_x, scale_y;
     
@@ -450,8 +458,17 @@ static void update_vertex_data(struct display_output *output) {
             cflp_info("Original resolution mode: video=%dx%d, display=%dx%d, scale_x=%.3f, scale_y=%.3f", 
                      video_frame_data.width, video_frame_data.height, output->width, output->height, scale_x, scale_y);
         }
+    } else if (stretch_mode) {
+        // Stretch mode - fill entire screen without maintaining aspect ratio
+        scale_x = panscan_value;
+        scale_y = panscan_value;
+        
+        if (VERBOSE) {
+            cflp_info("Stretch mode: panscan=%.2f, scale_x=%.3f, scale_y=%.3f (ignoring aspect ratio)", 
+                     panscan_value, scale_x, scale_y);
+        }
     } else {
-        // Normal panscan mode
+        // Normal panscan mode - fit/contain behavior (scale to fit inside screen)
         scale_x = panscan_value;
         scale_y = panscan_value;
         
@@ -467,9 +484,9 @@ static void update_vertex_data(struct display_output *output) {
             scale_x = scale_x * (video_aspect / display_aspect);
         }
         
-        if (VERBOSE == 2) {
-            cflp_info("Panscan mode: panscan=%.2f, scale_x=%.3f, scale_y=%.3f", 
-                     panscan_value, scale_x, scale_y);
+        if (VERBOSE) {
+            cflp_info("Panscan mode: panscan=%.2f, scale_x=%.3f, scale_y=%.3f (video_aspect=%.3f, display_aspect=%.3f)", 
+                     panscan_value, scale_x, scale_y, video_aspect, display_aspect);
         }
     }
     
@@ -1128,9 +1145,17 @@ static void apply_gst_options() {
             cflp_info("Looping enabled");
     }
     
+    // Handle stretch option
+    if (strstr(gst_options, "stretch") != NULL) {
+        stretch_mode = true;
+        if (VERBOSE)
+            cflp_info("Stretch mode enabled");
+    }
+    
     // Handle original resolution option
     if (strstr(gst_options, "original") != NULL) {
         panscan_value = -1.0f; // Special value to indicate original resolution mode
+        stretch_mode = false; // Original overrides stretch
         if (VERBOSE)
             cflp_info("Original resolution mode enabled");
     }
@@ -1143,6 +1168,8 @@ static void apply_gst_options() {
             // Move pointer to the value part (after "panscan=")
             panscan_str += 8; // Length of "panscan="
             float new_panscan = atof(panscan_str);
+            if (VERBOSE)
+                cflp_info("Parsed panscan string '%s' -> value %.2f", panscan_str, new_panscan);
             if (new_panscan >= 0.0f && new_panscan <= 1.0f) {
                 panscan_value = new_panscan;
                 if (VERBOSE)
