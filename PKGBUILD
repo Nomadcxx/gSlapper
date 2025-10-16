@@ -2,7 +2,7 @@
 pkgname=gslapper
 pkgver=1.2.0
 pkgrel=1
-pkgdesc="High-performance drop-in replacement for mpvpaper using GStreamer backend with panscan and original resolution features"
+pkgdesc="mpvpaper replacement using GStreamer backend"
 arch=('x86_64')
 url="https://github.com/Nomadcxx/gSlapper"
 license=('MIT')
@@ -31,7 +31,7 @@ optdepends=(
 provides=('mpvpaper')
 conflicts=('mpvpaper')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/Nomadcxx/gSlapper/archive/v$pkgver.tar.gz")
-sha256sums=('f16a7f641d14379166d37eb112093d2fbd9cc084616fadf2031e9f830278348c')
+sha256sums=('9b5a372383734c554acb0c14426a8c24f7d1d670edf280945d364a178e021af1')
 
 prepare() {
     cd "$pkgname-$pkgver"
