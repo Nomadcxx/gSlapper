@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <limits.h>
 #include <mcheck.h>
 #include <poll.h>
 #include <pthread.h>
@@ -1208,10 +1209,20 @@ static void init_gst(const struct wl_state *state) {
     // Set the URI - convert local file path to URI if needed
     char *uri = video_path;
     if (strstr(video_path, "://") == NULL) {
-        // Local file, convert to file:// URI
-        uri = malloc(strlen(video_path) + 8);
-        sprintf(uri, "file://%s", video_path);
+        // Local file, convert to absolute path first (fixes relative path issues)
+        char resolved_path[PATH_MAX];
+        if (realpath(video_path, resolved_path) == NULL) {
+            cflp_error("Failed to resolve path '%s': %s", video_path, strerror(errno));
+            exit_slapper(EXIT_FAILURE);
+        }
+
+        // Convert to file:// URI
+        uri = malloc(strlen(resolved_path) + 8);
+        sprintf(uri, "file://%s", resolved_path);
         allocated_uri = uri;  // Track for cleanup
+
+        if (VERBOSE)
+            cflp_info("Resolved '%s' to '%s'", video_path, resolved_path);
     }
     g_object_set(G_OBJECT(pipeline), "uri", uri, NULL);
 
