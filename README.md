@@ -38,12 +38,21 @@ sudo ninja -C build install
 
 ### Dependencies
 ```bash
-# Arch Linux
-sudo pacman -S gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad
+# Arch Linux (runtime)
+sudo pacman -S gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav
 
-# Ubuntu/Debian
-sudo apt install gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad
+# Arch Linux (build)
+sudo pacman -S meson ninja wayland-protocols
+
+# Ubuntu/Debian (runtime)
+sudo apt install gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+                 gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav
+
+# Ubuntu/Debian (build)
+sudo apt install meson ninja-build wayland-protocols libunwind-dev
 ```
+
+**Note:** `gst-plugins-ugly` and `gst-libav` provide codec support (H.264, H.265, etc.). Without these, videos may fail to play with "Pipeline failed to reach playing state" error.
 
 ## Usage
 

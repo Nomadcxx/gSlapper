@@ -775,9 +775,9 @@ static void stop_slapper() {
     exit_cleanup();
 
     // Start holder script
-    execv(strcat(exe_dir, "slapper-holder"), new_argv);
+    execv(strcat(exe_dir, "gslapper-holder"), new_argv);
 
-    cflp_error("Failed to stop clappie");
+    cflp_error("Failed to stop gslapper");
     exit(EXIT_FAILURE);
 }
 
@@ -1317,6 +1317,10 @@ static void init_gst(const struct wl_state *state) {
             GstStateChangeReturn wait_ret = gst_element_get_state(pipeline, NULL, NULL, 5 * GST_SECOND);
             if (wait_ret == GST_STATE_CHANGE_FAILURE) {
                 cflp_error("Pipeline failed to reach playing state");
+                cflp_error("This is often caused by missing codec support. Try:");
+                cflp_error("  Arch: sudo pacman -S gst-plugins-ugly gst-libav");
+                cflp_error("  Ubuntu: sudo apt install gstreamer1.0-plugins-ugly gstreamer1.0-libav");
+                cflp_error("Or run with GST_DEBUG=3 for more details");
                 exit_slapper(EXIT_FAILURE);
             }
         }
