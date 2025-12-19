@@ -34,6 +34,7 @@
 #include <gst/gl/gl.h>
 
 #include <cflogprinter.h>
+#include "ipc.h"
 
 typedef unsigned int uint;
 
@@ -139,6 +140,7 @@ static pthread_t threads[5] = {0};
 static uint SLIDESHOW_TIME = 0;
 static bool SHOW_OUTPUTS = false;
 static int VERBOSE = 0;
+static char *ipc_socket_path = NULL;
 
 // Forward declarations
 static void exit_cleanup();
@@ -155,6 +157,11 @@ static GLuint create_shader_program();
 
 // Cleanup function
 static void exit_cleanup() {
+
+    // Shutdown IPC server first
+    if (ipc_socket_path) {
+        ipc_shutdown();
+    }
 
     // Give GStreamer a chance to finish
     halt_info.stop_render_loop = 1;
@@ -272,6 +279,12 @@ static void exit_cleanup() {
     if (shader_program != 0) {
         glDeleteProgram(shader_program);
         shader_program = 0;
+    }
+
+    // Free IPC socket path
+    if (ipc_socket_path) {
+        free(ipc_socket_path);
+        ipc_socket_path = NULL;
     }
 }
 
@@ -1072,6 +1085,87 @@ static void *handle_gst_events(void *_) {
     pthread_exit(NULL);
 }
 
+// IPC command execution (called from main loop)
+static void execute_ipc_commands(void) {
+    ipc_drain_wakeup();
+
+    ipc_command_t *cmd;
+    while ((cmd = ipc_dequeue_command()) != NULL) {
+        // Parse command name and argument
+        char *cmd_name = cmd->cmd_line;
+        char *arg = strchr(cmd_name, ' ');
+        if (arg) {
+            *arg = '\0';
+            arg++;
+            while (*arg == ' ') arg++;  // Trim leading spaces
+        }
+
+        // Dispatch commands
+        if (strcmp(cmd_name, "pause") == 0) {
+            if (pipeline) {
+                GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PAUSED);
+                if (ret != GST_STATE_CHANGE_FAILURE) {
+                    halt_info.is_paused++;
+                    ipc_send_response(cmd->client_fd, "OK\n");
+                } else {
+                    ipc_send_response(cmd->client_fd, "ERROR: failed to pause\n");
+                }
+            } else {
+                ipc_send_response(cmd->client_fd, "ERROR: no pipeline\n");
+            }
+        }
+        else if (strcmp(cmd_name, "resume") == 0) {
+            if (pipeline) {
+                if (halt_info.is_paused > 0) halt_info.is_paused--;
+                GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
+                if (ret != GST_STATE_CHANGE_FAILURE) {
+                    ipc_send_response(cmd->client_fd, "OK\n");
+                } else {
+                    ipc_send_response(cmd->client_fd, "ERROR: failed to resume\n");
+                }
+            } else {
+                ipc_send_response(cmd->client_fd, "ERROR: no pipeline\n");
+            }
+        }
+        else if (strcmp(cmd_name, "query") == 0) {
+            char response[512];
+            const char *state = (halt_info.is_paused > 0) ? "paused" : "playing";
+            const char *path = video_path ? video_path : "unknown";
+            snprintf(response, sizeof(response), "STATUS: %s %s\n", state, path);
+            ipc_send_response(cmd->client_fd, response);
+        }
+        else if (strcmp(cmd_name, "change") == 0) {
+            if (!arg || strlen(arg) == 0) {
+                ipc_send_response(cmd->client_fd, "ERROR: missing path argument\n");
+            } else {
+                // Update argv with new video path for restart
+                if (halt_info.argv_copy && halt_info.argc > 0) {
+                    free(halt_info.argv_copy[halt_info.argc - 1]);
+                    halt_info.argv_copy[halt_info.argc - 1] = strdup(arg);
+                }
+                // Preserve IPC socket path in argv if set
+                // (stop_slapper will restart with same args)
+                ipc_send_response(cmd->client_fd, "OK\n");
+                // Small delay to ensure response is sent
+                usleep(10000);
+                stop_slapper();
+            }
+        }
+        else if (strcmp(cmd_name, "stop") == 0) {
+            ipc_send_response(cmd->client_fd, "OK\n");
+            usleep(10000);  // Small delay to ensure response sent
+            exit_slapper(EXIT_SUCCESS);
+        }
+        else {
+            ipc_send_response(cmd->client_fd, "ERROR: unknown command\n");
+        }
+
+        // Cleanup command
+        free(cmd->cmd_line);
+        free(cmd);
+    }
+}
+
 static void init_threads() {
     uint id = 0;
 
@@ -1756,6 +1850,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         {"layer", required_argument, NULL, 'l'},
         {"gst-options", required_argument, NULL, 'o'},
         {"fps-cap", required_argument, NULL, 'r'},
+        {"ipc-socket", required_argument, NULL, 'I'},
         {0, 0, 0, 0}
     };
 
@@ -1777,6 +1872,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         "--layer        -l LAYER        Specifies shell surface layer to run on (background by default)\n"
         "--gst-options  -o \"OPTIONS\"    Forwards GStreamer options (Must be within quotes\"\")\n"
         "--fps-cap      -r FPS           Frame rate cap (30, 60, or 100 FPS, default: 30)\n"
+        "--ipc-socket   -I PATH          Enable IPC control via Unix socket\n"
         "\n"
         "* The auto options might not work as intended\n"
         "See the man page for more details\n";
@@ -1784,7 +1880,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
     char *layer_name;
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "hdvfpsn:l:o:r:Z:", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hdvfpsn:l:o:r:I:Z:", long_options, NULL)) != -1) {
 
         switch (opt) {
             case 'h':
@@ -1853,6 +1949,9 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
                 break;
             case 'r':
                 set_frame_rate_cap(atoi(optarg));
+                break;
+            case 'I':
+                ipc_socket_path = strdup(optarg);
                 break;
 
             case 'Z': // Hidden option to recover video pos after stopping
@@ -1935,6 +2034,14 @@ int main(int argc, char **argv) {
             cflp_success("EGL initialized");
         init_gst(&state);
         init_threads();
+
+        // Start IPC server if socket path provided
+        if (ipc_socket_path) {
+            if (!ipc_init(ipc_socket_path)) {
+                cflp_warning("Failed to initialize IPC socket, continuing without IPC");
+            }
+        }
+
         if (VERBOSE)
             cflp_success("GStreamer initialized");
     }
@@ -1959,11 +2066,13 @@ int main(int argc, char **argv) {
 
     // Main Loop
     while (true) {
-        struct pollfd fds[2];
+        struct pollfd fds[3];
         fds[0].fd = wl_display_get_fd(state.display);
         fds[0].events = POLLIN;
         fds[1].fd = wakeup_pipe[0];
         fds[1].events = POLLIN;
+        fds[2].fd = ipc_socket_path ? ipc_get_wakeup_fd() : -1;
+        fds[2].events = POLLIN;
 
         // First make sure to call wl_display_prepare_read() before poll() to avoid deadlock
         int wl_display_prepare_read_state = wl_display_prepare_read(state.display);
@@ -1972,8 +2081,9 @@ int main(int argc, char **argv) {
         if (wl_display_flush(state.display) == -1 && errno != EAGAIN)
             break;
 
-        // Wait for a GStreamer callback or wl_display event
-        if (poll(fds, sizeof(fds) / sizeof(fds[0]), 50) == -1 && errno != EINTR)
+        // Wait for a GStreamer callback, IPC command, or wl_display event
+        int nfds = ipc_socket_path ? 3 : 2;
+        if (poll(fds, nfds, 50) == -1 && errno != EINTR)
             break;
 
         // If wl_display_prepare_read() was successful as 0
@@ -2016,6 +2126,11 @@ int main(int argc, char **argv) {
                     output->redraw_needed = true;
                 }
             }
+        }
+
+        // Handle IPC commands
+        if (ipc_socket_path && fds[2].revents & POLLIN) {
+            execute_ipc_commands();
         }
     }
 
