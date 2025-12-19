@@ -34,6 +34,32 @@ static pthread_mutex_t ipc_queue_mutex = PTHREAD_MUTEX_INITIALIZER;
 static void *ipc_server_thread_fn(void *arg);
 static void *ipc_client_thread_fn(void *arg);
 
+static void ipc_queue_command_internal(const char *cmd_line, int client_fd) {
+    ipc_command_t *cmd = calloc(1, sizeof(ipc_command_t));
+    if (!cmd) {
+        cflp_error("Failed to allocate IPC command");
+        return;
+    }
+
+    cmd->cmd_line = strdup(cmd_line);
+    if (!cmd->cmd_line) {
+        cflp_error("Failed to allocate IPC command string");
+        free(cmd);
+        return;
+    }
+    cmd->client_fd = client_fd;
+    cmd->next = NULL;
+
+    pthread_mutex_lock(&ipc_queue_mutex);
+    if (cmd_queue_tail) {
+        cmd_queue_tail->next = cmd;
+        cmd_queue_tail = cmd;
+    } else {
+        cmd_queue_head = cmd_queue_tail = cmd;
+    }
+    pthread_mutex_unlock(&ipc_queue_mutex);
+}
+
 static int create_socket(const char *path) {
     int sock_fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sock_fd < 0) {
@@ -80,7 +106,15 @@ int ipc_get_wakeup_fd(void) {
 }
 
 ipc_command_t *ipc_dequeue_command(void) {
-    return NULL;
+    pthread_mutex_lock(&ipc_queue_mutex);
+    ipc_command_t *cmd = cmd_queue_head;
+    if (cmd) {
+        cmd_queue_head = cmd->next;
+        if (!cmd_queue_head)
+            cmd_queue_tail = NULL;
+    }
+    pthread_mutex_unlock(&ipc_queue_mutex);
+    return cmd;
 }
 
 void ipc_send_response(int client_fd, const char *response) {
