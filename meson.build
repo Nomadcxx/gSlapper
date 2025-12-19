@@ -27,7 +27,7 @@ protocols_headers=[
 lib_protocols=static_library('protocols',protocols_src+protocols_headers,dependencies: wl_client)
 protocols_dep=declare_dependency(link_with: lib_protocols,sources: protocols_headers)
 
-executable(meson.project_name(), ['src/main.c', 'src/glad.c', 'src/cflogprinter.c'],
+executable(meson.project_name(), ['src/main.c', 'src/glad.c', 'src/cflogprinter.c', 'src/ipc.c'],
 include_directories : ['inc'],
 dependencies: [dl_dep, wl_client, wl_egl, egl, gst_dep, gst_video_dep, gst_gl_dep, threads, protocols_dep], install: true)
 
