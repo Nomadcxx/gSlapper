@@ -84,12 +84,41 @@ gslapper -o "loop" DP-3 /path/to/video2.mp4 &
 - `-p` - Auto-pause when wallpaper is hidden
 - `-s` - Auto-stop when wallpaper is hidden
 - `-l LAYER` - Shell layer (background, bottom, top, overlay)
+- `-I, --ipc-socket <path>` - Enable IPC control via Unix socket
 - `-o "OPTIONS"` - Video options (space-separated):
   - `loop` - Seamless video looping
   - `panscan=X` - Scale video (0.0-1.0, default 1.0 = fit to screen)
   - `stretch` - Stretch to fill screen (ignore aspect ratio)
   - `original` - Display at native resolution (1:1 pixel mapping)
   - `no-audio` - Disable audio playback
+
+### IPC Control
+
+gSlapper supports runtime control via Unix domain socket:
+
+```bash
+# Start with IPC enabled
+gslapper --ipc-socket /tmp/gslapper.sock -o "loop" DP-1 video.mp4
+
+# Send commands from another terminal
+echo "pause" | nc -U /tmp/gslapper.sock
+echo "resume" | nc -U /tmp/gslapper.sock
+echo "query" | nc -U /tmp/gslapper.sock
+echo "change /path/to/other.mp4" | nc -U /tmp/gslapper.sock
+echo "stop" | nc -U /tmp/gslapper.sock
+```
+
+**Commands:**
+- `pause` - Pause video playback
+- `resume` - Resume video playback
+- `query` - Get current state and video path
+- `change <path>` - Switch to different video (restarts gslapper)
+- `stop` - Stop gslapper
+
+**Responses:**
+- `OK` - Command succeeded
+- `ERROR: <message>` - Command failed
+- `STATUS: <playing|paused> <path>` - Query response
 
 ## Configuration
 
