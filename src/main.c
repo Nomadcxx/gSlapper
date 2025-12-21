@@ -110,6 +110,9 @@ static char *video_path;
 static char *gst_options = "";
 static float panscan_value = 1.0f;  // Default to full size (no scaling)
 static bool stretch_mode = false;  // Stretch to fill without maintaining aspect ratio
+static bool fill_mode = false;       // Fill screen maintaining aspect ratio (crops excess)
+static bool is_image_mode = false;   // True if displaying static image vs video
+static bool image_frame_captured = false;  // True once image frame is decoded
 
 static EGLConfig egl_config;
 static EGLDisplay *egl_display;
