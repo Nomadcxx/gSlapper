@@ -2,6 +2,7 @@
 #define IPC_H
 
 #include <stdbool.h>
+#include <glib.h>
 
 // Command structure for queue
 typedef struct ipc_command {
@@ -9,6 +10,16 @@ typedef struct ipc_command {
     int client_fd;
     struct ipc_command *next;
 } ipc_command_t;
+
+// Preloaded image cache entry
+typedef struct preload_entry {
+    char *path;
+    gpointer frame_data;
+    gsize frame_size;
+    gint width;
+    gint height;
+    struct preload_entry *next;
+} preload_entry_t;
 
 // Initialize IPC server with socket path
 // Returns true on success, false on failure
