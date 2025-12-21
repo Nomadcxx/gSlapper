@@ -2112,6 +2112,16 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         "--fps-cap      -r FPS           Frame rate cap (30, 60, or 100 FPS, default: 30)\n"
         "--ipc-socket   -I PATH          Enable IPC control via Unix socket\n"
         "\n"
+        "Scaling modes (use with -o):\n"
+        "  fill        Fill screen maintaining aspect ratio, crop excess (default for images)\n"
+        "  stretch     Fill screen ignoring aspect ratio\n"
+        "  original    Display at native resolution\n"
+        "  panscan=X   Fit inside screen with scaling factor 0.0-1.0 (default for video)\n"
+        "\n"
+        "Supported formats:\n"
+        "  Video: MP4, MKV, WebM, AVI, MOV, and other GStreamer-supported formats\n"
+        "  Image: JPEG, PNG, WebP, GIF, JXL\n"
+        "\n"
         "* The auto options might not work as intended\n"
         "See the man page for more details\n";
 
