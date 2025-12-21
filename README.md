@@ -77,6 +77,34 @@ gslapper -o "loop" DP-1 /path/to/video1.mp4 &
 gslapper -o "loop" DP-3 /path/to/video2.mp4 &
 ```
 
+### Static Images
+
+gSlapper supports static images (JPEG, PNG, WebP, GIF, JXL) with automatic format detection:
+
+```bash
+# Basic image wallpaper (defaults to fill mode)
+gslapper DP-1 /path/to/wallpaper.jpg
+
+# With different scaling modes
+gslapper -o "fill" DP-1 /path/to/image.png       # Fill screen, crop excess (default)
+gslapper -o "stretch" DP-1 /path/to/image.png    # Fill screen ignoring aspect ratio
+gslapper -o "original" DP-1 /path/to/image.png   # Display at native resolution
+gslapper -o "panscan=0.8" DP-1 /path/to/image.png # Fit inside with scaling
+
+# Image on all monitors
+gslapper -o "fill" '*' /path/to/wallpaper.jpg
+```
+
+**Scaling Modes:**
+- `fill` - Fill screen maintaining aspect ratio, crop excess (default for images)
+- `stretch` - Fill screen ignoring aspect ratio
+- `original` - Display at native resolution (1:1 pixel mapping)
+- `panscan=X` - Fit inside screen with scaling factor 0.0-1.0 (default for video)
+
+**Supported Formats:**
+- Video: MP4, MKV, WebM, AVI, MOV, and other GStreamer-supported formats
+- Image: JPEG, PNG, WebP, GIF, JXL
+
 ### Options
 
 - `-v, -vv` - Verbose output (use -vv for more detail)
@@ -106,19 +134,28 @@ echo "resume" | nc -U /tmp/gslapper.sock
 echo "query" | nc -U /tmp/gslapper.sock
 echo "change /path/to/other.mp4" | nc -U /tmp/gslapper.sock
 echo "stop" | nc -U /tmp/gslapper.sock
+
+# Image preloading commands (Phase 2 - coming soon)
+echo "preload /path/to/image.jpg" | nc -U /tmp/gslapper.sock
+echo "unload /path/to/image.jpg" | nc -U /tmp/gslapper.sock
+echo "list" | nc -U /tmp/gslapper.sock
 ```
 
 **Commands:**
 - `pause` - Pause video playback
 - `resume` - Resume video playback
 - `query` - Get current state and video path
-- `change <path>` - Switch to different video (restarts gslapper)
+- `change <path>` - Switch to different video/image (restarts gslapper)
 - `stop` - Stop gslapper
+- `preload <path>` - Preload image into cache (Phase 2)
+- `unload <path>` - Remove image from cache (Phase 2)
+- `list` - List preloaded images (Phase 2)
 
 **Responses:**
 - `OK` - Command succeeded
 - `ERROR: <message>` - Command failed
 - `STATUS: <playing|paused> <path>` - Query response
+- `PRELOADED: <list>` - List response
 
 ## Configuration
 
