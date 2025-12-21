@@ -472,8 +472,29 @@ static void update_vertex_data(struct display_output *output) {
         // If video is larger than display, it will be clipped (which is expected)
         
         if (VERBOSE == 2) {
-            cflp_info("Original resolution mode: video=%dx%d, display=%dx%d, scale_x=%.3f, scale_y=%.3f", 
+            cflp_info("Original resolution mode: video=%dx%d, display=%dx%d, scale_x=%.3f, scale_y=%.3f",
                      video_frame_data.width, video_frame_data.height, output->width, output->height, scale_x, scale_y);
+        }
+    } else if (fill_mode) {
+        // Fill mode - fill entire screen maintaining aspect ratio (crop excess)
+        float video_aspect = (float)video_frame_data.width / (float)video_frame_data.height;
+        float display_aspect = (float)output->width / (float)output->height;
+
+        // Start with full coverage
+        scale_x = 1.0f;
+        scale_y = 1.0f;
+
+        if (video_aspect > display_aspect) {
+            // Video/image is wider than display - scale based on height, crop width
+            scale_x = video_aspect / display_aspect;
+        } else {
+            // Video/image is taller than display - scale based on width, crop height
+            scale_y = display_aspect / video_aspect;
+        }
+
+        if (VERBOSE) {
+            cflp_info("Fill mode: scale_x=%.3f, scale_y=%.3f (video_aspect=%.3f, display_aspect=%.3f)",
+                     scale_x, scale_y, video_aspect, display_aspect);
         }
     } else if (stretch_mode) {
         // Stretch mode - fill entire screen without maintaining aspect ratio
