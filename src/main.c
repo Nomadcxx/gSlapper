@@ -157,6 +157,7 @@ static void init_texture_manager();
 static void cleanup_texture_manager();
 static GLuint get_texture_for_dimensions(int width, int height);
 static GLuint create_shader_program();
+static bool is_image_file(const char *path);
 
 // Cleanup function
 static void exit_cleanup() {
@@ -1189,6 +1190,28 @@ static void execute_ipc_commands(void) {
             ipc_send_response(cmd->client_fd, "OK\n");
             usleep(10000);  // Small delay to ensure response sent
             exit_slapper(EXIT_SUCCESS);
+        }
+        else if (strcmp(cmd_name, "preload") == 0) {
+            if (!arg || strlen(arg) == 0) {
+                ipc_send_response(cmd->client_fd, "ERROR: missing path argument\n");
+            } else if (!is_image_file(arg)) {
+                ipc_send_response(cmd->client_fd, "ERROR: not an image file\n");
+            } else {
+                // TODO: Implement preload cache in Phase 2
+                ipc_send_response(cmd->client_fd, "OK: preload queued\n");
+            }
+        }
+        else if (strcmp(cmd_name, "unload") == 0) {
+            if (!arg || strlen(arg) == 0) {
+                ipc_send_response(cmd->client_fd, "ERROR: missing path argument\n");
+            } else {
+                // TODO: Implement preload cache in Phase 2
+                ipc_send_response(cmd->client_fd, "OK: unloaded\n");
+            }
+        }
+        else if (strcmp(cmd_name, "list") == 0) {
+            // TODO: Implement preload cache listing in Phase 2
+            ipc_send_response(cmd->client_fd, "PRELOADED: (none)\n");
         }
         else {
             ipc_send_response(cmd->client_fd, "ERROR: unknown command\n");
