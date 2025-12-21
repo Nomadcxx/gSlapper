@@ -564,6 +564,11 @@ static void render(struct display_output *output) {
         return;
     }
 
+    // For image mode, only render once unless redraw explicitly needed
+    if (is_image_mode && !output->redraw_needed && texture_manager.initialized) {
+        return;  // Image already rendered, no continuous updates needed
+    }
+
     // Make sure we have a valid context
     if (!eglMakeCurrent(egl_display, output->egl_surface, output->egl_surface, egl_context)) {
         cflp_error("Failed to make output surface current");
@@ -969,14 +974,19 @@ static GstPadProbeReturn buffer_probe(GstPad *pad, GstPadProbeInfo *info, gpoint
                     video_frame_data.width = width;
                     video_frame_data.height = height;
                     video_frame_data.has_new_frame = TRUE;
-                    
+
+                    // For image mode, mark frame as captured (single frame only)
+                    if (is_image_mode) {
+                        image_frame_captured = true;
+                    }
+
                     if (VERBOSE == 2) {
                         static int frame_count = 0;
                         frame_count++;
                         if (frame_count % 100 == 0)  // Log every 100th frame
                             cflp_info("Captured %dx%d RGBA frame for texture update (frame %d)", width, height, frame_count);
                     }
-                    
+
                     // Trigger render via wakeup pipe to ensure thread safety
                     if (write(wakeup_pipe[1], "f", 1) == -1) {
                         // If pipe write fails, try to trigger directly
@@ -1263,7 +1273,14 @@ static void apply_gst_options() {
         if (VERBOSE)
             cflp_info("Looping enabled");
     }
-    
+
+    // Check for fill mode (fill screen maintaining aspect, crop excess)
+    if (strstr(gst_options, "fill") != NULL) {
+        fill_mode = true;
+        if (VERBOSE)
+            cflp_info("Fill mode enabled (crop to fill screen)");
+    }
+
     // Handle stretch option
     if (strstr(gst_options, "stretch") != NULL) {
         stretch_mode = true;
@@ -1338,6 +1355,152 @@ static bool is_image_file(const char *path) {
     }
 
     return false;
+}
+
+// Callback for decodebin dynamic pad linking (image pipeline)
+static void on_decodebin_pad_added(GstElement *decodebin, GstPad *pad, gpointer data) {
+    GstElement *videoconvert = (GstElement *)data;
+    GstPad *sink_pad = gst_element_get_static_pad(videoconvert, "sink");
+
+    if (gst_pad_is_linked(sink_pad)) {
+        gst_object_unref(sink_pad);
+        return;
+    }
+
+    // Check if this is a video pad
+    GstCaps *caps = gst_pad_get_current_caps(pad);
+    if (!caps) caps = gst_pad_query_caps(pad, NULL);
+
+    GstStructure *str = gst_caps_get_structure(caps, 0);
+    const gchar *name = gst_structure_get_name(str);
+
+    if (g_str_has_prefix(name, "video/")) {
+        GstPadLinkReturn ret = gst_pad_link(pad, sink_pad);
+        if (ret != GST_PAD_LINK_OK) {
+            cflp_warning("Failed to link decodebin to videoconvert");
+        }
+    }
+
+    gst_caps_unref(caps);
+    gst_object_unref(sink_pad);
+}
+
+// Image pipeline initialization (for static images)
+static void init_image_pipeline(void) {
+    // Initialize GStreamer if not already done
+    gst_init(NULL, NULL);
+
+    // Build simple image pipeline: filesrc ! decodebin ! videoconvert ! appsink
+    char resolved_path[PATH_MAX];
+    if (realpath(video_path, resolved_path) == NULL) {
+        cflp_error("Failed to resolve image path '%s': %s", video_path, strerror(errno));
+        exit_slapper(EXIT_FAILURE);
+    }
+
+    if (VERBOSE)
+        cflp_info("Loading image: %s", resolved_path);
+
+    // Create pipeline elements
+    GstElement *filesrc = gst_element_factory_make("filesrc", "filesrc");
+    GstElement *decodebin = gst_element_factory_make("decodebin", "decodebin");
+    GstElement *videoconvert = gst_element_factory_make("videoconvert", "videoconvert");
+    GstElement *appsink = gst_element_factory_make("appsink", "appsink");
+
+    if (!filesrc || !decodebin || !videoconvert || !appsink) {
+        cflp_error("Failed to create image pipeline elements");
+        exit_slapper(EXIT_FAILURE);
+    }
+
+    // Create pipeline
+    pipeline = gst_pipeline_new("image-pipeline");
+    if (!pipeline) {
+        cflp_error("Failed to create image pipeline");
+        exit_slapper(EXIT_FAILURE);
+    }
+
+    // Configure filesrc
+    g_object_set(G_OBJECT(filesrc), "location", resolved_path, NULL);
+
+    // Configure appsink for RGBA output
+    GstCaps *caps = gst_caps_from_string("video/x-raw,format=RGBA");
+    g_object_set(G_OBJECT(appsink),
+                 "caps", caps,
+                 "emit-signals", TRUE,
+                 "sync", FALSE,  // No sync needed for single frame
+                 "drop", FALSE,
+                 "max-buffers", 1,
+                 NULL);
+    gst_caps_unref(caps);
+
+    // Add elements to pipeline
+    gst_bin_add_many(GST_BIN(pipeline), filesrc, decodebin, videoconvert, appsink, NULL);
+
+    // Link filesrc to decodebin
+    if (!gst_element_link(filesrc, decodebin)) {
+        cflp_error("Failed to link filesrc to decodebin");
+        exit_slapper(EXIT_FAILURE);
+    }
+
+    // Link videoconvert to appsink
+    if (!gst_element_link(videoconvert, appsink)) {
+        cflp_error("Failed to link videoconvert to appsink");
+        exit_slapper(EXIT_FAILURE);
+    }
+
+    // Connect decodebin's dynamic pad to videoconvert
+    g_signal_connect(decodebin, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
+
+    // Set up buffer probe on appsink
+    GstPad *sink_pad = gst_element_get_static_pad(appsink, "sink");
+    if (sink_pad) {
+        gst_pad_add_probe(sink_pad, GST_PAD_PROBE_TYPE_BUFFER, buffer_probe, NULL, NULL);
+        gst_object_unref(sink_pad);
+    }
+
+    // Get bus for messages
+    bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
+
+    // Start pipeline
+    GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
+    if (ret == GST_STATE_CHANGE_FAILURE) {
+        cflp_error("Failed to start image pipeline");
+        exit_slapper(EXIT_FAILURE);
+    }
+
+    // Wait for the frame to be captured (with timeout)
+    int timeout_ms = 5000;
+    int waited = 0;
+    while (!image_frame_captured && waited < timeout_ms) {
+        g_usleep(10000);  // 10ms
+        waited += 10;
+
+        // Process any pending bus messages
+        GstMessage *msg = gst_bus_pop(bus);
+        if (msg) {
+            if (GST_MESSAGE_TYPE(msg) == GST_MESSAGE_ERROR) {
+                GError *error = NULL;
+                gchar *debug = NULL;
+                gst_message_parse_error(msg, &error, &debug);
+                cflp_error("Image decode error: %s", error->message);
+                g_error_free(error);
+                g_free(debug);
+                gst_message_unref(msg);
+                exit_slapper(EXIT_FAILURE);
+            }
+            gst_message_unref(msg);
+        }
+    }
+
+    if (!image_frame_captured) {
+        cflp_error("Timeout waiting for image frame");
+        exit_slapper(EXIT_FAILURE);
+    }
+
+    // Stop pipeline (we have the frame in texture)
+    gst_element_set_state(pipeline, GST_STATE_NULL);
+
+    if (VERBOSE)
+        cflp_success("Image loaded: %dx%d", video_frame_data.width, video_frame_data.height);
 }
 
 // GStreamer initialization
@@ -2084,7 +2247,21 @@ int main(int argc, char **argv) {
         init_egl(&state);
         if (VERBOSE)
             cflp_success("EGL initialized");
-        init_gst(&state);
+
+        // Detect if input is image or video
+        is_image_mode = is_image_file(video_path);
+
+        if (is_image_mode) {
+            // Default to fill mode for images (unless user specified otherwise)
+            if (!stretch_mode && panscan_value == 1.0f && !fill_mode) {
+                fill_mode = true;
+                if (VERBOSE)
+                    cflp_info("Image detected, defaulting to fill mode");
+            }
+            init_image_pipeline();
+        } else {
+            init_gst(&state);
+        }
         init_threads();
 
         // Start IPC server if socket path provided
