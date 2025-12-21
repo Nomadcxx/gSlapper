@@ -1291,6 +1291,34 @@ static void apply_gst_options() {
     }
 }
 
+// Known image extensions for fast-path detection
+static const char *image_extensions[] = {
+    ".jpg", ".jpeg", ".png", ".webp", ".gif", ".jxl", NULL
+};
+
+static bool is_image_file(const char *path) {
+    if (!path) return false;
+
+    // Get file extension (find last dot)
+    const char *ext = strrchr(path, '.');
+    if (!ext) return false;
+
+    // Convert to lowercase for comparison
+    char ext_lower[16] = {0};
+    for (int i = 0; ext[i] && i < 15; i++) {
+        ext_lower[i] = (ext[i] >= 'A' && ext[i] <= 'Z') ? ext[i] + 32 : ext[i];
+    }
+
+    // Check against known image extensions
+    for (int i = 0; image_extensions[i]; i++) {
+        if (strcmp(ext_lower, image_extensions[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // GStreamer initialization
 static void init_gst(const struct wl_state *state) {
     // Initialize GStreamer
