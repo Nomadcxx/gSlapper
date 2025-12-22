@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -1139,11 +1140,22 @@ static void execute_ipc_commands(void) {
         if (strcmp(cmd_name, "pause") == 0) {
             if (pipeline) {
                 GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PAUSED);
-                if (ret != GST_STATE_CHANGE_FAILURE) {
-                    halt_info.is_paused++;
-                    ipc_send_response(cmd->client_fd, "OK\n");
-                } else {
+                if (ret == GST_STATE_CHANGE_FAILURE) {
                     ipc_send_response(cmd->client_fd, "ERROR: failed to pause\n");
+                } else {
+                    // Wait for async state change to complete
+                    if (ret == GST_STATE_CHANGE_ASYNC) {
+                        GstStateChangeReturn wait_ret = gst_element_get_state(pipeline, NULL, NULL, 5 * GST_SECOND);
+                        if (wait_ret == GST_STATE_CHANGE_FAILURE) {
+                            ipc_send_response(cmd->client_fd, "ERROR: failed to pause\n");
+                        } else {
+                            halt_info.is_paused++;
+                            ipc_send_response(cmd->client_fd, "OK\n");
+                        }
+                    } else {
+                        halt_info.is_paused++;
+                        ipc_send_response(cmd->client_fd, "OK\n");
+                    }
                 }
             } else {
                 ipc_send_response(cmd->client_fd, "ERROR: no pipeline\n");
@@ -1151,12 +1163,23 @@ static void execute_ipc_commands(void) {
         }
         else if (strcmp(cmd_name, "resume") == 0) {
             if (pipeline) {
-                if (halt_info.is_paused > 0) halt_info.is_paused--;
                 GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
-                if (ret != GST_STATE_CHANGE_FAILURE) {
-                    ipc_send_response(cmd->client_fd, "OK\n");
-                } else {
+                if (ret == GST_STATE_CHANGE_FAILURE) {
                     ipc_send_response(cmd->client_fd, "ERROR: failed to resume\n");
+                } else {
+                    // Wait for async state change to complete
+                    if (ret == GST_STATE_CHANGE_ASYNC) {
+                        GstStateChangeReturn wait_ret = gst_element_get_state(pipeline, NULL, NULL, 5 * GST_SECOND);
+                        if (wait_ret == GST_STATE_CHANGE_FAILURE) {
+                            ipc_send_response(cmd->client_fd, "ERROR: failed to resume\n");
+                        } else {
+                            if (halt_info.is_paused > 0) halt_info.is_paused--;
+                            ipc_send_response(cmd->client_fd, "OK\n");
+                        }
+                    } else {
+                        if (halt_info.is_paused > 0) halt_info.is_paused--;
+                        ipc_send_response(cmd->client_fd, "OK\n");
+                    }
                 }
             } else {
                 ipc_send_response(cmd->client_fd, "ERROR: no pipeline\n");
@@ -1165,35 +1188,52 @@ static void execute_ipc_commands(void) {
         else if (strcmp(cmd_name, "query") == 0) {
             char response[512];
             const char *state = (halt_info.is_paused > 0) ? "paused" : "playing";
+            const char *mode = is_image_mode ? "image" : "video";
             const char *path = video_path ? video_path : "unknown";
-            snprintf(response, sizeof(response), "STATUS: %s %s\n", state, path);
+            snprintf(response, sizeof(response), "STATUS: %s %s %s\n", state, mode, path);
             ipc_send_response(cmd->client_fd, response);
         }
         else if (strcmp(cmd_name, "change") == 0) {
             if (!arg || strlen(arg) == 0) {
                 ipc_send_response(cmd->client_fd, "ERROR: missing path argument\n");
             } else {
-                // Update argv with new video path for restart
-                if (halt_info.argv_copy && halt_info.argc > 0) {
-                    free(halt_info.argv_copy[halt_info.argc - 1]);
-                    halt_info.argv_copy[halt_info.argc - 1] = strdup(arg);
+                // Validate path exists and is accessible
+                if (access(arg, R_OK) != 0) {
+                    ipc_send_response(cmd->client_fd, "ERROR: file not accessible\n");
+                } else {
+                    // Update argv with new video path for restart
+                    if (halt_info.argv_copy && halt_info.argc > 0) {
+                        free(halt_info.argv_copy[halt_info.argc - 1]);
+                        halt_info.argv_copy[halt_info.argc - 1] = strdup(arg);
+                        if (!halt_info.argv_copy[halt_info.argc - 1]) {
+                            ipc_send_response(cmd->client_fd, "ERROR: failed to allocate memory\n");
+                        } else {
+                            // Preserve IPC socket path in argv if set
+                            // (stop_slapper will restart with same args)
+                            ipc_send_response(cmd->client_fd, "OK\n");
+                            // Close write side to ensure response is flushed
+                            shutdown(cmd->client_fd, SHUT_WR);
+                            usleep(50000);  // Delay to ensure response is sent before restart
+                            stop_slapper();
+                        }
+                    } else {
+                        ipc_send_response(cmd->client_fd, "ERROR: cannot update path\n");
+                    }
                 }
-                // Preserve IPC socket path in argv if set
-                // (stop_slapper will restart with same args)
-                ipc_send_response(cmd->client_fd, "OK\n");
-                // Small delay to ensure response is sent
-                usleep(10000);
-                stop_slapper();
             }
         }
         else if (strcmp(cmd_name, "stop") == 0) {
             ipc_send_response(cmd->client_fd, "OK\n");
-            usleep(10000);  // Small delay to ensure response sent
+            // Close write side to ensure response is flushed
+            shutdown(cmd->client_fd, SHUT_WR);
+            usleep(50000);  // Delay to ensure response is sent before exit
             exit_slapper(EXIT_SUCCESS);
         }
         else if (strcmp(cmd_name, "preload") == 0) {
             if (!arg || strlen(arg) == 0) {
                 ipc_send_response(cmd->client_fd, "ERROR: missing path argument\n");
+            } else if (access(arg, R_OK) != 0) {
+                ipc_send_response(cmd->client_fd, "ERROR: file not accessible\n");
             } else if (!is_image_file(arg)) {
                 ipc_send_response(cmd->client_fd, "ERROR: not an image file\n");
             } else {

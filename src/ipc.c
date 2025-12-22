@@ -241,7 +241,13 @@ ipc_command_t *ipc_dequeue_command(void) {
 
 void ipc_send_response(int client_fd, const char *response) {
     if (client_fd < 0 || !response) return;
-    send(client_fd, response, strlen(response), MSG_NOSIGNAL);
+    size_t len = strlen(response);
+    ssize_t sent = send(client_fd, response, len, MSG_NOSIGNAL);
+    if (sent < 0 && errno != EPIPE) {
+        cflp_warning("Failed to send IPC response: %s", strerror(errno));
+    } else if ((size_t)sent < len) {
+        cflp_warning("Partial IPC response sent: %zd/%zu bytes", sent, len);
+    }
 }
 
 void ipc_drain_wakeup(void) {
