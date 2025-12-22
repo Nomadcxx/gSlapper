@@ -69,5 +69,14 @@ AGENTS.md
 PROJECT_SUMMARY.md
 CLAUDE.md
 opencode.json
+.opencode.json
 .SRCINFO
+gslapper-*.tar.gz
 gslapper-*.tar.gz.opencode.json
+
+# Development documentation
+docs/plans/
+docs/VERIFICATION_*.md
+
+# Task tracking files
+*.tasks*

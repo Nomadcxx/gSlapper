@@ -4,21 +4,7 @@
 
 <br>
 
-A drop-in replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) using GStreamer instead of libmpv. Fixes memory leaks on NVIDIA Wayland systems and provides better multi-monitor support.
-
-## Performance
-
-Benchmark results (NVIDIA RTX, dual monitors, 1-hour test):
-
-| Metric | gSlapper | mpvpaper | Improvement |
-|--------|----------|----------|-------------|
-| Frame Rate | 236.2 FPS | 23.5 FPS | 10.1x higher |
-| GPU Memory | 1668 MB | 1888 MB | 12% less |
-| Hardware Accel | NVDEC (12.8%) | Software (0%) | GPU accelerated |
-| Frame Drops | 0 | 0 | Both stable |
-| System RAM | 4.4 MB | 5.4 MB | 19% less |
-
-Run your own benchmark: `./benchmark.sh benchmark-test-video.mp4 -t 300`
+A drop-in replacement for [mpvpaper](https://github.com/GhostNaN/mpvpaper) using GStreamer instead of libmpv. Faster, more efficient, and fixes memory leaks on NVIDIA Wayland systems while providing better multi-monitor support.
 
 ## Installation
 
@@ -56,6 +42,8 @@ sudo apt install meson ninja-build wayland-protocols libunwind-dev
 
 ## Usage
 
+### Video Wallpapers
+
 ```bash
 # Basic usage
 gslapper DP-1 /path/to/video.mp4
@@ -77,7 +65,7 @@ gslapper -o "loop" DP-1 /path/to/video1.mp4 &
 gslapper -o "loop" DP-3 /path/to/video2.mp4 &
 ```
 
-### Static Images
+### Static Image Wallpapers
 
 gSlapper supports static images (JPEG, PNG, WebP, GIF, JXL) with automatic format detection:
 
@@ -115,6 +103,7 @@ gslapper -o "fill" '*' /path/to/wallpaper.jpg
 - `-I, --ipc-socket <path>` - Enable IPC control via Unix socket
 - `-o "OPTIONS"` - Video options (space-separated):
   - `loop` - Seamless video looping
+  - `fill` - Fill screen maintaining aspect ratio, crop excess (default for images)
   - `panscan=X` - Scale video (0.0-1.0, default 1.0 = fit to screen)
   - `stretch` - Stretch to fill screen (ignore aspect ratio)
   - `original` - Display at native resolution (1:1 pixel mapping)
@@ -135,7 +124,7 @@ echo "query" | nc -U /tmp/gslapper.sock
 echo "change /path/to/other.mp4" | nc -U /tmp/gslapper.sock
 echo "stop" | nc -U /tmp/gslapper.sock
 
-# Image preloading commands (Phase 2 - coming soon)
+# Image preloading commands (coming soon)
 echo "preload /path/to/image.jpg" | nc -U /tmp/gslapper.sock
 echo "unload /path/to/image.jpg" | nc -U /tmp/gslapper.sock
 echo "list" | nc -U /tmp/gslapper.sock
@@ -145,11 +134,11 @@ echo "list" | nc -U /tmp/gslapper.sock
 - `pause` - Pause video playback
 - `resume` - Resume video playback
 - `query` - Get current state and video path
-- `change <path>` - Switch to different video/image (restarts gslapper)
+- `change <path>` - Switch to different video/image
 - `stop` - Stop gslapper
-- `preload <path>` - Preload image into cache (Phase 2)
-- `unload <path>` - Remove image from cache (Phase 2)
-- `list` - List preloaded images (Phase 2)
+- `preload <path>` - Preload image into cache (coming soon)
+- `unload <path>` - Remove image from cache (coming soon)
+- `list` - List preloaded images (coming soon)
 
 **Responses:**
 - `OK` - Command succeeded
@@ -165,14 +154,9 @@ Uses mpvpaper config files:
 
 Compatible with Hyprland, Sway, and wlroots compositors.
 
-## Technical Details
+## Why GStreamer?
 
-gSlapper replaces libmpv with GStreamer to solve:
-- Memory leaks on NVIDIA Wayland
-- Poor GPU resource cleanup
-- Multi-monitor crashes
-
-GStreamer provides mature Wayland/EGL integration and proper hardware acceleration.
+gSlapper replaces libmpv with GStreamer to solve memory leaks on NVIDIA Wayland systems, improve GPU resource management, and provide more reliable multi-monitor support. GStreamer offers mature Wayland/EGL integration and proper hardware acceleration.
 
 ## License
 
