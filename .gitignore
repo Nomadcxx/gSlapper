@@ -77,6 +77,19 @@ gslapper-*.tar.gz.opencode.json
 # Development documentation
 docs/plans/
 docs/VERIFICATION_*.md
+CODE_REVIEW.md
+GAP_ANALYSIS.md
+IMPLEMENTATION_PLAN.md
+TEST_TRANSITIONS.md
+TRANSITION_DESIGN.md
+TRANSITION_EFFECTS_SUMMARY.md
+TRANSITION_IMPLEMENTATION.md
+TRANSITION_STATUS.md
+TRANSITION_TESTING_SUMMARY.md
+
+# Development test scripts
+test-transition-*.sh
+test-transitions-*.sh
 
 # Task tracking files
 *.tasks*
