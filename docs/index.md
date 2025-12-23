@@ -1,7 +1,7 @@
 # gSlapper Documentation
 
 <div align="center">
-  <img src="../gSlapper.png" alt="gSlapper Logo" width="400"/>
+  <img src="assets/images/gslapper-logo.png" alt="gSlapper Logo" style="background: transparent;"/>
 </div>
 
 <br>
