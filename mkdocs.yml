@@ -25,7 +25,6 @@ theme:
   font:
     text: 'Fira Code'
     code: 'Fira Code'
-  custom_dir: docs/overrides
   features:
     - navigation.tabs
     - navigation.sections
@@ -83,4 +82,4 @@ plugins:
       enable_creation_date: true
 
 extra_css:
-  - overrides/extra.css
+  - css/extra.css
