@@ -4,7 +4,7 @@
 
 <br>
 
-**gSlapper** is a high-performance wallpaper manager for Wayland that combines the best of [swww](https://github.com/Horus645/swww) and [mpvpaper](https://github.com/GhostNaN/mpvpaper). It uses GStreamer instead of libmpv, providing faster performance, better efficiency, and fixes memory leaks on NVIDIA Wayland systems while offering superior multi-monitor support.
+**gSlapper** is a wallpaper utility for Wayland that combines the best of [swww](https://github.com/Horus645/swww) and [mpvpaper](https://github.com/GhostNaN/mpvpaper). It uses GStreamer instead of libmpv making it more efficient and NVIDIA friendly for Wayland. Also offering superior multi-monitor support.
 
 ## Quick Start
 
@@ -23,13 +23,13 @@ Full documentation available at: https://nomadcxx.github.io/gSlapper/
 
 ## Features
 
-- **Video Wallpapers** - Play MP4, MKV, WebM, and other video formats
-- **Static Images** - Support for JPEG, PNG, WebP, GIF with smooth transitions
-- **Multi-Monitor** - Full support for multiple displays
-- **High Performance** - 10x faster than mpvpaper (236 FPS vs 23 FPS)
-- **IPC Control** - Runtime control via Unix socket
-- **Scaling Modes** - Fill, stretch, original, and panscan options
-- **Fade Transitions** - Smooth transitions between static images
+- **Video & Image Support** - Play videos (MP4, MKV, WebM) and display static images (JPEG, PNG, WebP, GIF)
+- **Smooth Transitions** - Fade transitions between static images
+- **Multi-Monitor** - Independent wallpaper control for each display
+- **High Performance** - 10x faster than mpvpaper with efficient GPU resource management
+- **IPC Control** - Runtime control via Unix domain socket (pause, resume, change wallpaper)
+- **Flexible Scaling** - Fill, stretch, original, and panscan modes for perfect display
+- **NVIDIA Optimized** - Fixes memory leaks and improves compatibility on NVIDIA Wayland systems
 
 ## Installation
 
