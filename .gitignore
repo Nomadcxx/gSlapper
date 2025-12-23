@@ -88,8 +88,10 @@ TRANSITION_STATUS.md
 TRANSITION_TESTING_SUMMARY.md
 
 # Development test scripts
-test-transition-*.sh
-test-transitions-*.sh
+test-*.sh
+install.sh
+BENCHMARKING.md
+PERFORMANCE.md
 
 # Task tracking files
 *.tasks*
