@@ -10,18 +10,22 @@ edit_uri: edit/development/docs/
 theme:
   name: material
   palette:
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
     - scheme: slate
-      primary: indigo
-      accent: indigo
+      primary: green
+      accent: green
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+    - scheme: default
+      primary: green
+      accent: green
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  font:
+    text: 'Fira Code'
+    code: 'Fira Code'
+  custom_dir: docs/overrides
   features:
     - navigation.tabs
     - navigation.sections
@@ -77,3 +81,6 @@ plugins:
   - search
   - git-revision-date-localized:
       enable_creation_date: true
+
+extra_css:
+  - overrides/extra.css
