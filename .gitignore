@@ -90,8 +90,10 @@ TRANSITION_TESTING_SUMMARY.md
 # Development test scripts
 test-*.sh
 install.sh
+benchmark.sh
 BENCHMARKING.md
 PERFORMANCE.md
+benchmark-test-video.mp4
 
 # Task tracking files
 *.tasks*
