@@ -19,15 +19,17 @@ gslapper -o "fill" DP-1 /path/to/image.jpg
 gslapper -o "loop" '*' /path/to/video.mp4
 ```
 
+Full documentation available at: https://nomadcxx.github.io/gSlapper/
+
 ## Features
 
-- 🎬 **Video Wallpapers** - Play MP4, MKV, WebM, and other video formats
-- 🖼️ **Static Images** - Support for JPEG, PNG, WebP, GIF with smooth transitions
-- 🖥️ **Multi-Monitor** - Full support for multiple displays
-- ⚡ **High Performance** - 10x faster than mpvpaper (236 FPS vs 23 FPS)
-- 🔧 **IPC Control** - Runtime control via Unix socket
-- 🎨 **Scaling Modes** - Fill, stretch, original, and panscan options
-- 🌊 **Fade Transitions** - Smooth transitions between static images
+- **Video Wallpapers** - Play MP4, MKV, WebM, and other video formats
+- **Static Images** - Support for JPEG, PNG, WebP, GIF with smooth transitions
+- **Multi-Monitor** - Full support for multiple displays
+- **High Performance** - 10x faster than mpvpaper (236 FPS vs 23 FPS)
+- **IPC Control** - Runtime control via Unix socket
+- **Scaling Modes** - Fill, stretch, original, and panscan options
+- **Fade Transitions** - Smooth transitions between static images
 
 ## Installation
 
@@ -44,23 +46,6 @@ meson setup build --prefix=/usr/local
 ninja -C build
 sudo ninja -C build install
 ```
-
-## Documentation
-
-📚 **Full documentation available at**: https://nomadcxx.github.io/gSlapper/
-
-- [Installation Guide](https://nomadcxx.github.io/gSlapper/getting-started/installation/)
-- [Quick Start](https://nomadcxx.github.io/gSlapper/getting-started/quick-start/)
-- [Video Wallpapers](https://nomadcxx.github.io/gSlapper/user-guide/video-wallpapers/)
-- [Static Images](https://nomadcxx.github.io/gSlapper/user-guide/static-images/)
-- [IPC Control](https://nomadcxx.github.io/gSlapper/user-guide/ipc-control/)
-- [Scaling Modes](https://nomadcxx.github.io/gSlapper/user-guide/scaling-modes/)
-- [Transitions](https://nomadcxx.github.io/gSlapper/advanced/transitions/)
-- [Troubleshooting](https://nomadcxx.github.io/gSlapper/advanced/troubleshooting/)
-
-## Why GStreamer?
-
-gSlapper uses GStreamer instead of libmpv to solve memory leaks on NVIDIA Wayland systems, improve GPU resource management, and provide more reliable multi-monitor support. GStreamer offers mature Wayland/EGL integration and proper hardware acceleration.
 
 ## License
 
