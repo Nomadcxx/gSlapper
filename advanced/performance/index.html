@@ -1,0 +1,2100 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Complete documentation for gSlapper - GStreamer-based wallpaper player for Wayland">
+      
+      
+        <meta name="author" content="Nomadcxx">
+      
+      
+        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/advanced/performance/">
+      
+      
+        <link rel="prev" href="../multi-monitor/">
+      
+      
+        <link rel="next" href="../troubleshooting/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Performance Tuning - gSlapper Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Code:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Fira Code";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../overrides/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="green" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#performance-tuning" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gSlapper Documentation" class="md-header__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gSlapper Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Performance Tuning
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="green" data-md-color-accent="green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="green"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Nomadcxx/gSlapper" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Nomadcxx/gSlapper
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/video-wallpapers/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../transitions/" class="md-tabs__link">
+          
+  
+  
+  Advanced
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../development/building/" class="md-tabs__link">
+          
+  
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gSlapper Documentation" class="md-nav__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gSlapper Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Nomadcxx/gSlapper" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Nomadcxx/gSlapper
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/video-wallpapers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Video Wallpapers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/static-images/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Static Images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/scaling-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scaling Modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/ipc-control/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IPC Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/command-line-options/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command Line Options
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Advanced
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../transitions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transitions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multi-monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Monitor Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance Tuning
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#frame-rate-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frame Rate Control
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frame Rate Control">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frame-rate-cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frame Rate Cap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-adjust" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Adjust
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#auto-pausestop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-Pause/Stop
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Auto-Pause/Stop">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-pause" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-Pause
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto-stop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-Stop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#video-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Video Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Video Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#codec-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#video-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Video Resolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Image Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#static-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static Images
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-monitor-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Monitor Performance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Monitor Performance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tips
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gpu-acceleration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPU Acceleration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GPU Acceleration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nvidia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NVIDIA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amdintel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMD/Intel
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#memory-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory Usage
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Memory Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#video-wallpapers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Video Wallpapers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-images_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static Images
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Performance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring Performance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verbose-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verbose Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-performance-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Performance Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting Performance Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#high-cpu-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High CPU Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#high-memory-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High Memory Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stutteringframe-drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stuttering/Frame Drops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/building/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building from Source
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#frame-rate-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frame Rate Control
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Frame Rate Control">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frame-rate-cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frame Rate Cap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-adjust" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Adjust
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#auto-pausestop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-Pause/Stop
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Auto-Pause/Stop">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-pause" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-Pause
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto-stop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-Stop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#video-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Video Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Video Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#codec-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codec Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#video-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Video Resolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Image Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#static-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static Images
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-monitor-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Monitor Performance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Monitor Performance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tips
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gpu-acceleration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPU Acceleration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GPU Acceleration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nvidia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NVIDIA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amdintel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AMD/Intel
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#memory-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory Usage
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Memory Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#video-wallpapers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Video Wallpapers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-images_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static Images
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Performance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring Performance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verbose-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verbose Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-performance-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Performance Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting Performance Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#high-cpu-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High CPU Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#high-memory-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High Memory Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stutteringframe-drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stuttering/Frame Drops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="performance-tuning">Performance Tuning<a class="headerlink" href="#performance-tuning" title="Permanent link">&para;</a></h1>
+<p>gSlapper is designed to be efficient, but there are several options to optimize performance for your system.</p>
+<h2 id="frame-rate-control">Frame Rate Control<a class="headerlink" href="#frame-rate-control" title="Permanent link">&para;</a></h2>
+<h3 id="frame-rate-cap">Frame Rate Cap<a class="headerlink" href="#frame-rate-cap" title="Permanent link">&para;</a></h3>
+<p>Control the maximum frame rate to reduce GPU/CPU usage:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gslapper<span class="w"> </span>--fps-cap<span class="w"> </span><span class="m">30</span><span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+</code></pre></div>
+<p>Available options:
+- <code>30</code> - 30 FPS (default, good balance)
+- <code>60</code> - 60 FPS (smoother, more resource intensive)
+- <code>100</code> - 100 FPS (maximum smoothness)</p>
+<h3 id="when-to-adjust">When to Adjust<a class="headerlink" href="#when-to-adjust" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Lower FPS (30)</strong>: Older hardware, battery-powered devices, multiple monitors</li>
+<li><strong>Higher FPS (60-100)</strong>: High-end GPUs, single monitor, smooth video playback</li>
+</ul>
+<h2 id="auto-pausestop">Auto-Pause/Stop<a class="headerlink" href="#auto-pausestop" title="Permanent link">&para;</a></h2>
+<p>Reduce resource usage when wallpapers are hidden:</p>
+<h3 id="auto-pause">Auto-Pause<a class="headerlink" href="#auto-pause" title="Permanent link">&para;</a></h3>
+<p>Pauses playback when certain applications are fullscreen:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>gslapper<span class="w"> </span>-p<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+</code></pre></div>
+<p>Configure apps in <code>~/.config/mpvpaper/pauselist</code>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>firefox
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>chromium
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>mpv
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>vlc
+</code></pre></div></p>
+<h3 id="auto-stop">Auto-Stop<a class="headerlink" href="#auto-stop" title="Permanent link">&para;</a></h3>
+<p>Completely stops playback when wallpaper is hidden:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gslapper<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+</code></pre></div>
+<p>Configure apps in <code>~/.config/mpvpaper/stoplist</code>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>games
+</code></pre></div></p>
+<h2 id="video-optimization">Video Optimization<a class="headerlink" href="#video-optimization" title="Permanent link">&para;</a></h2>
+<h3 id="codec-selection">Codec Selection<a class="headerlink" href="#codec-selection" title="Permanent link">&para;</a></h3>
+<p>Use hardware-accelerated codecs when available:</p>
+<ul>
+<li><strong>H.264</strong> - Widely supported, good performance</li>
+<li><strong>H.265/HEVC</strong> - Better compression, requires more processing</li>
+<li><strong>VP9</strong> - Open format, good compression</li>
+</ul>
+<h3 id="video-resolution">Video Resolution<a class="headerlink" href="#video-resolution" title="Permanent link">&para;</a></h3>
+<p>Lower resolution videos use fewer resources:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Use 1080p instead of 4K for better performance</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video_1080p.mp4
+</code></pre></div>
+<h2 id="image-optimization">Image Optimization<a class="headerlink" href="#image-optimization" title="Permanent link">&para;</a></h2>
+<h3 id="static-images">Static Images<a class="headerlink" href="#static-images" title="Permanent link">&para;</a></h3>
+<p>Static images are very efficient. For best performance:</p>
+<ul>
+<li>Use appropriate resolution (don't use 8K images on 1080p displays)</li>
+<li>Prefer JPEG for photos (smaller file size)</li>
+<li>Use PNG only when transparency is needed</li>
+</ul>
+<h3 id="transitions">Transitions<a class="headerlink" href="#transitions" title="Permanent link">&para;</a></h3>
+<p>Transitions add some CPU overhead:</p>
+<ul>
+<li>Shorter durations (0.5-1.0s) use fewer resources</li>
+<li>Longer durations (3.0s+) are smoother but use more CPU</li>
+<li>Disable transitions if performance is critical</li>
+</ul>
+<h2 id="multi-monitor-performance">Multi-Monitor Performance<a class="headerlink" href="#multi-monitor-performance" title="Permanent link">&para;</a></h2>
+<p>Running multiple instances uses more resources:</p>
+<h3 id="tips">Tips<a class="headerlink" href="#tips" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Mix static and video</strong> - Use static images on secondary monitors</li>
+<li><strong>Lower FPS on secondary</strong> - Use <code>--fps-cap 30</code> on non-primary monitors</li>
+<li><strong>Use auto-pause</strong> - Pause wallpapers when not visible</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Primary monitor: 60 FPS video</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>gslapper<span class="w"> </span>--fps-cap<span class="w"> </span><span class="m">60</span><span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Secondary monitor: 30 FPS video</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>gslapper<span class="w"> </span>--fps-cap<span class="w"> </span><span class="m">30</span><span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>HDMI-1<span class="w"> </span>video2.mp4<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Tertiary monitor: Static image (most efficient)</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>eDP-1<span class="w"> </span>image.jpg<span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div>
+<h2 id="gpu-acceleration">GPU Acceleration<a class="headerlink" href="#gpu-acceleration" title="Permanent link">&para;</a></h2>
+<p>gSlapper uses GStreamer's hardware acceleration when available:</p>
+<h3 id="nvidia">NVIDIA<a class="headerlink" href="#nvidia" title="Permanent link">&para;</a></h3>
+<p>Ensure proper drivers and GStreamer plugins:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Arch Linux</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>gst-plugins-bad<span class="w"> </span>gst-plugins-ugly
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Verify hardware acceleration</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>gst-inspect-1.0<span class="w"> </span>nvdec
+</code></pre></div></p>
+<h3 id="amdintel">AMD/Intel<a class="headerlink" href="#amdintel" title="Permanent link">&para;</a></h3>
+<p>Hardware acceleration is typically automatic with Mesa drivers.</p>
+<h2 id="memory-usage">Memory Usage<a class="headerlink" href="#memory-usage" title="Permanent link">&para;</a></h2>
+<h3 id="video-wallpapers">Video Wallpapers<a class="headerlink" href="#video-wallpapers" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Memory usage depends on video resolution and codec</li>
+<li>1080p videos: ~50-100 MB</li>
+<li>4K videos: ~200-400 MB</li>
+</ul>
+<h3 id="static-images_1">Static Images<a class="headerlink" href="#static-images_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Very low memory usage</li>
+<li>Typically &lt; 50 MB regardless of image size</li>
+</ul>
+<h2 id="monitoring-performance">Monitoring Performance<a class="headerlink" href="#monitoring-performance" title="Permanent link">&para;</a></h2>
+<h3 id="verbose-output">Verbose Output<a class="headerlink" href="#verbose-output" title="Permanent link">&para;</a></h3>
+<p>Use verbose mode to see performance information:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>gslapper<span class="w"> </span>-vv<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+</code></pre></div>
+<p>Look for:
+- Frame processing times
+- Texture allocation messages
+- Pipeline state changes</p>
+<h3 id="system-monitoring">System Monitoring<a class="headerlink" href="#system-monitoring" title="Permanent link">&para;</a></h3>
+<p>Monitor resource usage:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># CPU and memory</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>htop
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># GPU usage (NVIDIA)</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>nvidia-smi<span class="w"> </span>-l<span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1"># GPU usage (AMD/Intel)</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>radeontop<span class="w">  </span><span class="c1"># or intel_gpu_top</span>
+</code></pre></div>
+<h2 id="troubleshooting-performance-issues">Troubleshooting Performance Issues<a class="headerlink" href="#troubleshooting-performance-issues" title="Permanent link">&para;</a></h2>
+<h3 id="high-cpu-usage">High CPU Usage<a class="headerlink" href="#high-cpu-usage" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Lower frame rate cap: <code>--fps-cap 30</code></li>
+<li>Use auto-pause: <code>-p</code></li>
+<li>Reduce video resolution</li>
+<li>Disable transitions</li>
+</ol>
+<h3 id="high-memory-usage">High Memory Usage<a class="headerlink" href="#high-memory-usage" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Use static images instead of videos</li>
+<li>Lower video resolution</li>
+<li>Check for memory leaks (restart periodically)</li>
+</ol>
+<h3 id="stutteringframe-drops">Stuttering/Frame Drops<a class="headerlink" href="#stutteringframe-drops" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Lower frame rate cap</li>
+<li>Check GPU drivers are up to date</li>
+<li>Ensure hardware acceleration is working</li>
+<li>Close other GPU-intensive applications</li>
+</ol>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 23, 2025 10:42:13 UTC">December 23, 2025</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Created">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 23, 2025 10:42:13 UTC">December 23, 2025</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
