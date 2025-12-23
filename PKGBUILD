@@ -1,8 +1,8 @@
 # Maintainer: Nomadcxx <noovie@gmail.com>
 pkgname=gslapper
-pkgver=1.2.1
-pkgrel=2
-pkgdesc="mpvpaper replacement using GStreamer backend"
+pkgver=1.3.0
+pkgrel=1
+pkgdesc="Wallpaper utility for Wayland combining swww and mpvpaper features"
 arch=('x86_64')
 url="https://github.com/Nomadcxx/gSlapper"
 license=('MIT')
@@ -11,7 +11,8 @@ makedepends=('meson' 'ninja' 'wayland-protocols')
 optdepends=('gst-plugins-ugly: additional codec support'
             'gst-libav: FFmpeg-based codec support')
 source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/v${pkgver}.tar.gz")
-sha256sums=('bd043205a43e6031b54ed655bec2536857ad5b143d93c7c4b5e84573e990933c')
+sha256sums=('8a8f38ddca90c49d277329131f5687a92b2e236a3599660c66f7cae4cf1371e1')
+install=${pkgname}.install
 
 prepare() {
     cd "${srcdir}/gSlapper-${pkgver}"
