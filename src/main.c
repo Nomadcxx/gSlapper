@@ -1910,7 +1910,7 @@ static void apply_gst_options() {
 
 // Known image extensions for fast-path detection
 static const char *image_extensions[] = {
-    ".jpg", ".jpeg", ".png", ".webp", ".gif", ".jxl", NULL
+    ".jpg", ".jpeg", ".png", ".webp", ".gif", NULL
 };
 
 static bool is_image_file(const char *path) {
@@ -2865,7 +2865,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         "\n"
         "Supported formats:\n"
         "  Video: MP4, MKV, WebM, AVI, MOV, and other GStreamer-supported formats\n"
-        "  Image: JPEG, PNG, WebP, GIF, JXL\n"
+        "  Image: JPEG, PNG, WebP, GIF\n"
         "\n"
         "* The auto options might not work as intended\n"
         "See the man page for more details\n";

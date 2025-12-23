@@ -67,7 +67,7 @@ gslapper -o "loop" DP-3 /path/to/video2.mp4 &
 
 ### Static Image Wallpapers
 
-gSlapper supports static images (JPEG, PNG, WebP, GIF, JXL) with automatic format detection:
+gSlapper supports static images (JPEG, PNG, WebP, GIF) with automatic format detection:
 
 ```bash
 # Basic image wallpaper (defaults to fill mode)
@@ -91,7 +91,7 @@ gslapper -o "fill" '*' /path/to/wallpaper.jpg
 
 **Supported Formats:**
 - Video: MP4, MKV, WebM, AVI, MOV, and other GStreamer-supported formats
-- Image: JPEG, PNG, WebP, GIF, JXL
+- Image: JPEG, PNG, WebP, GIF
 
 ### Options
 

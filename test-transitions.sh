@@ -136,7 +136,7 @@ while IFS= read -r -d '' img; do
     [ ${#TEST_IMAGES[@]} -ge 10 ] && break
 done < <(find "$WALLPAPER_DIR" -maxdepth 1 -type f \( \
     -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o \
-    -iname "*.webp" -o -iname "*.jxl" \) -print0)
+    -iname "*.webp" \) -print0)
 
 if [ ${#TEST_IMAGES[@]} -lt 3 ]; then
     echo -e "${RED}Error: Need at least 3 images for testing, found ${#TEST_IMAGES[@]}${NC}"
