@@ -74,12 +74,49 @@ echo "stop" | nc -U /tmp/gslapper.sock
 
 **Response:** `OK` (gSlapper exits)
 
+### `set-transition <type>`
+
+Set transition effect type. Options: `none`, `fade`.
+
+```bash
+echo "set-transition fade" | nc -U /tmp/gslapper.sock
+echo "set-transition none" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** `OK` or `ERROR: <message>`
+
+!!! note "Transitions"
+    Transitions only work between static images. Videos always use instant switch regardless of transition settings.
+
+### `set-transition-duration <seconds>`
+
+Set transition duration in seconds (0.0-5.0).
+
+```bash
+echo "set-transition-duration 2.0" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** `OK` or `ERROR: <message>`
+
+### `get-transition`
+
+Query current transition settings.
+
+```bash
+echo "get-transition" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** `TRANSITION: <type> <enabled|disabled> <duration>`
+
+Example: `TRANSITION: fade enabled 1.50`
+
 ## Response Format
 
 - `OK` - Command succeeded
 - `OK: <message>` - Command succeeded with additional info
 - `ERROR: <message>` - Command failed with error message
 - `STATUS: <state> <type> <path>` - Query response
+- `TRANSITION: <type> <enabled|disabled> <duration>` - Transition query response
 
 ## Example Script
 
@@ -100,8 +137,12 @@ case "$1" in
     status)
         echo "query" | nc -U "$SOCKET"
         ;;
+    transition)
+        echo "set-transition fade" | nc -U "$SOCKET"
+        echo "set-transition-duration 2.0" | nc -U "$SOCKET"
+        ;;
     *)
-        echo "Usage: $0 {pause|resume|next|status}"
+        echo "Usage: $0 {pause|resume|next|status|transition}"
         exit 1
         ;;
 esac

@@ -93,3 +93,6 @@ test-transitions-*.sh
 
 # Task tracking files
 *.tasks*
+
+# MkDocs build output
+site/
