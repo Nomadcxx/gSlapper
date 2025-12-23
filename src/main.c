@@ -80,6 +80,7 @@ static bool using_waylandsink = false;
 // Video texture information
 static GLuint video_texture = 0;
 static GLuint shader_program = 0;
+static GLuint transition_shader_program = 0;  // Shader for transitions
 static GLuint vao = 0, vbo = 0;
 static pthread_mutex_t video_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -114,6 +115,49 @@ static bool stretch_mode = false;  // Stretch to fill without maintaining aspect
 static bool fill_mode = false;       // Fill screen maintaining aspect ratio (crops excess)
 static bool is_image_mode = false;   // True if displaying static image vs video
 static bool image_frame_captured = false;  // True once image frame is decoded
+
+// Transition effects
+typedef enum {
+    TRANSITION_NONE = 0,
+    TRANSITION_FADE
+} transition_type_t;
+
+typedef struct {
+    transition_type_t type;
+    bool active;
+    bool enabled;
+    float duration;
+    float elapsed;
+    float progress;
+    GLuint old_texture;
+    GLuint new_texture;
+    int old_width, old_height;
+    int new_width, new_height;
+    float old_scale_x, old_scale_y;
+    float alpha_old;
+    float alpha_new;
+    struct timespec start_time;
+} transition_state_t;
+
+static transition_state_t transition_state = {
+    .type = TRANSITION_NONE,
+    .active = false,
+    .enabled = false,
+    .duration = 0.5f,
+    .elapsed = 0.0f,
+    .progress = 0.0f,
+    .old_texture = 0,
+    .new_texture = 0,
+    .old_width = 0,
+    .old_height = 0,
+    .new_width = 0,
+    .new_height = 0,
+    .old_scale_x = 1.0f,
+    .old_scale_y = 1.0f,
+    .alpha_old = 1.0f,
+    .alpha_new = 0.0f,
+    .start_time = {0}
+};
 
 static EGLConfig egl_config;
 static EGLDisplay *egl_display;
@@ -158,7 +202,16 @@ static void init_texture_manager();
 static void cleanup_texture_manager();
 static GLuint get_texture_for_dimensions(int width, int height);
 static GLuint create_shader_program();
+static GLuint create_transition_shader_program();
 static bool is_image_file(const char *path);
+static bool should_use_transition(const char *new_path);
+static void start_transition(const char *new_path);
+static void update_transition(void);
+static void render_transition(struct display_output *output);
+static void complete_transition(void);
+static void cancel_transition(void);
+static void init_image_pipeline(void);
+static bool reload_image_pipeline(const char *new_path);
 
 // Cleanup function
 static void exit_cleanup() {
@@ -185,6 +238,13 @@ static void exit_cleanup() {
 
     // Clean up texture manager
     cleanup_texture_manager();
+    
+    // Clean up transition resources
+    cancel_transition();
+    if (transition_shader_program != 0) {
+        glDeleteProgram(transition_shader_program);
+        transition_shader_program = 0;
+    }
     
     if (pipeline) {
         // More graceful GStreamer shutdown sequence
@@ -444,6 +504,309 @@ static GLuint create_shader_program() {
     return program;
 }
 
+// Create shader program for transition effects (blends two textures)
+static GLuint create_transition_shader_program() {
+    const char *vertex_shader_source = 
+        "#version 330 core\n"
+        "layout (location = 0) in vec2 aPos;\n"
+        "layout (location = 1) in vec2 aTexCoord;\n"
+        "out vec2 TexCoord;\n"
+        "void main() {\n"
+        "    gl_Position = vec4(aPos, 0.0, 1.0);\n"
+        "    TexCoord = aTexCoord;\n"
+        "}\0";
+    
+    const char *fragment_shader_source = 
+        "#version 330 core\n"
+        "in vec2 TexCoord;\n"
+        "out vec4 FragColor;\n"
+        "uniform sampler2D oldTexture;\n"
+        "uniform sampler2D newTexture;\n"
+        "uniform float alpha;\n"
+        "void main() {\n"
+        "    vec4 oldColor = texture(oldTexture, TexCoord);\n"
+        "    vec4 newColor = texture(newTexture, TexCoord);\n"
+        "    FragColor = mix(oldColor, newColor, alpha);\n"
+        "}\0";
+    
+    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex_shader, 1, &vertex_shader_source, NULL);
+    glCompileShader(vertex_shader);
+    
+    GLint success;
+    glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        char info_log[512];
+        glGetShaderInfoLog(vertex_shader, 512, NULL, info_log);
+        cflp_error("Transition vertex shader compilation failed: %s", info_log);
+        return 0;
+    }
+    
+    GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragment_shader, 1, &fragment_shader_source, NULL);
+    glCompileShader(fragment_shader);
+    
+    glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        char info_log[512];
+        glGetShaderInfoLog(fragment_shader, 512, NULL, info_log);
+        cflp_error("Transition fragment shader compilation failed: %s", info_log);
+        glDeleteShader(vertex_shader);
+        return 0;
+    }
+    
+    GLuint program = glCreateProgram();
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    glLinkProgram(program);
+    
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    if (!success) {
+        char info_log[512];
+        glGetProgramInfoLog(program, 512, NULL, info_log);
+        cflp_error("Transition shader program linking failed: %s", info_log);
+        glDeleteShader(vertex_shader);
+        glDeleteShader(fragment_shader);
+        glDeleteProgram(program);
+        return 0;
+    }
+    
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+    
+    return program;
+}
+
+// Check if transition should be used for this wallpaper change
+static bool should_use_transition(const char *new_path) {
+    // Only use transitions if enabled
+    if (!transition_state.enabled || transition_state.type == TRANSITION_NONE) {
+        return false;
+    }
+    
+    // Only transition between images (not videos)
+    if (!is_image_mode || !is_image_file(new_path)) {
+        return false;
+    }
+    
+    // Don't start a new transition if one is already active
+    if (transition_state.active) {
+        return false;
+    }
+    
+    // Need a valid current texture to transition from
+    pthread_mutex_lock(&video_mutex);
+    bool has_current_texture = texture_manager.initialized && texture_manager.texture != 0;
+    pthread_mutex_unlock(&video_mutex);
+    
+    if (!has_current_texture) {
+        return false;
+    }
+    
+    return true;
+}
+
+// Start a transition by capturing the current wallpaper state
+static void start_transition(const char *new_path) {
+    if (!should_use_transition(new_path)) {
+        return;
+    }
+    
+    pthread_mutex_lock(&video_mutex);
+    
+    // Capture current texture and dimensions
+    transition_state.old_texture = texture_manager.texture;
+    transition_state.old_width = video_frame_data.width;
+    transition_state.old_height = video_frame_data.height;
+    
+    // Capture current scaling (needed for rendering old texture during transition)
+    // For now, store current scale values (will be updated in render_transition)
+    transition_state.old_scale_x = 1.0f;
+    transition_state.old_scale_y = 1.0f;
+    
+    // Mark transition as active
+    transition_state.active = true;
+    transition_state.elapsed = 0.0f;
+    transition_state.progress = 0.0f;
+    transition_state.alpha_old = 1.0f;
+    transition_state.alpha_new = 0.0f;
+    
+    // Record start time
+    clock_gettime(CLOCK_MONOTONIC, &transition_state.start_time);
+    
+    // Create a NEW texture for the incoming image
+    // The old texture is now in transition_state.old_texture
+    // We need a fresh texture for the new image
+    glGenTextures(1, &texture_manager.texture);
+    texture_manager.initialized = FALSE;  // Force re-initialization for new dimensions
+    texture_manager.current_width = 0;
+    texture_manager.current_height = 0;
+    
+    if (VERBOSE)
+        cflp_info("Created new texture %u for transition (old: %u)", 
+                 texture_manager.texture, transition_state.old_texture);
+    
+    pthread_mutex_unlock(&video_mutex);
+    
+    if (VERBOSE) {
+        cflp_info("Starting %s transition from %dx%d to %s",
+                 transition_state.type == TRANSITION_FADE ? "fade" : "unknown",
+                 transition_state.old_width, transition_state.old_height, new_path);
+    }
+}
+
+// Update transition progress each frame
+static void update_transition(void) {
+    if (!transition_state.active) {
+        return;
+    }
+    
+    struct timespec current_time;
+    clock_gettime(CLOCK_MONOTONIC, &current_time);
+    
+    // Calculate elapsed time in seconds
+    long long elapsed_ns = (current_time.tv_sec - transition_state.start_time.tv_sec) * 1000000000LL +
+                          (current_time.tv_nsec - transition_state.start_time.tv_nsec);
+    transition_state.elapsed = (float)elapsed_ns / 1e9f;
+    
+    // Calculate progress (0.0 to 1.0)
+    transition_state.progress = transition_state.elapsed / transition_state.duration;
+    
+    if (transition_state.progress >= 1.0f) {
+        transition_state.progress = 1.0f;
+        transition_state.alpha_old = 0.0f;
+        transition_state.alpha_new = 1.0f;
+    } else {
+        // For fade: linear interpolation
+        transition_state.alpha_new = transition_state.progress;
+        transition_state.alpha_old = 1.0f - transition_state.progress;
+    }
+    
+    // Check if transition is complete
+    if (transition_state.progress >= 1.0f) {
+        complete_transition();
+    }
+}
+
+// Render the transition frame (blends old and new textures)
+static void render_transition(struct display_output *output) {
+    if (!transition_state.active) {
+        return;
+    }
+    
+    if (VERBOSE == 2)
+        cflp_info("render_transition called: old_texture=%u, new_texture=%u, alpha=%.2f",
+                 transition_state.old_texture, texture_manager.texture, transition_state.alpha_new);
+    
+    // Make sure we have the transition shader
+    if (transition_shader_program == 0) {
+        transition_shader_program = create_transition_shader_program();
+        if (transition_shader_program == 0) {
+            cflp_error("Failed to create transition shader, canceling transition");
+            cancel_transition();
+            return;
+        }
+    }
+    
+    // NOTE: Caller (render()) already holds video_mutex - don't lock again!
+    
+    // Check if we have both textures
+    if (transition_state.old_texture == 0 || texture_manager.texture == 0) {
+        if (VERBOSE)
+            cflp_warning("Missing textures for transition, canceling");
+        cancel_transition();
+        return;
+    }
+    
+    // Update new texture dimensions if available
+    if (video_frame_data.width > 0 && video_frame_data.height > 0) {
+        transition_state.new_width = video_frame_data.width;
+        transition_state.new_height = video_frame_data.height;
+    }
+    
+    // Use transition shader
+    glUseProgram(transition_shader_program);
+    
+    // Bind old texture to texture unit 0
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, transition_state.old_texture);
+    glUniform1i(glGetUniformLocation(transition_shader_program, "oldTexture"), 0);
+    
+    // Bind new texture to texture unit 1
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture_manager.texture);
+    glUniform1i(glGetUniformLocation(transition_shader_program, "newTexture"), 1);
+    
+    // Set alpha blend value
+    glUniform1f(glGetUniformLocation(transition_shader_program, "alpha"), transition_state.alpha_new);
+    
+    // Use the same vertex data as normal rendering
+    // (update_vertex_data will have been called with new dimensions)
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    glBindVertexArray(0);
+    
+    // Clean up
+    glUseProgram(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+    // NOTE: Don't unlock mutex - caller (render()) will do it
+}
+
+// Complete transition - cleanup old texture
+static void complete_transition(void) {
+    if (!transition_state.active) {
+        return;
+    }
+    
+    pthread_mutex_lock(&video_mutex);
+    
+    // Delete old texture
+    if (transition_state.old_texture != 0) {
+        glDeleteTextures(1, &transition_state.old_texture);
+        transition_state.old_texture = 0;
+    }
+    
+    // Reset transition state
+    transition_state.active = false;
+    transition_state.progress = 1.0f;
+    transition_state.elapsed = transition_state.duration;
+    
+    pthread_mutex_unlock(&video_mutex);
+    
+    if (VERBOSE) {
+        cflp_info("Transition completed");
+    }
+}
+
+// Cancel transition - cleanup both textures
+static void cancel_transition(void) {
+    if (!transition_state.active && transition_state.old_texture == 0) {
+        return;  // Nothing to cancel
+    }
+    
+    pthread_mutex_lock(&video_mutex);
+    
+    // Delete old texture if it exists
+    if (transition_state.old_texture != 0) {
+        glDeleteTextures(1, &transition_state.old_texture);
+        transition_state.old_texture = 0;
+    }
+    
+    // Reset transition state
+    transition_state.active = false;
+    transition_state.progress = 0.0f;
+    transition_state.elapsed = 0.0f;
+    
+    pthread_mutex_unlock(&video_mutex);
+    
+    if (VERBOSE) {
+        cflp_info("Transition canceled");
+    }
+}
+
 // Update vertex data based on video dimensions and scaling options
 static void update_vertex_data(struct display_output *output) {
     if (vao == 0 || vbo == 0) {
@@ -459,7 +822,7 @@ static void update_vertex_data(struct display_output *output) {
         return;
     }
     
-    if (VERBOSE)
+    if (VERBOSE == 2)
         cflp_info("Updating vertex data with panscan_value=%.2f", panscan_value);
     
     float scale_x, scale_y;
@@ -494,7 +857,7 @@ static void update_vertex_data(struct display_output *output) {
             scale_y = display_aspect / video_aspect;
         }
 
-        if (VERBOSE) {
+        if (VERBOSE == 2) {
             cflp_info("Fill mode: scale_x=%.3f, scale_y=%.3f (video_aspect=%.3f, display_aspect=%.3f)",
                      scale_x, scale_y, video_aspect, display_aspect);
         }
@@ -524,7 +887,7 @@ static void update_vertex_data(struct display_output *output) {
             scale_x = scale_x * (video_aspect / display_aspect);
         }
         
-        if (VERBOSE) {
+        if (VERBOSE == 2) {
             cflp_info("Panscan mode: panscan=%.2f, scale_x=%.3f, scale_y=%.3f (video_aspect=%.3f, display_aspect=%.3f)", 
                      panscan_value, scale_x, scale_y, video_aspect, display_aspect);
         }
@@ -566,8 +929,8 @@ static void render(struct display_output *output) {
         return;
     }
 
-    // For image mode, only render once unless redraw explicitly needed
-    if (is_image_mode && !output->redraw_needed && texture_manager.initialized) {
+    // For image mode, only render once unless redraw explicitly needed or transitioning
+    if (is_image_mode && !output->redraw_needed && texture_manager.initialized && !transition_state.active) {
         return;  // Image already rendered, no continuous updates needed
     }
 
@@ -582,6 +945,9 @@ static void render(struct display_output *output) {
     // Clear with black background
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    // Update transition progress if active
+    update_transition();
 
     // Frame rate limiting for GPU optimization
     struct timespec current_time;
@@ -599,7 +965,7 @@ static void render(struct display_output *output) {
         should_render = TRUE; // Always render if we have a new frame
         frames_skipped = 0; // Reset skip counter when we render
     } else {
-        if (VERBOSE)
+        if (VERBOSE == 2)
             cflp_info("No new frame found");
     }
     
@@ -643,9 +1009,11 @@ static void render(struct display_output *output) {
             if (texture_count % 100 == 0)  // Log every 100th frame
                 cflp_info("Updated video texture %u with %dx%d frame (update %d)", texture_manager.texture, video_frame_data.width, video_frame_data.height, texture_count);
         }
-    } else if (texture_manager.initialized && texture_manager.texture != 0 && time_since_last_render >= target_frame_time_ns) {
+    } else if ((texture_manager.initialized && texture_manager.texture != 0 && time_since_last_render >= target_frame_time_ns) ||
+               transition_state.active) {
         // No new frame, but we should still render the existing texture at target frame rate
-        if (VERBOSE == 2) {
+        // OR we're in a transition and need continuous rendering
+        if (VERBOSE == 2 && !transition_state.active) {
             static int render_only_count = 0;
             render_only_count++;
             if (render_only_count % 100 == 0)
@@ -658,8 +1026,42 @@ static void render(struct display_output *output) {
             cflp_info("No new video frame available (frame rate limited)");
     }
     
-    // Render video texture if available
-    if (texture_manager.initialized && texture_manager.texture != 0) {
+    // Check if we're in a transition - render transition if active
+    if (transition_state.active) {
+        if (VERBOSE == 2)
+            cflp_info("Rendering transition frame (progress=%.2f, alpha_new=%.2f)", 
+                     transition_state.progress, transition_state.alpha_new);
+        
+        // Create VAO and VBO if needed (shared with normal rendering)
+        if (vao == 0) {
+            glGenVertexArrays(1, &vao);
+            glGenBuffers(1, &vbo);
+            
+            glBindVertexArray(vao);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            
+            // Position attribute
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+            glEnableVertexAttribArray(0);
+            
+            // Texture coordinate attribute
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+            glEnableVertexAttribArray(1);
+            
+            glBindVertexArray(0);
+            
+            if (VERBOSE)
+                cflp_info("Created VAO %u and VBO %u", vao, vbo);
+        }
+        
+        // Update vertex data for new texture dimensions
+        update_vertex_data(output);
+        
+        // Render transition blend
+        render_transition(output);
+    }
+    // Render video texture if available (normal rendering when not transitioning)
+    else if (texture_manager.initialized && texture_manager.texture != 0) {
         if (VERBOSE == 2) {
             static int render_count = 0;
             render_count++;
@@ -735,14 +1137,49 @@ static void render(struct display_output *output) {
     }
     pthread_mutex_unlock(&video_mutex);
 
-    // Callback new frame
-    output->frame_callback = wl_surface_frame(output->surface);
-    wl_callback_add_listener(output->frame_callback, &wl_surface_frame_listener, output);
-    output->redraw_needed = false;
-
-    // Display frame
+    // Display frame first (must be done before creating frame callback)
     if (!eglSwapBuffers(egl_display, output->egl_surface))
         cflp_error("Failed to swap egl buffers");
+
+    // Create frame callback for next frame
+    // During transitions, we always want a callback to ensure continuous rendering
+    // For normal rendering, we only create callback if redraw is needed
+    if (transition_state.active || output->redraw_needed) {
+        // Destroy any existing callback first (shouldn't happen, but be safe)
+        if (output->frame_callback) {
+            wl_callback_destroy(output->frame_callback);
+            output->frame_callback = NULL;
+        }
+        
+        output->frame_callback = wl_surface_frame(output->surface);
+        wl_callback_add_listener(output->frame_callback, &wl_surface_frame_listener, output);
+        
+        // During transitions, keep redraw_needed true to ensure continuous rendering
+        if (transition_state.active) {
+            output->redraw_needed = true;
+        } else {
+            output->redraw_needed = false;
+        }
+        
+        // Commit the surface to make the new buffer visible and trigger frame callback
+        // This is critical for transitions - without commit, the compositor won't display
+        // the frame or send the frame callback, breaking the render loop
+        wl_surface_commit(output->surface);
+        
+        // Flush Wayland connection to send frame request immediately
+        // This ensures the compositor receives the callback request right away
+        if (global_state && global_state->display) {
+            wl_display_flush(global_state->display);
+        }
+    } else {
+        // No callback needed - clear any existing one
+        if (output->frame_callback) {
+            wl_callback_destroy(output->frame_callback);
+            output->frame_callback = NULL;
+        }
+        output->redraw_needed = false;
+    }
+    
 }
 
 static void frame_handle_done(void *data, struct wl_callback *callback, uint32_t frame_time) {
@@ -756,10 +1193,13 @@ static void frame_handle_done(void *data, struct wl_callback *callback, uint32_t
     // Reset deadman switch timer
     halt_info.frame_ready = 1;
 
-    // Render next frame
-    if (output->redraw_needed) {
+
+    // Always render if transition is active or redraw is needed
+    // During transitions, this creates a continuous render loop:
+    // render() -> frame_callback -> frame_handle_done() -> render() -> ...
+    if (transition_state.active || output->redraw_needed) {
         if (VERBOSE == 2)
-            cflp_info("%s is ready for rendering", output->name);
+            cflp_info("%s frame callback: rendering next frame", output->name);
         render(output);
     }
 }
@@ -1201,23 +1641,57 @@ static void execute_ipc_commands(void) {
                 if (access(arg, R_OK) != 0) {
                     ipc_send_response(cmd->client_fd, "ERROR: file not accessible\n");
                 } else {
-                    // Update argv with new video path for restart
-                    if (halt_info.argv_copy && halt_info.argc > 0) {
-                        free(halt_info.argv_copy[halt_info.argc - 1]);
-                        halt_info.argv_copy[halt_info.argc - 1] = strdup(arg);
-                        if (!halt_info.argv_copy[halt_info.argc - 1]) {
-                            ipc_send_response(cmd->client_fd, "ERROR: failed to allocate memory\n");
+                    // Check if we should use a transition for this change
+                    bool use_transition = should_use_transition(arg);
+                    
+                    if (use_transition && is_image_mode) {
+                        if (VERBOSE)
+                            cflp_info("IPC: Starting transition to %s", arg);
+                        
+                        // Start transition before changing wallpaper
+                        start_transition(arg);
+                        
+                        // Send response IMMEDIATELY so IPC doesn't block
+                        // Image loading will happen asynchronously
+                        ipc_send_response(cmd->client_fd, "OK: transition started\n");
+                        
+                        if (VERBOSE)
+                            cflp_info("IPC: Transition started, loading new image asynchronously...");
+                        
+                        // Reload image pipeline with new path (will update texture_manager.texture)
+                        // This may block briefly, but response is already sent
+                        if (!reload_image_pipeline(arg)) {
+                            // Transition was canceled due to error in reload_image_pipeline
+                            cflp_warning("IPC: Failed to load new image for transition");
+                            // Note: Can't send error response here as response already sent
+                            // Transition will be canceled automatically
                         } else {
-                            // Preserve IPC socket path in argv if set
-                            // (stop_slapper will restart with same args)
-                            ipc_send_response(cmd->client_fd, "OK\n");
-                            // Close write side to ensure response is flushed
-                            shutdown(cmd->client_fd, SHUT_WR);
-                            usleep(50000);  // Delay to ensure response is sent before restart
-                            stop_slapper();
+                            if (VERBOSE)
+                                cflp_info("IPC: New image loaded, transition active=%d", transition_state.active);
                         }
+                        
+                        if (VERBOSE)
+                            cflp_info("IPC: Change command completed");
                     } else {
-                        ipc_send_response(cmd->client_fd, "ERROR: cannot update path\n");
+                        // No transition - proceed with normal change
+                        // Update argv with new video path for restart
+                        if (halt_info.argv_copy && halt_info.argc > 0) {
+                            free(halt_info.argv_copy[halt_info.argc - 1]);
+                            halt_info.argv_copy[halt_info.argc - 1] = strdup(arg);
+                            if (!halt_info.argv_copy[halt_info.argc - 1]) {
+                                ipc_send_response(cmd->client_fd, "ERROR: failed to allocate memory\n");
+                            } else {
+                                // Preserve IPC socket path in argv if set
+                                // (stop_slapper will restart with same args)
+                                ipc_send_response(cmd->client_fd, "OK\n");
+                                // Close write side to ensure response is flushed
+                                shutdown(cmd->client_fd, SHUT_WR);
+                                usleep(50000);  // Delay to ensure response is sent before restart
+                                stop_slapper();
+                            }
+                        } else {
+                            ipc_send_response(cmd->client_fd, "ERROR: cannot update path\n");
+                        }
                     }
                 }
             }
@@ -1252,6 +1726,48 @@ static void execute_ipc_commands(void) {
         else if (strcmp(cmd_name, "list") == 0) {
             // TODO: Implement preload cache listing in Phase 2
             ipc_send_response(cmd->client_fd, "PRELOADED: (none)\n");
+        }
+        else if (strcmp(cmd_name, "set-transition") == 0) {
+            if (!arg || strlen(arg) == 0) {
+                ipc_send_response(cmd->client_fd, "ERROR: missing transition type argument\n");
+            } else {
+                if (strcmp(arg, "fade") == 0) {
+                    transition_state.type = TRANSITION_FADE;
+                    transition_state.enabled = true;
+                    ipc_send_response(cmd->client_fd, "OK: fade transitions enabled\n");
+                } else if (strcmp(arg, "none") == 0) {
+                    transition_state.type = TRANSITION_NONE;
+                    transition_state.enabled = false;
+                    cancel_transition();  // Cancel any active transition
+                    ipc_send_response(cmd->client_fd, "OK: transitions disabled\n");
+                } else {
+                    ipc_send_response(cmd->client_fd, "ERROR: unknown transition type\n");
+                }
+            }
+        }
+        else if (strcmp(cmd_name, "get-transition") == 0) {
+            char response[128];
+            const char *type_str = transition_state.type == TRANSITION_FADE ? "fade" : "none";
+            snprintf(response, sizeof(response), "TRANSITION: %s %s %.2f\n",
+                    type_str,
+                    transition_state.enabled ? "enabled" : "disabled",
+                    transition_state.duration);
+            ipc_send_response(cmd->client_fd, response);
+        }
+        else if (strcmp(cmd_name, "set-transition-duration") == 0) {
+            if (!arg || strlen(arg) == 0) {
+                ipc_send_response(cmd->client_fd, "ERROR: missing duration argument\n");
+            } else {
+                float duration = atof(arg);
+                if (duration > 0.0f && duration <= 5.0f) {
+                    transition_state.duration = duration;
+                    char response[64];
+                    snprintf(response, sizeof(response), "OK: duration set to %.2f seconds\n", duration);
+                    ipc_send_response(cmd->client_fd, response);
+                } else {
+                    ipc_send_response(cmd->client_fd, "ERROR: invalid duration (must be 0.0-5.0)\n");
+                }
+            }
         }
         else {
             ipc_send_response(cmd->client_fd, "ERROR: unknown command\n");
@@ -1449,6 +1965,191 @@ static void on_decodebin_pad_added(GstElement *decodebin, GstPad *pad, gpointer 
 }
 
 // Image pipeline initialization (for static images)
+// Reload image pipeline with new path (for transitions)
+// Returns true on success, false on failure
+static bool reload_image_pipeline(const char *new_path) {
+    if (VERBOSE)
+        cflp_info("Reloading image pipeline for: %s", new_path);
+    
+    // Clean up old pipeline if it exists
+    if (pipeline) {
+        gst_element_set_state(pipeline, GST_STATE_NULL);
+        if (bus) {
+            gst_bus_remove_watch(bus);
+            gst_object_unref(bus);
+            bus = NULL;
+        }
+        gst_object_unref(pipeline);
+        pipeline = NULL;
+    }
+    
+    // Reset image capture flag
+    image_frame_captured = false;
+    
+    // Update video_path
+    if (video_path) {
+        free(video_path);
+    }
+    video_path = strdup(new_path);
+    if (!video_path) {
+        cflp_error("Failed to allocate memory for new path");
+        cancel_transition();
+        return false;
+    }
+    
+    // Update is_image_mode
+    is_image_mode = is_image_file(new_path);
+    
+    // Build the new image pipeline inline (don't call init_image_pipeline to avoid exit on error)
+    char resolved_path[PATH_MAX];
+    if (realpath(new_path, resolved_path) == NULL) {
+        cflp_error("Failed to resolve image path '%s': %s", new_path, strerror(errno));
+        cancel_transition();
+        return false;
+    }
+
+    if (VERBOSE)
+        cflp_info("Loading new image: %s", resolved_path);
+
+    // Create pipeline elements
+    GstElement *filesrc = gst_element_factory_make("filesrc", "filesrc");
+    GstElement *decodebin = gst_element_factory_make("decodebin", "decodebin");
+    GstElement *videoconvert = gst_element_factory_make("videoconvert", "videoconvert");
+    GstElement *appsink = gst_element_factory_make("appsink", "appsink");
+
+    if (!filesrc || !decodebin || !videoconvert || !appsink) {
+        cflp_error("Failed to create image pipeline elements");
+        cancel_transition();
+        return false;
+    }
+
+    // Create pipeline
+    pipeline = gst_pipeline_new("image-pipeline");
+    if (!pipeline) {
+        cflp_error("Failed to create image pipeline");
+        cancel_transition();
+        return false;
+    }
+
+    // Configure filesrc
+    g_object_set(G_OBJECT(filesrc), "location", resolved_path, NULL);
+
+    // Configure appsink for RGBA output
+    GstCaps *caps = gst_caps_from_string("video/x-raw,format=RGBA");
+    g_object_set(G_OBJECT(appsink),
+                 "caps", caps,
+                 "emit-signals", TRUE,
+                 "sync", FALSE,
+                 "drop", FALSE,
+                 "max-buffers", 1,
+                 NULL);
+    gst_caps_unref(caps);
+
+    // Add elements to pipeline
+    gst_bin_add_many(GST_BIN(pipeline), filesrc, decodebin, videoconvert, appsink, NULL);
+
+    // Link filesrc to decodebin
+    if (!gst_element_link(filesrc, decodebin)) {
+        cflp_error("Failed to link filesrc to decodebin");
+        gst_object_unref(pipeline);
+        pipeline = NULL;
+        cancel_transition();
+        return false;
+    }
+
+    // Link videoconvert to appsink
+    if (!gst_element_link(videoconvert, appsink)) {
+        cflp_error("Failed to link videoconvert to appsink");
+        gst_object_unref(pipeline);
+        pipeline = NULL;
+        cancel_transition();
+        return false;
+    }
+
+    // Connect decodebin's dynamic pad to videoconvert
+    g_signal_connect(decodebin, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
+
+    // Set up buffer probe on appsink
+    GstPad *sink_pad = gst_element_get_static_pad(appsink, "sink");
+    if (sink_pad) {
+        gst_pad_add_probe(sink_pad, GST_PAD_PROBE_TYPE_BUFFER, buffer_probe, NULL, NULL);
+        gst_object_unref(sink_pad);
+    }
+
+    // Get bus for messages
+    bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
+
+    // Start pipeline
+    GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
+    if (ret == GST_STATE_CHANGE_FAILURE) {
+        cflp_error("Failed to start image pipeline");
+        gst_object_unref(bus);
+        bus = NULL;
+        gst_object_unref(pipeline);
+        pipeline = NULL;
+        cancel_transition();
+        return false;
+    }
+
+    // Wait for the frame to be captured (with timeout)
+    // Process events during wait to keep IPC responsive
+    int timeout_ms = 5000;
+    int waited = 0;
+    while (!image_frame_captured && waited < timeout_ms) {
+        // Process GStreamer bus messages (non-blocking)
+        GstMessage *msg = gst_bus_pop(bus);
+        if (msg) {
+            if (GST_MESSAGE_TYPE(msg) == GST_MESSAGE_ERROR) {
+                GError *error = NULL;
+                gchar *debug = NULL;
+                gst_message_parse_error(msg, &error, &debug);
+                cflp_error("Image decode error: %s", error->message);
+                g_error_free(error);
+                g_free(debug);
+                gst_message_unref(msg);
+                gst_object_unref(bus);
+                bus = NULL;
+                gst_object_unref(pipeline);
+                pipeline = NULL;
+                cancel_transition();
+                return false;
+            }
+            gst_message_unref(msg);
+        }
+        
+        // Process Wayland events if available (non-blocking)
+        // This keeps IPC responsive during image loading
+        if (global_state && global_state->display) {
+            // Try to dispatch pending events without blocking
+            wl_display_dispatch_pending(global_state->display);
+            // Flush to send any pending requests
+            wl_display_flush(global_state->display);
+        }
+        
+        // Short sleep to avoid busy-waiting
+        g_usleep(10000);  // 10ms - balance between responsiveness and CPU usage
+        waited += 10;  // Increment by sleep duration
+    }
+
+    if (!image_frame_captured) {
+        cflp_error("Timeout waiting for image frame");
+        gst_object_unref(bus);
+        bus = NULL;
+        gst_object_unref(pipeline);
+        pipeline = NULL;
+        cancel_transition();
+        return false;
+    }
+
+    // Stop pipeline (we have the frame in texture)
+    gst_element_set_state(pipeline, GST_STATE_NULL);
+
+    if (VERBOSE)
+        cflp_success("New image loaded: %dx%d", video_frame_data.width, video_frame_data.height);
+    
+    return true;
+}
+
 static void init_image_pipeline(void) {
     // Initialize GStreamer if not already done
     gst_init(NULL, NULL);
@@ -2129,6 +2830,8 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         {"gst-options", required_argument, NULL, 'o'},
         {"fps-cap", required_argument, NULL, 'r'},
         {"ipc-socket", required_argument, NULL, 'I'},
+        {"transition-type", required_argument, NULL, 'T'},
+        {"transition-duration", required_argument, NULL, 'D'},
         {0, 0, 0, 0}
     };
 
@@ -2151,6 +2854,8 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         "--gst-options  -o \"OPTIONS\"    Forwards GStreamer options (Must be within quotes\"\")\n"
         "--fps-cap      -r FPS           Frame rate cap (30, 60, or 100 FPS, default: 30)\n"
         "--ipc-socket   -I PATH          Enable IPC control via Unix socket\n"
+        "--transition-type TYPE          Transition effect (fade, none, default: none)\n"
+        "--transition-duration SECS      Transition duration in seconds (default: 0.5)\n"
         "\n"
         "Scaling modes (use with -o):\n"
         "  fill        Fill screen maintaining aspect ratio, crop excess (default for images)\n"
@@ -2168,7 +2873,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
     char *layer_name;
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "hdvfpsn:l:o:r:I:Z:", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hdvfpsn:l:o:r:I:T:D:Z:", long_options, NULL)) != -1) {
 
         switch (opt) {
             case 'h':
@@ -2240,6 +2945,33 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
                 break;
             case 'I':
                 ipc_socket_path = strdup(optarg);
+                break;
+            case 'T':
+                if (strcmp(optarg, "fade") == 0) {
+                    transition_state.type = TRANSITION_FADE;
+                    transition_state.enabled = true;
+                    if (VERBOSE)
+                        cflp_info("Fade transitions enabled");
+                } else if (strcmp(optarg, "none") == 0) {
+                    transition_state.type = TRANSITION_NONE;
+                    transition_state.enabled = false;
+                } else {
+                    cflp_warning("Unknown transition type '%s', using 'none'", optarg);
+                    transition_state.type = TRANSITION_NONE;
+                    transition_state.enabled = false;
+                }
+                break;
+            case 'D':
+                {
+                    float duration = atof(optarg);
+                    if (duration > 0.0f && duration <= 5.0f) {
+                        transition_state.duration = duration;
+                        if (VERBOSE)
+                            cflp_info("Transition duration set to %.2f seconds", duration);
+                    } else {
+                        cflp_warning("Invalid transition duration %.2f, using default (0.5)", duration);
+                    }
+                }
                 break;
 
             case 'Z': // Hidden option to recover video pos after stopping
@@ -2385,8 +3117,11 @@ int main(int argc, char **argv) {
 
         // Wait for a GStreamer callback, IPC command, or wl_display event
         int nfds = ipc_socket_path ? 3 : 2;
-        if (poll(fds, nfds, 50) == -1 && errno != EINTR)
+        int poll_timeout = transition_state.active ? 16 : 50;  // Faster polling during transitions
+        int poll_result = poll(fds, nfds, poll_timeout);
+        if (poll_result == -1 && errno != EINTR)
             break;
+
 
         // If wl_display_prepare_read() was successful as 0
         if (wl_display_prepare_read_state == 0) {
@@ -2397,7 +3132,9 @@ int main(int argc, char **argv) {
                 wl_display_cancel_read(state.display);
             }
         }
-        // Lastly process wl_display events without blocking
+        // Process wl_display events without blocking
+        // This dispatches frame callbacks and other Wayland events
+        // During transitions, frame callbacks will fire here and trigger render() via frame_handle_done()
         if (wl_display_dispatch_pending(state.display) == -1)
             break;
 
@@ -2432,7 +3169,29 @@ int main(int argc, char **argv) {
 
         // Handle IPC commands
         if (ipc_socket_path && fds[2].revents & POLLIN) {
+            if (VERBOSE == 2)
+                cflp_info("Main loop: Processing IPC commands");
             execute_ipc_commands();
+            if (VERBOSE == 2)
+                cflp_info("Main loop: IPC commands processed");
+        }
+        
+        // During transitions, force continuous rendering
+        // We can't rely on frame callbacks for smooth transitions
+        if (transition_state.active) {
+            struct display_output *output;
+            wl_list_for_each(output, &state.outputs, link) {
+                if (output->egl_window && output->egl_surface) {
+                    // Destroy pending frame callback - we're taking over rendering
+                    if (output->frame_callback) {
+                        wl_callback_destroy(output->frame_callback);
+                        output->frame_callback = NULL;
+                    }
+                    if (VERBOSE == 2)
+                        cflp_info("Transition render triggered");
+                    render(output);
+                }
+            }
         }
     }
 
