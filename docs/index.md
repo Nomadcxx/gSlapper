@@ -38,5 +38,6 @@ MIT License - see [LICENSE](../LICENSE)
 ## Acknowledgments
 
 - [mpvpaper](https://github.com/GhostNaN/mpvpaper) - Original inspiration
+- [swww](https://github.com/Horus645/swww) - Static wallpaper inspiration
 - [GStreamer](https://gstreamer.freedesktop.org/) - Multimedia framework
 - [Clapper](https://github.com/Rafostar/clapper) - GStreamer integration patterns
