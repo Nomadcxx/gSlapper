@@ -4,7 +4,7 @@ This document provides an overview of gSlapper's internal architecture and desig
 
 ## Overview
 
-gSlapper is a Wayland-based wallpaper application that uses GStreamer for media playback and EGL/OpenGL for rendering. It's designed as a drop-in replacement for mpvpaper with better NVIDIA compatibility and multi-monitor support.
+gSlapper is a high-performance wallpaper manager for Wayland that combines the best of swww and mpvpaper. It uses GStreamer for media playback and EGL/OpenGL for rendering, providing faster performance, better efficiency, and fixes memory leaks on NVIDIA Wayland systems while offering superior multi-monitor support.
 
 ## Core Components
 

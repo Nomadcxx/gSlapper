@@ -6,7 +6,7 @@
 
 <br>
 
-**gSlapper** is a drop-in replacement for [mpvpaper](https://github.com/GostNaN/mpvpaper) using GStreamer instead of libmpv. Faster, more efficient, and fixes memory leaks on NVIDIA Wayland systems while providing better multi-monitor support.
+**gSlapper** is a high-performance wallpaper manager for Wayland that combines the best of [swww](https://github.com/Horus645/swww) and [mpvpaper](https://github.com/GhostNaN/mpvpaper). It uses GStreamer instead of libmpv, providing faster performance, better efficiency, and fixes memory leaks on NVIDIA Wayland systems while offering superior multi-monitor support.
 
 ## Quick Links
 
