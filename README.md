@@ -4,7 +4,7 @@
 
 <br>
 
-**gSlapper** is a wallpaper utility for Wayland that combines the best of [swww](https://github.com/Horus645/swww) and [mpvpaper](https://github.com/GhostNaN/mpvpaper). It uses GStreamer instead of libmpv making it more efficient and NVIDIA friendly for Wayland. Also offering superior multi-monitor support.
+**gSlapper** is a wallpaper utility for wayland that combines the best of [swww](https://github.com/Horus645/swww) and [mpvpaper](https://github.com/GhostNaN/mpvpaper) by allowing both static and video wallpapers. It uses GStreamer instead of libmpv making it more efficient and NVIDIA friendly for wayland.
 
 ## Quick Start
 
