@@ -21,6 +21,8 @@ gslapper -o "loop" '*' /path/to/video.mp4
 
 Full documentation available at: https://nomadcxx.github.io/gSlapper/
 
+**Systemd Service:** See [systemd-service.md](docs/systemd-service.md) for automatic wallpaper management at login.
+
 ## Features
 
 - **Video & Image Support** - Play videos (MP4, MKV, WebM) and display static images (JPEG, PNG, WebP, GIF)
