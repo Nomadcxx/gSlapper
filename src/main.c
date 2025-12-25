@@ -36,6 +36,11 @@
 
 #include <cflogprinter.h>
 #include "ipc.h"
+#include "state.h"
+
+#ifdef HAVE_SYSTEMD
+#include <systemd/sd-daemon.h>
+#endif
 
 typedef unsigned int uint;
 
@@ -115,6 +120,18 @@ static bool stretch_mode = false;  // Stretch to fill without maintaining aspect
 static bool fill_mode = false;       // Fill screen maintaining aspect ratio (crops excess)
 static bool is_image_mode = false;   // True if displaying static image vs video
 static bool image_frame_captured = false;  // True once image frame is decoded
+
+// State management for systemd service
+static char *state_file_path = NULL;
+static bool systemd_mode = false;
+static bool save_state_on_exit = true;
+static bool restore_flag = false;
+static bool save_state_flag = false;
+static pthread_mutex_t state_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+// Global storage for restore position (FIXED: was static inside function)
+static double restore_position = 0.0;
+static bool restore_paused = false;
 
 // Transition effects
 typedef enum {
@@ -212,9 +229,22 @@ static void complete_transition(void);
 static void cancel_transition(void);
 static void init_image_pipeline(void);
 static bool reload_image_pipeline(const char *new_path);
+static void save_current_state(void);
+static int restore_from_state(const char *path);
+static void restore_video_position(void);
+static void notify_systemd_ready(void);
+static void notify_systemd_stopping(void);
 
 // Cleanup function
 static void exit_cleanup() {
+
+    // Notify systemd that we're stopping
+    notify_systemd_stopping();
+
+    // CRITICAL: Save state BEFORE GStreamer shutdown to avoid race conditions
+    if (save_state_on_exit) {
+        save_current_state();
+    }
 
     // Shutdown IPC server first
     if (ipc_socket_path) {
@@ -422,16 +452,30 @@ static void exit_slapper(int reason) {
     exit(reason);
 }
 
-static void *exit_by_pthread(void *_) {
-    exit_slapper(EXIT_SUCCESS);
-    pthread_exit(NULL);
-}
-
+// CHANGED 2025-12-25 - Implemented SIGHUP reload functionality - Problem: Need config reload without restarting process
 static void handle_signal(int signum) {
-    (void)signum;
-    // Separate thread to avoid crash
-    pthread_t thread;
-    pthread_create(&thread, NULL, exit_by_pthread, NULL);
+    if (signum == SIGHUP) {
+        // SIGHUP means reload - save state and restart gracefully
+        cflp_info("Received SIGHUP, saving state for reload...");
+        save_current_state();
+
+        // Notify systemd we're reloading (optional)
+        #ifdef HAVE_SYSTEMD
+        sd_notify(0, "RELOADING=1\nSTATUS=Reloading configuration");
+        #endif
+
+        // Clean exit - systemd will restart us with --restore
+        exit_cleanup();
+        exit(EXIT_SUCCESS);
+    } else {
+        // SIGINT, SIGTERM, SIGQUIT - clean exit
+        if (VERBOSE)
+            cflp_info("Signal %d received, exiting...", signum);
+
+        save_current_state();
+        exit_cleanup();
+        exit(EXIT_SUCCESS);
+    }
 }
 
 const static struct wl_callback_listener wl_surface_frame_listener;
@@ -1208,6 +1252,235 @@ const static struct wl_callback_listener wl_surface_frame_listener = {
     .done = frame_handle_done,
 };
 
+// Save current state (maps to existing global variables)
+// CRITICAL: Must be called BEFORE GStreamer pipeline shutdown to avoid race conditions
+static void save_current_state(void) {
+    if (!save_state_on_exit || !video_path) return;
+    
+    // CRITICAL: Acquire mutex to protect against concurrent access
+    pthread_mutex_lock(&state_mutex);
+    
+    struct wallpaper_state state = {0};
+    
+    // Map existing globals to state structure (read while holding mutex)
+    // Note: These globals may be modified by other threads, but we read them atomically here
+    state.path = video_path;
+    state.is_image = is_image_mode;
+    
+    // FIXED: Check if gst_options is heap-allocated (not empty string literal)
+    if (gst_options && strlen(gst_options) > 0) {
+        state.options = gst_options;
+    } else {
+        state.options = "";
+    }
+    
+    // Get output name from first configured output
+    char *current_output = NULL;
+    if (global_state && !wl_list_empty(&global_state->outputs)) {
+        struct display_output *output;
+        wl_list_for_each(output, &global_state->outputs, link) {
+            if (output->name) {
+                state.output = output->name;
+                current_output = output->name;
+                break;
+            }
+        }
+    }
+    
+    // Get video position if playing video
+    // CRITICAL: Check pipeline is valid and not shutting down
+    if (!is_image_mode && pipeline) {
+        GstState gst_state, pending;
+        gst_element_get_state(pipeline, &gst_state, &pending, 0);
+        
+        // Only query position if pipeline is in valid state (not NULL/READY)
+        if (gst_state > GST_STATE_READY) {
+            gint64 pos_ns = 0;
+            if (gst_element_query_position(pipeline, GST_FORMAT_TIME, &pos_ns)) {
+                state.position = (double)pos_ns / GST_SECOND;
+            }
+            state.paused = (gst_state == GST_STATE_PAUSED);
+        } else {
+            // Pipeline shutting down, use last known position or 0
+            state.position = 0.0;
+            state.paused = false;
+        }
+    }
+    
+    // Use output-specific state file path if output is known
+    char *state_path = state_file_path;
+    if (!state_path && current_output) {
+        state_path = get_state_file_path(current_output);
+        if (!state_path) {
+            cflp_warning("Failed to get state file path for output %s", current_output);
+            pthread_mutex_unlock(&state_mutex);
+            return;
+        }
+    } else if (!state_path) {
+        state_path = get_state_file_path(NULL);
+        if (!state_path) {
+            cflp_warning("Failed to get default state file path");
+            pthread_mutex_unlock(&state_mutex);
+            return;
+        }
+    }
+    
+    // Save to file
+    int retry_count = 0;
+    int save_result = -1;
+    while (retry_count < 3 && save_result != 0) {
+        save_result = save_state_file(state_path, &state);
+        if (save_result != 0) {
+            retry_count++;
+            if (retry_count < 3) {
+                usleep(100000); // Wait 100ms before retry
+            }
+        }
+    }
+    
+    if (save_result == 0) {
+        if (VERBOSE)
+            cflp_info("State saved successfully to %s", state_path);
+    } else {
+        cflp_error("Failed to save state after %d attempts", retry_count);
+    }
+    
+    // Free state_path if we allocated it
+    if (state_path != state_file_path) {
+        free(state_path);
+    }
+    
+    pthread_mutex_unlock(&state_mutex);
+}
+
+// Restore state (sets existing globals)
+static int restore_from_state(const char *path) {
+    char *state_path = NULL;
+    if (!path) {
+        // Try to get output-specific state file first
+        if (global_state && global_state->monitor) {
+            state_path = get_state_file_path(global_state->monitor);
+        }
+        // Fall back to default if output-specific not found
+        if (!state_path) {
+            state_path = get_state_file_path(NULL);
+        }
+        if (!state_path) {
+            cflp_error("Failed to determine state file path");
+            return -1;
+        }
+        path = state_path;
+    }
+    
+    struct wallpaper_state state = {0};
+    if (load_state_file(path, &state) != 0) {
+        cflp_warning("No state file found or failed to load: %s", path);
+        if (state_path) free(state_path);
+        return -1;
+    }
+    
+    // Map state back to existing globals
+    if (state.path) {
+        if (video_path) free(video_path);
+        video_path = strdup(state.path);
+        is_image_mode = state.is_image;
+        
+        if (state.options && strlen(state.options) > 0) {
+            // FIXED: Check if gst_options is heap-allocated before freeing
+            if (gst_options && strlen(gst_options) > 0) {
+                // Only free if it's not the empty string literal
+                // Check by comparing pointer to known empty string (safe check)
+                char empty_str[] = "";
+                if (gst_options != empty_str) {
+                    free(gst_options);
+                }
+            }
+            gst_options = strdup(state.options);
+        } else {
+            // If no options in state, set to empty string literal (codebase default)
+            if (gst_options && strlen(gst_options) > 0) {
+                free(gst_options);
+            }
+            gst_options = "";
+        }
+        
+        // Set output if specified
+        if (state.output && global_state) {
+            pthread_mutex_lock(&state_mutex);
+            if (global_state->monitor) free(global_state->monitor);
+            global_state->monitor = strdup(state.output);
+            pthread_mutex_unlock(&state_mutex);
+        }
+        
+        // FIXED: Store restore position in global (not static inside function)
+        if (!state.is_image) {
+            pthread_mutex_lock(&state_mutex);
+            restore_position = state.position;
+            restore_paused = state.paused;
+            pthread_mutex_unlock(&state_mutex);
+        }
+    }
+    
+    free_wallpaper_state(&state);
+    
+    // Free state_path if we allocated it
+    if (state_path) {
+        free(state_path);
+    }
+    
+    if (VERBOSE)
+        cflp_info("State restored successfully from %s", path);
+    return 0;
+}
+
+// Systemd readiness notification
+static void notify_systemd_ready(void) {
+#ifdef HAVE_SYSTEMD
+    if (systemd_mode) {
+        sd_notify(0, "READY=1\nSTATUS=Wallpapers loaded and playing");
+        if (VERBOSE)
+            cflp_info("Notified systemd: READY");
+    }
+#endif
+}
+
+static void notify_systemd_stopping(void) {
+#ifdef HAVE_SYSTEMD
+    if (systemd_mode) {
+        sd_notify(0, "STOPPING=1\nSTATUS=Shutting down");
+    }
+#endif
+}
+
+// Restore video position after pipeline starts (call this after pipeline is PLAYING)
+static void restore_video_position(void) {
+    if (is_image_mode || !pipeline) return;
+    
+    pthread_mutex_lock(&state_mutex);
+    double pos = restore_position;
+    bool paused = restore_paused;
+    pthread_mutex_unlock(&state_mutex);
+    
+    if (pos > 0.0) {
+        gint64 pos_ns = (gint64)(pos * GST_SECOND);
+        if (!gst_element_seek(pipeline, 1.0, GST_FORMAT_TIME,
+                GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT,
+                GST_SEEK_TYPE_SET, pos_ns,
+                GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE)) {
+            cflp_warning("Failed to seek to restored position: %.2f", pos);
+        } else {
+            if (VERBOSE)
+                cflp_info("Restored video position: %.2f seconds", pos);
+        }
+    }
+    
+    if (paused) {
+        gst_element_set_state(pipeline, GST_STATE_PAUSED);
+        if (VERBOSE)
+            cflp_info("Restored video to paused state");
+    }
+}
+
 static void stop_slapper() {
 
     // Save video position to arg -Z
@@ -1256,6 +1529,9 @@ static void stop_slapper() {
             break;
         }
     }
+
+    // Save state before stopping
+    save_current_state();
 
     exit_cleanup();
 
@@ -1501,6 +1777,12 @@ static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data) {
                 if (new_state == GST_STATE_PLAYING) {
                     if (VERBOSE)
                         cflp_success("GStreamer pipeline is playing");
+                    // Restore video position if we have a saved position
+                    if (restore_position > 0.0) {
+                        restore_video_position();
+                    }
+                    // Notify systemd that we're ready
+                    notify_systemd_ready();
                     
                     // CHANGED 2025-09-07 - Initialize segment-based looping when pipeline starts
                     // Problem: Need initial segment seek to enable SEGMENT_DONE messages instead of EOS
@@ -2832,6 +3114,11 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         {"ipc-socket", required_argument, NULL, 'I'},
         {"transition-type", required_argument, NULL, 'T'},
         {"transition-duration", required_argument, NULL, 'D'},
+        {"systemd", no_argument, NULL, 'S'},
+        {"restore", no_argument, NULL, 'R'},
+        {"save-state", no_argument, NULL, 1000},
+        {"state-file", required_argument, NULL, 1001},
+        {"no-save-state", no_argument, NULL, 1002},
         {0, 0, 0, 0}
     };
 
@@ -2873,7 +3160,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
     char *layer_name;
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "hdvfpsn:l:o:r:I:T:D:Z:", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hdvfpsn:l:o:r:I:T:D:Z:SR", long_options, NULL)) != -1) {
 
         switch (opt) {
             case 'h':
@@ -2977,6 +3264,21 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
             case 'Z': // Hidden option to recover video pos after stopping
                 halt_info.save_info = strdup(optarg);
                 break;
+            case 'S': // --systemd
+                systemd_mode = true;
+                break;
+            case 'R': // --restore
+                restore_flag = true;
+                break;
+            case 1000: // --save-state
+                save_state_flag = true;
+                break;
+            case 1001: // --state-file
+                state_file_path = strdup(optarg);
+                break;
+            case 1002: // --no-save-state
+                save_state_on_exit = false;
+                break;
         }
     }
 
@@ -3011,10 +3313,12 @@ static void check_paper_processes() {
 int main(int argc, char **argv) {
     // Initialize mtrace for memory leak detection
     mtrace();
-    
+
+    // CHANGED 2025-12-25 - Added SIGHUP handler for config reload - Problem: Need runtime config reload support
     signal(SIGINT, handle_signal);
     signal(SIGQUIT, handle_signal);
     signal(SIGTERM, handle_signal);
+    signal(SIGHUP, handle_signal);
 
     check_paper_processes();
 
@@ -3025,6 +3329,30 @@ int main(int argc, char **argv) {
     state.surface_layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
 
     parse_command_line(argc, argv, &state);
+    
+    // Handle --save-state flag (save and exit immediately)
+    if (save_state_flag) {
+        if (!video_path) {
+            cflp_error("--save-state requires a wallpaper to be set");
+            exit(EXIT_FAILURE);
+        }
+        // Initialize minimal state for saving
+        global_state = &state;
+        save_current_state();
+        exit(EXIT_SUCCESS);
+    }
+    
+    // Handle --restore flag (restore state before initialization)
+    if (restore_flag) {
+        if (restore_from_state(NULL) == 0) {
+            if (VERBOSE)
+                cflp_info("State restored, continuing with restored wallpaper");
+        } else {
+            if (VERBOSE)
+                cflp_info("No state file found or restore failed, continuing normally");
+        }
+    }
+    
     set_watch_lists();
     if (halt_info.auto_stop || halt_info.stoplist)
         copy_argv(argc, argv);
