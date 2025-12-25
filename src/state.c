@@ -258,17 +258,27 @@ int load_state_file(const char *path, struct wallpaper_state *state) {
         free_wallpaper_state(state);
         return -1;
     }
-    
-    // Validate file exists
-    if (access(state->path, R_OK) != 0) {
-        cflp_warning("State file references non-existent path: %s", state->path);
-        free_wallpaper_state(state);
-        return -1;
+
+    // VALIDATION: Check if path exists
+    if (state->path) {
+        struct stat path_stat;
+        if (stat(state->path, &path_stat) != 0) {
+            cflp_warning("State file references non-existent path: %s", state->path);
+            cflp_warning("File may have been moved or deleted since state was saved");
+            // Don't fail - just warn and let caller decide
+        }
     }
-    
+
+    // VALIDATION: Output name not empty
+    if (state->output && strlen(state->output) == 0) {
+        cflp_warning("Invalid empty output name in state file");
+        free(state->output);
+        state->output = NULL;
+    }
+
     // Validate type is set
     // (is_image is set during parsing, so if we got here it's valid)
-    
+
     cflp_success("State loaded from %s", path);
     return 0;
 }
