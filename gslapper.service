@@ -1,0 +1,31 @@
+[Unit]
+Description=gSlapper Wallpaper Service
+Documentation=https://nomadcxx.github.io/gSlapper/
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/gslapper --systemd --restore
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+
+# CRITICAL: Wayland environment variables
+# Load from user environment file (required - see documentation)
+EnvironmentFile=%h/.config/gslapper/environment
+
+# CRITICAL: XDG runtime directory (required for Wayland)
+Environment=XDG_RUNTIME_DIR=%t
+
+# Resource limits
+MemoryMax=512M
+CPUQuota=50%
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target
