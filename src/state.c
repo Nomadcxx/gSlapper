@@ -233,10 +233,8 @@ int load_state_file(const char *path, struct wallpaper_state *state) {
             state->options = strdup(value);
         } else if (strcmp(key, "position") == 0) {
             state->position = strtod(value, NULL);
-            if (state->position < 0.0) {
-                cflp_warning("Invalid position in state file: %.2f (must be >= 0)", state->position);
-                state->position = 0.0;
-            }
+            // Position validation is done in the validation section after parsing
+            // (needs to check if it's a video, not an image)
         } else if (strcmp(key, "paused") == 0) {
             if (strcmp(value, "0") == 0) {
                 state->paused = false;
@@ -274,6 +272,12 @@ int load_state_file(const char *path, struct wallpaper_state *state) {
         cflp_warning("Invalid empty output name in state file");
         free(state->output);
         state->output = NULL;
+    }
+
+    // VALIDATION: Check position is sane for videos
+    if (!state->is_image && state->position < 0.0) {
+        cflp_warning("Invalid video position in state file: %.2f (resetting to 0.0)", state->position);
+        state->position = 0.0;
     }
 
     // Validate type is set
