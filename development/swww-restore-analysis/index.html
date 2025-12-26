@@ -12,13 +12,9 @@
         <meta name="author" content="Nomadcxx">
       
       
-        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/development/contributing/">
+        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/development/swww-restore-analysis/">
       
       
-        <link rel="prev" href="../building/">
-      
-      
-        <link rel="next" href="../api-reference/">
       
       
         
@@ -29,7 +25,7 @@
     
     
       
-        <title>Contributing - gSlapper Documentation</title>
+        <title>How swww Handles Wallpaper Restoration After Reboot - gSlapper Documentation</title>
       
     
     
@@ -82,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#contributing" class="md-skip">
+        <a href="#how-swww-handles-wallpaper-restoration-after-reboot" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Contributing
+              How swww Handles Wallpaper Restoration After Reboot
             
           </span>
         </div>
@@ -312,12 +308,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../index.md" class="md-tabs__link">
           
   
@@ -1048,10 +1042,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -1071,22 +1063,21 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1104,7 +1095,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1175,37 +1166,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Contributing
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
         
   
   
@@ -1221,253 +1185,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Started
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#development-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Setup
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code-style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Code Style
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#making-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Making Changes
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Making Changes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#adding-new-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding New Features
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#adding-new-ipc-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding New IPC Commands
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#adding-new-transition-effects" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding New Transition Effects
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#modifying-rendering-pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Modifying Rendering Pipeline
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Testing">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#basic-functionality" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Basic Functionality
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#test-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Test Scripts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ipc-testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPC Testing
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#commit-guidelines" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Guidelines
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Commit Guidelines">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#commit-message-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Message Format
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pull-request-process" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pull Request Process
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#areas-for-contribution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Areas for Contribution
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reporting-issues" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reporting Issues
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#questions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Questions?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#license" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        License
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1684,55 +1401,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
+  <a href="#key-finding-swww-uses-a-cache-system" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Getting Started
+        Key Finding: swww Uses a Cache System
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#development-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Setup
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code-style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Code Style
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#making-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Making Changes
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Making Changes">
+    <nav class="md-nav" aria-label="Key Finding: swww Uses a Cache System">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#adding-new-features" class="md-nav__link">
+  <a href="#1-built-in-cache-system" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding New Features
+        1. Built-in Cache System
       
     </span>
   </a>
@@ -1740,10 +1424,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#adding-new-ipc-commands" class="md-nav__link">
+  <a href="#2-swww-restore-command" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding New IPC Commands
+        2. swww-restore Command
       
     </span>
   </a>
@@ -1751,10 +1435,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#adding-new-transition-effects" class="md-nav__link">
+  <a href="#3-common-restoration-methods" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding New Transition Effects
+        3. Common Restoration Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Common Restoration Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-1-automatic-default-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 1: Automatic (Default Behavior)
       
     </span>
   </a>
@@ -1762,10 +1458,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#modifying-rendering-pipeline" class="md-nav__link">
+  <a href="#method-2-systemd-service-most-common" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Modifying Rendering Pipeline
+        Method 2: Systemd Service (Most Common)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-3-manual-restore-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 3: Manual Restore Command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-4-shell-script-in-startup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 4: Shell Script in Startup
       
     </span>
   </a>
@@ -1776,24 +1494,12 @@
     </nav>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Testing">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#basic-functionality" class="md-nav__link">
+  <a href="#4-cache-vs-state-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Functionality
+        4. Cache vs State Files
       
     </span>
   </a>
@@ -1801,10 +1507,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#test-scripts" class="md-nav__link">
+  <a href="#5-why-swww-doesnt-need-systemd-service" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Test Scripts
+        5. Why swww Doesn't Need Systemd Service
       
     </span>
   </a>
@@ -1812,10 +1518,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ipc-testing" class="md-nav__link">
+  <a href="#6-key-differences-swww-vs-gslapper" class="md-nav__link">
     <span class="md-ellipsis">
       
-        IPC Testing
+        6. Key Differences: swww vs gSlapper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-why-gslapper-needs-systemd-more-than-swww" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Why gSlapper Needs Systemd More Than swww
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-recommendation-for-gslapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Recommendation for gSlapper
       
     </span>
   </a>
@@ -1824,89 +1552,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#commit-guidelines" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Guidelines
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Commit Guidelines">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#commit-message-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Message Format
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pull-request-process" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pull Request Process
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#areas-for-contribution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Areas for Contribution
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reporting-issues" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reporting Issues
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#questions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Questions?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#license" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        License
-      
-    </span>
-  </a>
   
 </li>
       
@@ -1930,144 +1575,171 @@
   
 
 
-<h1 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h1>
-<p>Thank you for your interest in contributing to gSlapper! This guide will help you get started.</p>
-<h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Fork the repository</strong> on GitHub</li>
-<li><strong>Clone your fork</strong>:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/YOUR_USERNAME/gSlapper.git
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>gSlapper
-</code></pre></div></li>
-<li><strong>Create a branch</strong> for your changes:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature/your-feature-name
-</code></pre></div></li>
-</ol>
-<h2 id="development-setup">Development Setup<a class="headerlink" href="#development-setup" title="Permanent link">&para;</a></h2>
-<p>See <a href="../building/">Building from Source</a> for setup instructions.</p>
-<h2 id="code-style">Code Style<a class="headerlink" href="#code-style" title="Permanent link">&para;</a></h2>
+<h1 id="how-swww-handles-wallpaper-restoration-after-reboot">How swww Handles Wallpaper Restoration After Reboot<a class="headerlink" href="#how-swww-handles-wallpaper-restoration-after-reboot" title="Permanent link">&para;</a></h1>
+<h2 id="key-finding-swww-uses-a-cache-system">Key Finding: swww Uses a Cache System<a class="headerlink" href="#key-finding-swww-uses-a-cache-system" title="Permanent link">&para;</a></h2>
+<p>Based on the swww source code and documentation, here's how swww handles restoration:</p>
+<h3 id="1-built-in-cache-system">1. <strong>Built-in Cache System</strong><a class="headerlink" href="#1-built-in-cache-system" title="Permanent link">&para;</a></h3>
+<p>swww-daemon has a <strong>cache system</strong> that stores the last displayed image for each output:</p>
 <ul>
-<li><strong>C code</strong> follows K&amp;R style with 4-space indentation</li>
-<li><strong>GStreamer objects</strong> use <code>g_</code> prefix (GLib naming)</li>
-<li><strong>Wayland objects</strong> use <code>wl_</code> prefix</li>
-<li><strong>Static functions</strong> at file scope</li>
-<li><strong>Global state</strong> in <code>global_state</code> pointer</li>
-<li><strong>Thread communication</strong> via <code>wakeup_pipe</code></li>
+<li><strong>Cache location</strong>: Likely in <code>~/.cache/swww/</code> or similar</li>
+<li><strong>Automatic restoration</strong>: When daemon starts, it automatically loads cached images</li>
+<li><strong>Per-output cache</strong>: Each monitor has its own cached wallpaper</li>
 </ul>
-<h2 id="making-changes">Making Changes<a class="headerlink" href="#making-changes" title="Permanent link">&para;</a></h2>
-<h3 id="adding-new-features">Adding New Features<a class="headerlink" href="#adding-new-features" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Plan your changes</strong> - Consider architecture and impact</li>
-<li><strong>Update documentation</strong> - Add/update relevant docs</li>
-<li><strong>Add tests</strong> - Create test scripts if applicable</li>
-<li><strong>Test thoroughly</strong> - Test on different compositors and setups</li>
-</ol>
-<h3 id="adding-new-ipc-commands">Adding New IPC Commands<a class="headerlink" href="#adding-new-ipc-commands" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Define command handler</strong> in <code>src/main.c</code>'s <code>process_ipc_commands()</code> function</li>
-<li><strong>Parse command arguments</strong> from <code>cmd_line</code> string</li>
-<li><strong>Validate inputs</strong> and check state</li>
-<li><strong>Implement command logic</strong> with thread safety in mind</li>
-<li><strong>Send response</strong> via <code>ipc_send_response(client_fd, response)</code></li>
-<li><strong>Free command</strong> with <code>free(cmd-&gt;cmd_line)</code> and <code>free(cmd)</code></li>
-</ol>
-<p>See existing commands like <code>set-transition</code> or <code>change</code> for examples.</p>
-<h3 id="adding-new-transition-effects">Adding New Transition Effects<a class="headerlink" href="#adding-new-transition-effects" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Add transition type</strong> to <code>transition_type_t</code> enum</li>
-<li><strong>Implement transition function</strong> (similar to <code>update_transition()</code>)</li>
-<li><strong>Update command parser</strong> in IPC <code>set-transition</code> handler</li>
-<li><strong>Add command-line option</strong> parsing in <code>parse_command_line()</code></li>
-<li><strong>Test</strong> with automated and visual tests</li>
-</ol>
-<h3 id="modifying-rendering-pipeline">Modifying Rendering Pipeline<a class="headerlink" href="#modifying-rendering-pipeline" title="Permanent link">&para;</a></h3>
-<ol>
-<li>Locate rendering code in <code>render()</code> function</li>
-<li>Ensure EGL context is current before OpenGL calls</li>
-<li>Lock <code>video_mutex</code> when accessing <code>video_frame_data</code> or <code>transition_state</code></li>
-<li>Update vertex data with <code>update_vertex_data()</code> for scaling changes</li>
-</ol>
-<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
-<h3 id="basic-functionality">Basic Functionality<a class="headerlink" href="#basic-functionality" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Test video playback</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>./build/gslapper<span class="w"> </span>-v<span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Test image display</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>./build/gslapper<span class="w"> </span>-v<span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Test with IPC enabled</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>./build/gslapper<span class="w"> </span>-I<span class="w"> </span>/tmp/test.sock<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+<p><strong>From swww-daemon.1.scd:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>*--no-cache*
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    Don&#39;t search the cache for the last wallpaper for each output.
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    Useful if you always want to select which image &#39;swww&#39; loads manually using
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    &#39;swww img&#39;
+</code></pre></div></p>
+<p>This means:
+- <strong>By default</strong>: swww-daemon automatically restores cached wallpapers on startup
+- <strong>With --no-cache</strong>: Daemon starts without restoring (blank/black screen)</p>
+<h3 id="2-swww-restore-command">2. <strong>swww-restore Command</strong><a class="headerlink" href="#2-swww-restore-command" title="Permanent link">&para;</a></h3>
+<p>swww provides a <code>swww restore</code> command that explicitly restores cached wallpapers:</p>
+<p><strong>From swww-restore.1.scd:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Restores the last displayed image on the specified outputs.
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>This can be used to split initialization (with *swww init --no-daemon*) and
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>cache loading into different steps, in order to avoid race condition traps.
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>You can also use this command to restore the last displayed image when
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>reconnecting a monitor.
+</code></pre></div></p>
+<p><strong>Usage:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>swww<span class="w"> </span>restore<span class="w">                    </span><span class="c1"># Restore all outputs</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>swww<span class="w"> </span>restore<span class="w"> </span>-o<span class="w"> </span>DP-1,DP-3<span class="w">      </span><span class="c1"># Restore specific outputs</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>swww<span class="w"> </span>restore<span class="w"> </span>-n<span class="w"> </span>namespace<span class="w">       </span><span class="c1"># Restore specific namespace</span>
+</code></pre></div></p>
+<h3 id="3-common-restoration-methods">3. <strong>Common Restoration Methods</strong><a class="headerlink" href="#3-common-restoration-methods" title="Permanent link">&para;</a></h3>
+<h4 id="method-1-automatic-default-behavior">Method 1: Automatic (Default Behavior)<a class="headerlink" href="#method-1-automatic-default-behavior" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Just start the daemon - it automatically restores cached wallpapers</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>swww-daemon
 </code></pre></div>
-<h3 id="test-scripts">Test Scripts<a class="headerlink" href="#test-scripts" title="Permanent link">&para;</a></h3>
-<p>Run the included test scripts:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Video format testing</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>./test-all-formats.sh
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Image format testing</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>./test-images.sh
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Wallpaper modes testing</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>./test-wallpaper-modes.sh
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># Transition effects testing</span>
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>./test-transitions-comprehensive.sh
+<p><strong>How it works:</strong>
+- Daemon reads cache files on startup
+- Automatically displays last wallpaper for each output
+- No manual intervention needed</p>
+<h4 id="method-2-systemd-service-most-common">Method 2: Systemd Service (Most Common)<a class="headerlink" href="#method-2-systemd-service-most-common" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">[Service]</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/swww-daemon</span>
 </code></pre></div>
-<h3 id="ipc-testing">IPC Testing<a class="headerlink" href="#ipc-testing" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Start with IPC enabled</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>./build/gslapper<span class="w"> </span>-I<span class="w"> </span>/tmp/test.sock<span class="w"> </span>-vv<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># From another terminal, test commands</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;query&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/test.sock
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/test.sock
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;resume&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/test.sock
+<p><strong>What happens:</strong>
+1. Systemd starts <code>swww-daemon</code> on login
+2. Daemon automatically reads cache and restores wallpapers
+3. Wallpapers appear automatically - no <code>swww restore</code> needed</p>
+<h4 id="method-3-manual-restore-command">Method 3: Manual Restore Command<a class="headerlink" href="#method-3-manual-restore-command" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Start daemon without cache</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>swww-daemon<span class="w"> </span>--no-cache
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Later, manually restore</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>swww<span class="w"> </span>restore
 </code></pre></div>
-<h2 id="commit-guidelines">Commit Guidelines<a class="headerlink" href="#commit-guidelines" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Write clear commit messages</strong> - Explain what and why</li>
-<li><strong>Keep commits focused</strong> - One logical change per commit</li>
-<li><strong>Test before committing</strong> - Ensure changes work</li>
-<li><strong>Update documentation</strong> - Keep docs in sync with code</li>
-</ul>
-<h3 id="commit-message-format">Commit Message Format<a class="headerlink" href="#commit-message-format" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Short summary (50 chars or less)
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>More detailed explanation if needed. Wrap at 72 characters.
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Explain what the change does and why.
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>- Bullet points for multiple changes
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>- Reference issues if applicable
+<p><strong>Use case:</strong> When you want to control when restoration happens</p>
+<h4 id="method-4-shell-script-in-startup">Method 4: Shell Script in Startup<a class="headerlink" href="#method-4-shell-script-in-startup" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># In ~/.bashrc or ~/.zshrc</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>swww-daemon<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>swww<span class="w"> </span>restore<span class="w">  </span><span class="c1"># Explicit restore (optional - daemon does it automatically)</span>
 </code></pre></div>
-<h2 id="pull-request-process">Pull Request Process<a class="headerlink" href="#pull-request-process" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Ensure your code works</strong> - Test on your system</li>
-<li><strong>Update documentation</strong> - Keep docs current</li>
-<li><strong>Write a clear PR description</strong> - Explain changes and motivation</li>
-<li><strong>Reference issues</strong> - Link to related issues if applicable</li>
-<li><strong>Wait for review</strong> - Be responsive to feedback</li>
-</ol>
-<h2 id="areas-for-contribution">Areas for Contribution<a class="headerlink" href="#areas-for-contribution" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Bug fixes</strong> - Report and fix issues</li>
-<li><strong>Performance improvements</strong> - Optimize rendering or memory usage</li>
-<li><strong>New features</strong> - Add requested functionality</li>
-<li><strong>Documentation</strong> - Improve docs and examples</li>
-<li><strong>Testing</strong> - Add test coverage</li>
-<li><strong>Code quality</strong> - Refactor and improve code</li>
-</ul>
-<h2 id="reporting-issues">Reporting Issues<a class="headerlink" href="#reporting-issues" title="Permanent link">&para;</a></h2>
-<p>When reporting issues, please include:</p>
-<ul>
-<li><strong>gSlapper version</strong> - <code>gslapper --version</code> or git commit</li>
-<li><strong>System information</strong> - OS, compositor, GPU</li>
-<li><strong>Steps to reproduce</strong> - Clear reproduction steps</li>
-<li><strong>Expected behavior</strong> - What should happen</li>
-<li><strong>Actual behavior</strong> - What actually happens</li>
-<li><strong>Logs</strong> - Output with <code>-vv</code> flag if applicable</li>
-</ul>
-<h2 id="questions">Questions?<a class="headerlink" href="#questions" title="Permanent link">&para;</a></h2>
-<p>Feel free to open an issue for questions or discussions about contributions.</p>
-<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
-<p>By contributing, you agree that your contributions will be licensed under the MIT License.</p>
+<h3 id="4-cache-vs-state-files">4. <strong>Cache vs State Files</strong><a class="headerlink" href="#4-cache-vs-state-files" title="Permanent link">&para;</a></h3>
+<p><strong>swww approach:</strong>
+- <strong>Cache files</strong> - Store last displayed image path per output
+- <strong>In-memory state</strong> - Daemon keeps state while running
+- <strong>No explicit state files</strong> - Just cache for restoration</p>
+<p><strong>gSlapper approach (current):</strong>
+- <strong>State files</strong> - Store wallpaper path, options, position, pause state
+- <strong>Explicit restoration</strong> - <code>--restore</code> flag loads state
+- <strong>More detailed</strong> - Includes video position, options, etc.</p>
+<h3 id="5-why-swww-doesnt-need-systemd-service">5. <strong>Why swww Doesn't Need Systemd Service</strong><a class="headerlink" href="#5-why-swww-doesnt-need-systemd-service" title="Permanent link">&para;</a></h3>
+<p><strong>swww-daemon:</strong>
+- <strong>Long-running process</strong> - Stays alive indefinitely
+- <strong>Automatic cache restoration</strong> - Restores on startup by default
+- <strong>Manual startup works</strong> - Users can just run <code>swww-daemon &amp;</code> in shell config
+- <strong>Systemd is optional</strong> - Convenience, not requirement</p>
+<p><strong>Common swww setup patterns:</strong></p>
+<p><strong>Pattern A: Systemd Service (Recommended)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">[Service]</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/swww-daemon</span>
+</code></pre></div>
+- Automatic startup on login
+- Automatic cache restoration
+- Process management</p>
+<p><strong>Pattern B: Shell Script</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># ~/.bashrc or ~/.zshrc</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>swww-daemon<span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div>
+- Manual startup
+- Still gets automatic cache restoration
+- Simpler, no systemd knowledge needed</p>
+<p><strong>Pattern C: Explicit Restore</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>swww-daemon<span class="w"> </span>--no-cache<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>swww<span class="w"> </span>restore<span class="w">  </span><span class="c1"># Explicit restore when ready</span>
+</code></pre></div>
+- Control over when restoration happens
+- Useful for race condition avoidance</p>
+<h3 id="6-key-differences-swww-vs-gslapper">6. <strong>Key Differences: swww vs gSlapper</strong><a class="headerlink" href="#6-key-differences-swww-vs-gslapper" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>swww</th>
+<th>gSlapper</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Architecture</strong></td>
+<td>Daemon (long-running)</td>
+<td>One-shot process</td>
+</tr>
+<tr>
+<td><strong>Restoration</strong></td>
+<td>Automatic cache on startup</td>
+<td>Explicit <code>--restore</code> flag</td>
+</tr>
+<tr>
+<td><strong>State Storage</strong></td>
+<td>Cache files (image paths)</td>
+<td>State files (path, options, position)</td>
+</tr>
+<tr>
+<td><strong>After Reboot</strong></td>
+<td>Daemon auto-restores cache</td>
+<td>Must restart with <code>--restore</code></td>
+</tr>
+<tr>
+<td><strong>Systemd Need</strong></td>
+<td>Optional (convenience)</td>
+<td><strong>Required</strong> (for auto-restore)</td>
+</tr>
+<tr>
+<td><strong>Manual Startup</strong></td>
+<td>Works fine (<code>swww-daemon &amp;</code>)</td>
+<td>Works but no auto-restore</td>
+</tr>
+</tbody>
+</table>
+<h3 id="7-why-gslapper-needs-systemd-more-than-swww">7. <strong>Why gSlapper Needs Systemd More Than swww</strong><a class="headerlink" href="#7-why-gslapper-needs-systemd-more-than-swww" title="Permanent link">&para;</a></h3>
+<p><strong>swww:</strong>
+- Daemon stays alive - can be started manually
+- Automatic cache restoration - works without systemd
+- Systemd is just for convenience (auto-start, process management)</p>
+<p><strong>gSlapper:</strong>
+- Process exits when done - needs restart after reboot
+- No automatic restoration - requires <code>--restore</code> flag
+- <strong>Systemd is essential</strong> - Without it, users must manually run <code>gslapper --restore</code> after every login</p>
+<h3 id="8-recommendation-for-gslapper">8. <strong>Recommendation for gSlapper</strong><a class="headerlink" href="#8-recommendation-for-gslapper" title="Permanent link">&para;</a></h3>
+<p><strong>We should:</strong>
+1. ✅ <strong>Keep systemd service</strong> - Essential for automatic restoration
+2. ✅ <strong>Keep state files</strong> - More detailed than swww's cache (video position, etc.)
+3. ✅ <strong>Keep <code>--restore</code> flag</strong> - Explicit restoration (like <code>swww restore</code>)
+4. ✅ <strong>Document manual alternative</strong> - Show shell script approach for non-systemd users</p>
+<p><strong>We could add (future enhancement):</strong>
+- Automatic restoration on startup (like swww's cache)
+- But this conflicts with our architecture (one-shot process)</p>
+<p><strong>Current approach is correct:</strong>
+- Systemd service provides automatic restoration
+- Matches user expectations (wallpaper on login)
+- More powerful than swww (video position, options, etc.)</p>
 
 
 

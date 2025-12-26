@@ -12,31 +12,27 @@
         <meta name="author" content="Nomadcxx">
       
       
-        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/development/contributing/">
+        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/systemd-service-setup/">
       
       
-        <link rel="prev" href="../building/">
-      
-      
-        <link rel="next" href="../api-reference/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Contributing - gSlapper Documentation</title>
+        <title>Systemd Service Setup for gSlapper - gSlapper Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -55,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="../../css/extra.css">
+      <link rel="stylesheet" href="../css/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -82,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#contributing" class="md-skip">
+        <a href="#systemd-service-setup-for-gslapper" class="md-skip">
           Skip to content
         </a>
       
@@ -96,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="gSlapper Documentation" class="md-header__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+    <a href=".." title="gSlapper Documentation" class="md-header__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -116,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Contributing
+              Systemd Service Setup for gSlapper
             
           </span>
         </div>
@@ -229,7 +225,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href=".." class="md-tabs__link">
         
   
   
@@ -250,7 +246,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../getting-started/" class="md-tabs__link">
+        <a href="../getting-started/" class="md-tabs__link">
           
   
   
@@ -272,7 +268,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../user-guide/" class="md-tabs__link">
+        <a href="../user-guide/" class="md-tabs__link">
           
   
   
@@ -294,7 +290,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../advanced/" class="md-tabs__link">
+        <a href="../advanced/" class="md-tabs__link">
           
   
   
@@ -312,13 +308,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../index.md" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../development/index.md" class="md-tabs__link">
           
   
   
@@ -340,7 +334,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../TO_IMPLEMENT.md" class="md-tabs__link">
+        <a href="../TO_IMPLEMENT.md" class="md-tabs__link">
           
   
   
@@ -376,7 +370,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="gSlapper Documentation" class="md-nav__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+    <a href=".." title="gSlapper Documentation" class="md-nav__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -406,7 +400,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -464,7 +458,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../getting-started/" class="md-nav__link ">
+            <a href="../getting-started/" class="md-nav__link ">
               
   
   
@@ -508,7 +502,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/installation/" class="md-nav__link">
+      <a href="../getting-started/installation/" class="md-nav__link">
         
   
   
@@ -536,7 +530,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/quick-start/" class="md-nav__link">
+      <a href="../getting-started/quick-start/" class="md-nav__link">
         
   
   
@@ -564,7 +558,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/configuration/" class="md-nav__link">
+      <a href="../getting-started/configuration/" class="md-nav__link">
         
   
   
@@ -636,7 +630,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../user-guide/" class="md-nav__link ">
+            <a href="../user-guide/" class="md-nav__link ">
               
   
   
@@ -680,7 +674,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/video-wallpapers/" class="md-nav__link">
+      <a href="../user-guide/video-wallpapers/" class="md-nav__link">
         
   
   
@@ -708,7 +702,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/static-images/" class="md-nav__link">
+      <a href="../user-guide/static-images/" class="md-nav__link">
         
   
   
@@ -736,7 +730,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/scaling-modes/" class="md-nav__link">
+      <a href="../user-guide/scaling-modes/" class="md-nav__link">
         
   
   
@@ -764,7 +758,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/ipc-control/" class="md-nav__link">
+      <a href="../user-guide/ipc-control/" class="md-nav__link">
         
   
   
@@ -792,7 +786,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/command-line-options/" class="md-nav__link">
+      <a href="../user-guide/command-line-options/" class="md-nav__link">
         
   
   
@@ -820,7 +814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/persistent-wallpapers/" class="md-nav__link">
+      <a href="../user-guide/persistent-wallpapers/" class="md-nav__link">
         
   
   
@@ -888,7 +882,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../advanced/" class="md-nav__link ">
+            <a href="../advanced/" class="md-nav__link ">
               
   
   
@@ -932,7 +926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/transitions/" class="md-nav__link">
+      <a href="../advanced/transitions/" class="md-nav__link">
         
   
   
@@ -960,7 +954,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/multi-monitor/" class="md-nav__link">
+      <a href="../advanced/multi-monitor/" class="md-nav__link">
         
   
   
@@ -988,7 +982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/performance/" class="md-nav__link">
+      <a href="../advanced/performance/" class="md-nav__link">
         
   
   
@@ -1016,7 +1010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/troubleshooting/" class="md-nav__link">
+      <a href="../advanced/troubleshooting/" class="md-nav__link">
         
   
   
@@ -1048,10 +1042,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -1071,22 +1063,21 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1104,7 +1095,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1122,7 +1113,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../index.md" class="md-nav__link">
+      <a href="../development/index.md" class="md-nav__link">
         
   
   
@@ -1150,7 +1141,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../building/" class="md-nav__link">
+      <a href="../development/building/" class="md-nav__link">
         
   
   
@@ -1175,37 +1166,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Contributing
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../development/contributing/" class="md-nav__link">
         
   
   
@@ -1221,253 +1185,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Started
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#development-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Setup
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code-style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Code Style
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#making-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Making Changes
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Making Changes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#adding-new-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding New Features
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#adding-new-ipc-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding New IPC Commands
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#adding-new-transition-effects" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding New Transition Effects
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#modifying-rendering-pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Modifying Rendering Pipeline
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Testing">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#basic-functionality" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Basic Functionality
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#test-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Test Scripts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ipc-testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPC Testing
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#commit-guidelines" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Guidelines
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Commit Guidelines">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#commit-message-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Message Format
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pull-request-process" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pull Request Process
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#areas-for-contribution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Areas for Contribution
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reporting-issues" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reporting Issues
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#questions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Questions?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#license" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        License
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1480,7 +1197,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-reference/" class="md-nav__link">
+      <a href="../development/api-reference/" class="md-nav__link">
         
   
   
@@ -1508,7 +1225,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../architecture/" class="md-nav__link">
+      <a href="../development/architecture/" class="md-nav__link">
         
   
   
@@ -1536,7 +1253,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../systemd-service/" class="md-nav__link">
+      <a href="../development/systemd-service/" class="md-nav__link">
         
   
   
@@ -1629,7 +1346,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../TO_IMPLEMENT.md" class="md-nav__link">
+      <a href="../TO_IMPLEMENT.md" class="md-nav__link">
         
   
   
@@ -1684,55 +1401,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
+  <a href="#quick-setup" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Getting Started
+        Quick Setup
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#development-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Setup
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code-style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Code Style
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#making-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Making Changes
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Making Changes">
+    <nav class="md-nav" aria-label="Quick Setup">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#adding-new-features" class="md-nav__link">
+  <a href="#1-create-environment-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding New Features
+        1. Create Environment File
       
     </span>
   </a>
@@ -1740,10 +1424,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#adding-new-ipc-commands" class="md-nav__link">
+  <a href="#2-set-initial-wallpaper" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding New IPC Commands
+        2. Set Initial Wallpaper
       
     </span>
   </a>
@@ -1751,10 +1435,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#adding-new-transition-effects" class="md-nav__link">
+  <a href="#3-create-service-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding New Transition Effects
+        3. Create Service File
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Create Service File">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-single-service-all-monitors-same-wallpaper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A: Single Service (All Monitors - Same Wallpaper)
       
     </span>
   </a>
@@ -1762,10 +1458,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#modifying-rendering-pipeline" class="md-nav__link">
+  <a href="#option-b-per-monitor-services-different-wallpapers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Modifying Rendering Pipeline
+        Option B: Per-Monitor Services (Different Wallpapers)
       
     </span>
   </a>
@@ -1776,51 +1472,6 @@
     </nav>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Testing">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#basic-functionality" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Basic Functionality
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#test-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Test Scripts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ipc-testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPC Testing
-      
-    </span>
-  </a>
-  
-</li>
         
       </ul>
     </nav>
@@ -1828,38 +1479,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#commit-guidelines" class="md-nav__link">
+  <a href="#service-management" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Commit Guidelines
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Commit Guidelines">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#commit-message-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Message Format
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pull-request-process" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pull Request Process
+        Service Management
       
     </span>
   </a>
@@ -1867,10 +1490,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#areas-for-contribution" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Areas for Contribution
+        How It Works
       
     </span>
   </a>
@@ -1878,10 +1501,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#reporting-issues" class="md-nav__link">
+  <a href="#state-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reporting Issues
+        State Files
       
     </span>
   </a>
@@ -1889,10 +1512,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#questions" class="md-nav__link">
+  <a href="#comparison-with-swww" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Questions?
+        Comparison with swww
       
     </span>
   </a>
@@ -1900,10 +1523,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#license" class="md-nav__link">
+  <a href="#troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
       
-        License
+        Troubleshooting
       
     </span>
   </a>
@@ -1930,144 +1553,179 @@
   
 
 
-<h1 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h1>
-<p>Thank you for your interest in contributing to gSlapper! This guide will help you get started.</p>
-<h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Fork the repository</strong> on GitHub</li>
-<li><strong>Clone your fork</strong>:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/YOUR_USERNAME/gSlapper.git
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>gSlapper
-</code></pre></div></li>
-<li><strong>Create a branch</strong> for your changes:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature/your-feature-name
-</code></pre></div></li>
-</ol>
-<h2 id="development-setup">Development Setup<a class="headerlink" href="#development-setup" title="Permanent link">&para;</a></h2>
-<p>See <a href="../building/">Building from Source</a> for setup instructions.</p>
-<h2 id="code-style">Code Style<a class="headerlink" href="#code-style" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>C code</strong> follows K&amp;R style with 4-space indentation</li>
-<li><strong>GStreamer objects</strong> use <code>g_</code> prefix (GLib naming)</li>
-<li><strong>Wayland objects</strong> use <code>wl_</code> prefix</li>
-<li><strong>Static functions</strong> at file scope</li>
-<li><strong>Global state</strong> in <code>global_state</code> pointer</li>
-<li><strong>Thread communication</strong> via <code>wakeup_pipe</code></li>
-</ul>
-<h2 id="making-changes">Making Changes<a class="headerlink" href="#making-changes" title="Permanent link">&para;</a></h2>
-<h3 id="adding-new-features">Adding New Features<a class="headerlink" href="#adding-new-features" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Plan your changes</strong> - Consider architecture and impact</li>
-<li><strong>Update documentation</strong> - Add/update relevant docs</li>
-<li><strong>Add tests</strong> - Create test scripts if applicable</li>
-<li><strong>Test thoroughly</strong> - Test on different compositors and setups</li>
-</ol>
-<h3 id="adding-new-ipc-commands">Adding New IPC Commands<a class="headerlink" href="#adding-new-ipc-commands" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Define command handler</strong> in <code>src/main.c</code>'s <code>process_ipc_commands()</code> function</li>
-<li><strong>Parse command arguments</strong> from <code>cmd_line</code> string</li>
-<li><strong>Validate inputs</strong> and check state</li>
-<li><strong>Implement command logic</strong> with thread safety in mind</li>
-<li><strong>Send response</strong> via <code>ipc_send_response(client_fd, response)</code></li>
-<li><strong>Free command</strong> with <code>free(cmd-&gt;cmd_line)</code> and <code>free(cmd)</code></li>
-</ol>
-<p>See existing commands like <code>set-transition</code> or <code>change</code> for examples.</p>
-<h3 id="adding-new-transition-effects">Adding New Transition Effects<a class="headerlink" href="#adding-new-transition-effects" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Add transition type</strong> to <code>transition_type_t</code> enum</li>
-<li><strong>Implement transition function</strong> (similar to <code>update_transition()</code>)</li>
-<li><strong>Update command parser</strong> in IPC <code>set-transition</code> handler</li>
-<li><strong>Add command-line option</strong> parsing in <code>parse_command_line()</code></li>
-<li><strong>Test</strong> with automated and visual tests</li>
-</ol>
-<h3 id="modifying-rendering-pipeline">Modifying Rendering Pipeline<a class="headerlink" href="#modifying-rendering-pipeline" title="Permanent link">&para;</a></h3>
-<ol>
-<li>Locate rendering code in <code>render()</code> function</li>
-<li>Ensure EGL context is current before OpenGL calls</li>
-<li>Lock <code>video_mutex</code> when accessing <code>video_frame_data</code> or <code>transition_state</code></li>
-<li>Update vertex data with <code>update_vertex_data()</code> for scaling changes</li>
-</ol>
-<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
-<h3 id="basic-functionality">Basic Functionality<a class="headerlink" href="#basic-functionality" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Test video playback</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>./build/gslapper<span class="w"> </span>-v<span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
+<h1 id="systemd-service-setup-for-gslapper">Systemd Service Setup for gSlapper<a class="headerlink" href="#systemd-service-setup-for-gslapper" title="Permanent link">&para;</a></h1>
+<p>gSlapper can run as a systemd user service, similar to how <code>swww-daemon</code> works. This allows automatic wallpaper restoration on login.</p>
+<h2 id="quick-setup">Quick Setup<a class="headerlink" href="#quick-setup" title="Permanent link">&para;</a></h2>
+<h3 id="1-create-environment-file">1. Create Environment File<a class="headerlink" href="#1-create-environment-file" title="Permanent link">&para;</a></h3>
+<p><strong>Required:</strong> Create <code>~/.config/gslapper/environment</code> with your Wayland display:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.config/gslapper
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;WAYLAND_DISPLAY=</span><span class="nv">$WAYLAND_DISPLAY</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>~/.config/gslapper/environment
+</code></pre></div>
+<p><strong>Finding your WAYLAND_DISPLAY:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">echo</span><span class="w"> </span><span class="nv">$WAYLAND_DISPLAY</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Common values: wayland-0, wayland-1</span>
+</code></pre></div></p>
+<h3 id="2-set-initial-wallpaper">2. Set Initial Wallpaper<a class="headerlink" href="#2-set-initial-wallpaper" title="Permanent link">&para;</a></h3>
+<p>Start gSlapper manually once to set your wallpaper (this saves state):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Single monitor</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Test image display</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>./build/gslapper<span class="w"> </span>-v<span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Test with IPC enabled</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>./build/gslapper<span class="w"> </span>-I<span class="w"> </span>/tmp/test.sock<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># All monitors (same wallpaper)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span>/path/to/video.mp4
 </code></pre></div>
-<h3 id="test-scripts">Test Scripts<a class="headerlink" href="#test-scripts" title="Permanent link">&para;</a></h3>
-<p>Run the included test scripts:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Video format testing</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>./test-all-formats.sh
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Image format testing</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>./test-images.sh
+<p>Stop with <code>Ctrl+C</code>. The state is saved automatically.</p>
+<h3 id="3-create-service-file">3. Create Service File<a class="headerlink" href="#3-create-service-file" title="Permanent link">&para;</a></h3>
+<p>Choose one of the following approaches:</p>
+<h4 id="option-a-single-service-all-monitors-same-wallpaper">Option A: Single Service (All Monitors - Same Wallpaper)<a class="headerlink" href="#option-a-single-service-all-monitors-same-wallpaper" title="Permanent link">&para;</a></h4>
+<p>Create <code>~/.config/systemd/user/gslapper.service</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">[Unit]</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="na">Description</span><span class="o">=</span><span class="s">gSlapper Wallpaper Service</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="na">Documentation</span><span class="o">=</span><span class="s">https://nomadcxx.github.io/gSlapper/</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="na">After</span><span class="o">=</span><span class="s">graphical-session.target</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="na">Wants</span><span class="o">=</span><span class="s">graphical-session.target</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Wallpaper modes testing</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>./test-wallpaper-modes.sh
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># Transition effects testing</span>
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>./test-transitions-comprehensive.sh
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="k">[Service]</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="na">Type</span><span class="o">=</span><span class="s">notify</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/gslapper --systemd --restore &#39;*&#39;</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="na">ExecReload</span><span class="o">=</span><span class="s">/bin/kill -HUP $MAINPID</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="na">Restart</span><span class="o">=</span><span class="s">on-failure</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="na">RestartSec</span><span class="o">=</span><span class="s">5</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="na">TimeoutStopSec</span><span class="o">=</span><span class="s">30</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="c1"># CRITICAL: Wayland environment variables</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="na">EnvironmentFile</span><span class="o">=</span><span class="s">%h/.config/gslapper/environment</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="na">Environment</span><span class="o">=</span><span class="s">XDG_RUNTIME_DIR=%t</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="c1"># Resource limits</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="na">MemoryMax</span><span class="o">=</span><span class="s">512M</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="na">CPUQuota</span><span class="o">=</span><span class="s">50%</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="c1"># Security</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="na">NoNewPrivileges</span><span class="o">=</span><span class="s">true</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="na">PrivateTmp</span><span class="o">=</span><span class="s">true</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a>
+<a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="k">[Install]</span>
+<a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="na">WantedBy</span><span class="o">=</span><span class="s">default.target</span>
 </code></pre></div>
-<h3 id="ipc-testing">IPC Testing<a class="headerlink" href="#ipc-testing" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Start with IPC enabled</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>./build/gslapper<span class="w"> </span>-I<span class="w"> </span>/tmp/test.sock<span class="w"> </span>-vv<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># From another terminal, test commands</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;query&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/test.sock
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/test.sock
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;resume&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/test.sock
+<p><strong>Enable and start:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>daemon-reload
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper.service
+</code></pre></div></p>
+<h4 id="option-b-per-monitor-services-different-wallpapers">Option B: Per-Monitor Services (Different Wallpapers)<a class="headerlink" href="#option-b-per-monitor-services-different-wallpapers" title="Permanent link">&para;</a></h4>
+<p>Create <code>~/.config/systemd/user/gslapper@.service</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">[Unit]</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="na">Description</span><span class="o">=</span><span class="s">gSlapper Wallpaper Service for %i</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="na">Documentation</span><span class="o">=</span><span class="s">https://nomadcxx.github.io/gSlapper/</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="na">After</span><span class="o">=</span><span class="s">graphical-session.target</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="na">Wants</span><span class="o">=</span><span class="s">graphical-session.target</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="k">[Service]</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="na">Type</span><span class="o">=</span><span class="s">notify</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/gslapper --systemd --restore %i</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="na">ExecReload</span><span class="o">=</span><span class="s">/bin/kill -HUP $MAINPID</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="na">Restart</span><span class="o">=</span><span class="s">on-failure</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="na">RestartSec</span><span class="o">=</span><span class="s">5</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="na">TimeoutStopSec</span><span class="o">=</span><span class="s">30</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="c1"># CRITICAL: Wayland environment variables</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="na">EnvironmentFile</span><span class="o">=</span><span class="s">%h/.config/gslapper/environment</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="na">Environment</span><span class="o">=</span><span class="s">XDG_RUNTIME_DIR=%t</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="c1"># Resource limits</span>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="na">MemoryMax</span><span class="o">=</span><span class="s">512M</span>
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="na">CPUQuota</span><span class="o">=</span><span class="s">50%</span>
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="c1"># Security</span>
+<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="na">NoNewPrivileges</span><span class="o">=</span><span class="s">true</span>
+<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="na">PrivateTmp</span><span class="o">=</span><span class="s">true</span>
+<a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>
+<a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="k">[Install]</span>
+<a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="na">WantedBy</span><span class="o">=</span><span class="s">default.target</span>
 </code></pre></div>
-<h2 id="commit-guidelines">Commit Guidelines<a class="headerlink" href="#commit-guidelines" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Write clear commit messages</strong> - Explain what and why</li>
-<li><strong>Keep commits focused</strong> - One logical change per commit</li>
-<li><strong>Test before committing</strong> - Ensure changes work</li>
-<li><strong>Update documentation</strong> - Keep docs in sync with code</li>
-</ul>
-<h3 id="commit-message-format">Commit Message Format<a class="headerlink" href="#commit-message-format" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Short summary (50 chars or less)
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>More detailed explanation if needed. Wrap at 72 characters.
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Explain what the change does and why.
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>- Bullet points for multiple changes
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>- Reference issues if applicable
+<p><strong>Set wallpapers per monitor:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Set wallpaper on DP-1</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/video1.mp4
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># Ctrl+C to stop (saves state)</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># Set wallpaper on DP-3</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-3<span class="w"> </span>/path/to/image.jpg
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Ctrl+C to stop (saves state)</span>
+</code></pre></div></p>
+<p><strong>Enable per monitor:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>daemon-reload
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper@DP-1.service
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper@DP-3.service
+</code></pre></div></p>
+<h2 id="service-management">Service Management<a class="headerlink" href="#service-management" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Check status</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>status<span class="w"> </span>gslapper.service
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># View logs</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>-u<span class="w"> </span>gslapper.service<span class="w"> </span>-f
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># Reload (saves state, restarts)</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>reload<span class="w"> </span>gslapper.service
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="c1"># Restart</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>restart<span class="w"> </span>gslapper.service
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="c1"># Stop</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>stop<span class="w"> </span>gslapper.service
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="c1"># Disable autostart</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>disable<span class="w"> </span>gslapper.service
 </code></pre></div>
-<h2 id="pull-request-process">Pull Request Process<a class="headerlink" href="#pull-request-process" title="Permanent link">&para;</a></h2>
+<h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Ensure your code works</strong> - Test on your system</li>
-<li><strong>Update documentation</strong> - Keep docs current</li>
-<li><strong>Write a clear PR description</strong> - Explain changes and motivation</li>
-<li><strong>Reference issues</strong> - Link to related issues if applicable</li>
-<li><strong>Wait for review</strong> - Be responsive to feedback</li>
+<li><strong>Service starts</strong> with <code>--systemd --restore &lt;output&gt;</code> flags</li>
+<li><strong>Restores state</strong> from <code>~/.local/state/gslapper/state-&lt;output&gt;.txt</code></li>
+<li><strong>Resumes wallpaper</strong> at saved position (videos) or shows saved image</li>
+<li><strong>On reload/stop</strong> saves current state automatically</li>
+<li><strong>On restart</strong> restores from saved state</li>
 </ol>
-<h2 id="areas-for-contribution">Areas for Contribution<a class="headerlink" href="#areas-for-contribution" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Bug fixes</strong> - Report and fix issues</li>
-<li><strong>Performance improvements</strong> - Optimize rendering or memory usage</li>
-<li><strong>New features</strong> - Add requested functionality</li>
-<li><strong>Documentation</strong> - Improve docs and examples</li>
-<li><strong>Testing</strong> - Add test coverage</li>
-<li><strong>Code quality</strong> - Refactor and improve code</li>
-</ul>
-<h2 id="reporting-issues">Reporting Issues<a class="headerlink" href="#reporting-issues" title="Permanent link">&para;</a></h2>
-<p>When reporting issues, please include:</p>
-<ul>
-<li><strong>gSlapper version</strong> - <code>gslapper --version</code> or git commit</li>
-<li><strong>System information</strong> - OS, compositor, GPU</li>
-<li><strong>Steps to reproduce</strong> - Clear reproduction steps</li>
-<li><strong>Expected behavior</strong> - What should happen</li>
-<li><strong>Actual behavior</strong> - What actually happens</li>
-<li><strong>Logs</strong> - Output with <code>-vv</code> flag if applicable</li>
-</ul>
-<h2 id="questions">Questions?<a class="headerlink" href="#questions" title="Permanent link">&para;</a></h2>
-<p>Feel free to open an issue for questions or discussions about contributions.</p>
-<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
-<p>By contributing, you agree that your contributions will be licensed under the MIT License.</p>
+<h2 id="state-files">State Files<a class="headerlink" href="#state-files" title="Permanent link">&para;</a></h2>
+<p>State files are saved automatically to:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>~/.local/state/gslapper/state-DP-1.txt
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>~/.local/state/gslapper/state-DP-3.txt
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>~/.local/state/gslapper/state.txt  (for &#39;*&#39; output)
+</code></pre></div></p>
+<p>Each file contains:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>version=1
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>output=DP-1
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>path=/path/to/wallpaper.mp4
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>type=video
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>options=loop panscan=0.8
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>position=123.45
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>paused=0
+</code></pre></div></p>
+<h2 id="comparison-with-swww">Comparison with swww<a class="headerlink" href="#comparison-with-swww" title="Permanent link">&para;</a></h2>
+<p><strong>swww:</strong>
+- <code>swww-daemon</code> runs as a single daemon process
+- Systemd service: <code>ExecStart=/usr/bin/swww-daemon</code>
+- Automatic cache restoration on startup (built-in)
+- Manages all outputs in one process</p>
+<p><strong>gSlapper:</strong>
+- One process per wallpaper (like mpvpaper)
+- Systemd service: <code>ExecStart=/usr/bin/gslapper --systemd --restore &lt;output&gt;</code>
+- Explicit state restoration via <code>--restore</code> flag
+- Each monitor can have its own service instance
+- More detailed state (video position, pause state, options)</p>
+<p><strong>Why the difference:</strong>
+- swww is a daemon that stays alive - automatic cache restoration works naturally
+- gSlapper is one-shot process - needs systemd to restart and restore after reboot
+- Both approaches work, but gSlapper's systemd service is essential for persistence</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<p><strong>Service fails to start:</strong>
+- Check <code>journalctl --user -u gslapper.service</code>
+- Verify <code>~/.config/gslapper/environment</code> exists and has <code>WAYLAND_DISPLAY</code>
+- Ensure state file exists (set wallpaper manually first)</p>
+<p><strong>Wallpaper not restoring:</strong>
+- Check state file exists: <code>ls ~/.local/state/gslapper/</code>
+- Verify path in state file still exists
+- Check service logs for errors</p>
+<p><strong>Multiple monitors:</strong>
+- Use template service (<code>gslapper@.service</code>) for per-monitor instances
+- Or use single service with <code>'*'</code> for same wallpaper on all monitors</p>
 
 
 
@@ -2155,10 +1813,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

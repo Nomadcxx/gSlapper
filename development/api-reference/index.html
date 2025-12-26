@@ -1,0 +1,4121 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Complete documentation for gSlapper - GStreamer-based wallpaper player for Wayland">
+      
+      
+        <meta name="author" content="Nomadcxx">
+      
+      
+        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/development/api-reference/">
+      
+      
+        <link rel="prev" href="../contributing/">
+      
+      
+        <link rel="next" href="../architecture/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>API Reference - gSlapper Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Code:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Fira Code";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="green" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gSlapper Documentation" class="md-header__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gSlapper Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="green" data-md-color-accent="green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="green"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Nomadcxx/gSlapper" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Nomadcxx/gSlapper
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../advanced/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Advanced
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../index.md" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../TO_IMPLEMENT.md" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Project
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gSlapper Documentation" class="md-nav__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gSlapper Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Nomadcxx/gSlapper" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Nomadcxx/gSlapper
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../user-guide/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/video-wallpapers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Video Wallpapers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/static-images/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Static Images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/scaling-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scaling Modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/ipc-control/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IPC Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/command-line-options/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command Line Options
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/persistent-wallpapers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistent Wallpapers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../advanced/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Advanced
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/transitions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transitions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/multi-monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Monitor Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    None
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../building/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building from Source
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ipc-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPC API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IPC API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Initialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipc_initconst-char-socket_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_init(const char *socket_path)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc_shutdownvoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_shutdown(void)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wakeup-mechanism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wakeup Mechanism
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wakeup Mechanism">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipc_get_wakeup_fdvoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_get_wakeup_fd(void)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc_drain_wakeupvoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_drain_wakeup(void)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Queue
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Command Queue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipc_dequeue_commandvoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_dequeue_command(void)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc_send_responseint-client_fd-const-char-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_send_response(int client_fd, const char *response)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPC Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IPC Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-client-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Client Code
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-structures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Structures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Structures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipc_command_t" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_command_t
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preload_entry_t" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preload_entry_t
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-management-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Management API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="State Management API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-structures_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Structures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Structures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wallpaper_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wallpaper_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#path-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Path Resolution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Path Resolution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_state_file_pathconst-char-output_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_state_file_path(const char *output_name)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-file-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State File Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="State File Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#save_state_fileconst-char-path-const-struct-wallpaper_state-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save_state_file(const char *path, const struct wallpaper_state *state)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load_state_fileconst-char-path-struct-wallpaper_state-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load_state_file(const char *path, struct wallpaper_state *state)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#free_wallpaper_statestruct-wallpaper_state-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        free_wallpaper_state(struct wallpaper_state *state)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logging API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cflp_successchar-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cflp_success(char *msg, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cflp_errorchar-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cflp_error(char *msg, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cflp_warningchar-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cflp_warning(char *msg, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cflp_infochar-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cflp_info(char *msg, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cflp_customchar-color-char-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cflp_custom(char *color, char *msg, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Color Constants
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internal-apis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Internal APIs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Internal APIs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wayland-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wayland Integration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wayland Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#global-state-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global State Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-output-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display Output Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gstreamer-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GStreamer Pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GStreamer Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#global-gstreamer-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global GStreamer Elements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#video-texture-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Video Texture Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frame-rate-limiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frame Rate Limiting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-management-globals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Management Globals
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transition-effects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transition Effects
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-parsing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command-Line Parsing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Command-Line Parsing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gstreamer-options-passed-via-o" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GStreamer Options (passed via -o)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#helper-programs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Helper Programs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Helper Programs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#holderc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        holder.c
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thread-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Thread Safety
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Thread Safety">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mutexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#thread-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Thread Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-return-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Return Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-with-these-apis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building with these APIs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building with these APIs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-custom-wallpaper-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Custom Wallpaper Manager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-state-based-wallpaper-switcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: State-Based Wallpaper Switcher
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../systemd-service/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systemd Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Project
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../TO_IMPLEMENT.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TO IMPLEMENT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ipc-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPC API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IPC API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Initialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipc_initconst-char-socket_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_init(const char *socket_path)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc_shutdownvoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_shutdown(void)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wakeup-mechanism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wakeup Mechanism
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wakeup Mechanism">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipc_get_wakeup_fdvoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_get_wakeup_fd(void)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc_drain_wakeupvoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_drain_wakeup(void)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Queue
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Command Queue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipc_dequeue_commandvoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_dequeue_command(void)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc_send_responseint-client_fd-const-char-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_send_response(int client_fd, const char *response)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPC Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IPC Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-client-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Client Code
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-structures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Structures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Structures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipc_command_t" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ipc_command_t
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preload_entry_t" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preload_entry_t
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-management-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Management API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="State Management API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-structures_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Structures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Structures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wallpaper_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wallpaper_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#path-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Path Resolution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Path Resolution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_state_file_pathconst-char-output_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_state_file_path(const char *output_name)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-file-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State File Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="State File Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#save_state_fileconst-char-path-const-struct-wallpaper_state-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save_state_file(const char *path, const struct wallpaper_state *state)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load_state_fileconst-char-path-struct-wallpaper_state-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load_state_file(const char *path, struct wallpaper_state *state)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#free_wallpaper_statestruct-wallpaper_state-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        free_wallpaper_state(struct wallpaper_state *state)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logging API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cflp_successchar-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cflp_success(char *msg, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cflp_errorchar-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cflp_error(char *msg, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cflp_warningchar-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cflp_warning(char *msg, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cflp_infochar-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cflp_info(char *msg, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cflp_customchar-color-char-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cflp_custom(char *color, char *msg, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Color Constants
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internal-apis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Internal APIs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Internal APIs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wayland-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wayland Integration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wayland Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#global-state-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global State Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-output-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display Output Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gstreamer-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GStreamer Pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GStreamer Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#global-gstreamer-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global GStreamer Elements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#video-texture-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Video Texture Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frame-rate-limiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frame Rate Limiting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-management-globals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Management Globals
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transition-effects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transition Effects
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-parsing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command-Line Parsing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Command-Line Parsing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gstreamer-options-passed-via-o" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GStreamer Options (passed via -o)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#helper-programs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Helper Programs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Helper Programs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#holderc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        holder.c
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thread-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Thread Safety
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Thread Safety">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mutexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#thread-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Thread Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-return-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Return Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-with-these-apis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building with these APIs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building with these APIs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-custom-wallpaper-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Custom Wallpaper Manager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-state-based-wallpaper-switcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: State-Based Wallpaper Switcher
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h1>
+<p>This document provides a comprehensive reference for gSlapper's public APIs, internal functions, and data structures.</p>
+<p><strong>Note</strong>: This is a developer-facing API reference. For user-facing command-line options, see <a href="./command-line-options.md">Command Line Options</a>.</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="#ipc-api">IPC API</a></li>
+<li><a href="#state-management-api">State Management API</a></li>
+<li><a href="#logging-api">Logging API</a></li>
+<li><a href="#internal-apis">Internal APIs</a></li>
+<li><a href="#wayland-integration">Wayland Integration</a></li>
+<li><a href="#gstreamer-pipeline">GStreamer Pipeline</a></li>
+<li><a href="#rendering">Rendering</a></li>
+<li><a href="#command-line-parsing">Command-Line Parsing</a></li>
+</ul>
+<hr />
+<h2 id="ipc-api">IPC API<a class="headerlink" href="#ipc-api" title="Permanent link">&para;</a></h2>
+<p>The IPC (Inter-Process Communication) API allows runtime control of gSlapper via Unix domain sockets.</p>
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The IPC system uses a client-server model:
+- <strong>Server</strong>: Runs within gSlapper main process
+- <strong>Clients</strong>: External processes (scripts, user tools)
+- <strong>Protocol</strong>: Text-based commands over Unix socket</p>
+<h3 id="initialization">Initialization<a class="headerlink" href="#initialization" title="Permanent link">&para;</a></h3>
+<h4 id="ipc_initconst-char-socket_path"><code>ipc_init(const char *socket_path)</code><a class="headerlink" href="#ipc_initconst-char-socket_path" title="Permanent link">&para;</a></h4>
+<p>Initialize IPC server with specified socket path.</p>
+<p><strong>Parameters</strong>:
+- <code>socket_path</code> - Path to Unix socket (e.g., <code>/tmp/gslapper.sock</code>)</p>
+<p><strong>Returns</strong>:
+- <code>true</code> on success
+- <code>false</code> on failure</p>
+<p><strong>Thread Safety</strong>: Thread-safe (creates dedicated thread)</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ipc.h&quot;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kt">bool</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ipc_init</span><span class="p">(</span><span class="s">&quot;/tmp/gslapper.sock&quot;</span><span class="p">);</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Failed to initialize IPC server</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h4 id="ipc_shutdownvoid"><code>ipc_shutdown(void)</code><a class="headerlink" href="#ipc_shutdownvoid" title="Permanent link">&para;</a></h4>
+<p>Shutdown IPC server and cleanup resources.</p>
+<p><strong>Parameters</strong>: None</p>
+<p><strong>Returns</strong>: void</p>
+<p><strong>Thread Safety</strong>: Thread-safe (uses internal locks)</p>
+<p><strong>Behavior</strong>:
+- Closes all client connections
+- Unlinks socket file
+- Joins server thread
+- Frees all allocated resources</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// At program exit or on signal</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">ipc_shutdown</span><span class="p">();</span>
+</code></pre></div></p>
+<hr />
+<h3 id="wakeup-mechanism">Wakeup Mechanism<a class="headerlink" href="#wakeup-mechanism" title="Permanent link">&para;</a></h3>
+<h4 id="ipc_get_wakeup_fdvoid"><code>ipc_get_wakeup_fd(void)</code><a class="headerlink" href="#ipc_get_wakeup_fdvoid" title="Permanent link">&para;</a></h4>
+<p>Get file descriptor for the wakeup pipe (used by main event loop).</p>
+<p><strong>Returns</strong>:
+- File descriptor (int) for wakeup pipe
+- <code>-1</code> if IPC not initialized</p>
+<p><strong>Purpose</strong>:
+- Allows main loop to monitor IPC activity via <code>poll()</code> or <code>select()</code>
+- Writing to this pipe wakes up the main loop when new commands arrive</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;poll.h&gt;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">// In main event loop</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">struct</span><span class="w"> </span><span class="nc">pollfd</span><span class="w"> </span><span class="n">fds</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">fds</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wl_display_get_fd</span><span class="p">(</span><span class="n">display</span><span class="p">);</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">fds</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">events</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">POLLIN</span><span class="p">;</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">fds</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ipc_get_wakeup_fd</span><span class="p">();</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">fds</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">events</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">POLLIN</span><span class="p">;</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">running</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="n">poll</span><span class="p">(</span><span class="n">fds</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="c1">// Handle events...</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h4 id="ipc_drain_wakeupvoid"><code>ipc_drain_wakeup(void)</code><a class="headerlink" href="#ipc_drain_wakeupvoid" title="Permanent link">&para;</a></h4>
+<p>Drain the wakeup pipe (call before processing commands).</p>
+<p><strong>Parameters</strong>: None</p>
+<p><strong>Returns</strong>: void</p>
+<p><strong>Purpose</strong>:
+- Clear pending data from wakeup pipe
+- Prevents repeated wakeups for same event</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// After poll() returns with IPC event</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fds</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">revents</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">POLLIN</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">ipc_drain_wakeup</span><span class="p">();</span><span class="w">  </span><span class="c1">// Clear pipe</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="c1">// Now process commands</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="n">ipc_command_t</span><span class="w"> </span><span class="o">*</span><span class="n">cmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ipc_dequeue_command</span><span class="p">();</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="c1">// ...</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h3 id="command-queue">Command Queue<a class="headerlink" href="#command-queue" title="Permanent link">&para;</a></h3>
+<h4 id="ipc_dequeue_commandvoid"><code>ipc_dequeue_command(void)</code><a class="headerlink" href="#ipc_dequeue_commandvoid" title="Permanent link">&para;</a></h4>
+<p>Dequeue next command from internal queue.</p>
+<p><strong>Returns</strong>:
+- Pointer to <code>ipc_command_t</code> structure
+- <code>NULL</code> if queue empty</p>
+<p><strong>Responsibility</strong>: Caller must free:
+- <code>cmd-&gt;cmd_line</code> (string)
+- Command structure itself (<code>free(cmd)</code>)</p>
+<p><strong>Thread Safety</strong>: Thread-safe (uses mutex-protected queue)</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">while</span><span class="w"> </span><span class="p">((</span><span class="n">cmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ipc_dequeue_command</span><span class="p">())</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="c1">// Process cmd-&gt;cmd_line</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="c1">// Send response to cmd-&gt;client_fd</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="n">ipc_send_response</span><span class="p">(</span><span class="n">cmd</span><span class="o">-&gt;</span><span class="n">client_fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;OK</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="c1">// Cleanup</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">cmd</span><span class="o">-&gt;</span><span class="n">cmd_line</span><span class="p">);</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">cmd</span><span class="p">);</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h4 id="ipc_send_responseint-client_fd-const-char-response"><code>ipc_send_response(int client_fd, const char *response)</code><a class="headerlink" href="#ipc_send_responseint-client_fd-const-char-response" title="Permanent link">&para;</a></h4>
+<p>Send response to IPC client (thread-safe).</p>
+<p><strong>Parameters</strong>:
+- <code>client_fd</code> - File descriptor of client socket
+- <code>response</code> - Response string to send</p>
+<p><strong>Returns</strong>: void</p>
+<p><strong>Thread Safety</strong>: Thread-safe</p>
+<p><strong>Format</strong>: Responses follow this format:
+- Success: <code>OK</code> or <code>OK: &lt;message&gt;</code>
+- Error: <code>ERROR: &lt;message&gt;</code>
+- Query: <code>STATUS: &lt;state&gt; &lt;type&gt; &lt;path&gt;</code>
+- Transition: <code>TRANSITION: &lt;type&gt; &lt;enabled|disabled&gt; &lt;duration&gt;</code></p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">ipc_send_response</span><span class="p">(</span><span class="n">client_fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;OK: Wallpaper changed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">ipc_send_response</span><span class="p">(</span><span class="n">client_fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ERROR: File not found</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">ipc_send_response</span><span class="p">(</span><span class="n">client_fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;STATUS: playing video /path/to/video.mp4</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</code></pre></div></p>
+<hr />
+<h3 id="ipc-commands">IPC Commands<a class="headerlink" href="#ipc-commands" title="Permanent link">&para;</a></h3>
+<h4 id="available-commands">Available Commands<a class="headerlink" href="#available-commands" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Parameters</th>
+<th>Response</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pause</code></td>
+<td>None</td>
+<td><code>OK</code></td>
+<td>Pause video playback</td>
+</tr>
+<tr>
+<td><code>resume</code></td>
+<td>None</td>
+<td><code>OK</code></td>
+<td>Resume paused playback</td>
+</tr>
+<tr>
+<td><code>stop</code></td>
+<td>None</td>
+<td><code>OK</code></td>
+<td>Stop gSlapper (exits)</td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>None</td>
+<td><code>STATUS: &lt;state&gt; &lt;type&gt; &lt;path&gt;</code></td>
+<td>Get current wallpaper state</td>
+</tr>
+<tr>
+<td><code>change &lt;path&gt;</code></td>
+<td>File path</td>
+<td><code>OK</code> or <code>OK: transition started</code></td>
+<td>Change wallpaper</td>
+</tr>
+<tr>
+<td><code>set-transition &lt;type&gt;</code></td>
+<td><code>none</code> or <code>fade</code></td>
+<td><code>OK</code> or <code>ERROR</code></td>
+<td>Set transition effect</td>
+</tr>
+<tr>
+<td><code>set-transition-duration &lt;secs&gt;</code></td>
+<td>0.0-5.0 seconds</td>
+<td><code>OK</code> or <code>ERROR</code></td>
+<td>Set transition duration</td>
+</tr>
+<tr>
+<td><code>get-transition</code></td>
+<td>None</td>
+<td><code>TRANSITION: &lt;type&gt; &lt;enabled&gt; &lt;duration&gt;</code></td>
+<td>Query transition settings</td>
+</tr>
+</tbody>
+</table>
+<h4 id="example-client-code">Example Client Code<a class="headerlink" href="#example-client-code" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sys/socket.h&gt;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sys/un.h&gt;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="kt">int</span><span class="w"> </span><span class="nf">connect_to_ipc</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">socket_path</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">socket</span><span class="p">(</span><span class="n">AF_UNIX</span><span class="p">,</span><span class="w"> </span><span class="n">SOCK_STREAM</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">sockaddr_un</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="n">addr</span><span class="p">.</span><span class="n">sun_family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AF_UNIX</span><span class="p">;</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="n">strncpy</span><span class="p">(</span><span class="n">addr</span><span class="p">.</span><span class="n">sun_path</span><span class="p">,</span><span class="w"> </span><span class="n">socket_path</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">.</span><span class="n">sun_path</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">connect</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">sockaddr</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">))</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">fd</span><span class="p">;</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="p">}</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="kt">void</span><span class="w"> </span><span class="nf">send_ipc_command</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">cmd</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">    </span><span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">cmd</span><span class="p">));</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">response</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="w">    </span><span class="kt">ssize_t</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="w">        </span><span class="n">response</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Response: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="p">}</span>
+<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a>
+<a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">connect_to_ipc</span><span class="p">(</span><span class="s">&quot;/tmp/gslapper.sock&quot;</span><span class="p">);</span>
+<a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fd</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a><span class="w">        </span><span class="n">perror</span><span class="p">(</span><span class="s">&quot;Failed to connect&quot;</span><span class="p">);</span>
+<a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>
+<a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a><span class="w">    </span><span class="n">send_ipc_command</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;pause</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a><span class="w">    </span><span class="n">send_ipc_command</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;query</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<a id="__codelineno-6-37" name="__codelineno-6-37" href="#__codelineno-6-37"></a><span class="w">    </span><span class="n">send_ipc_command</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;change /path/to/new/video.mp4</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<a id="__codelineno-6-38" name="__codelineno-6-38" href="#__codelineno-6-38"></a>
+<a id="__codelineno-6-39" name="__codelineno-6-39" href="#__codelineno-6-39"></a><span class="w">    </span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+<a id="__codelineno-6-40" name="__codelineno-6-40" href="#__codelineno-6-40"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<a id="__codelineno-6-41" name="__codelineno-6-41" href="#__codelineno-6-41"></a><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="data-structures">Data Structures<a class="headerlink" href="#data-structures" title="Permanent link">&para;</a></h3>
+<h4 id="ipc_command_t"><code>ipc_command_t</code><a class="headerlink" href="#ipc_command_t" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">ipc_command</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">cmd_line</span><span class="p">;</span><span class="w">          </span><span class="c1">// Full command string from client</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">client_fd</span><span class="p">;</span><span class="w">            </span><span class="c1">// Client socket file descriptor</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">ipc_command</span><span class="w"> </span><span class="o">*</span><span class="n">next</span><span class="p">;</span><span class="w">  </span><span class="c1">// Next command in queue (linked list)</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">}</span><span class="w"> </span><span class="n">ipc_command_t</span><span class="p">;</span>
+</code></pre></div>
+<p><strong>Usage</strong>:
+- Internal to IPC system (queued by server thread)
+- Dequeued by main thread for processing
+- Must be freed by caller after processing</p>
+<h4 id="preload_entry_t"><code>preload_entry_t</code><a class="headerlink" href="#preload_entry_t" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">preload_entry</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">path</span><span class="p">;</span><span class="w">              </span><span class="c1">// File path of preloaded image</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="n">gpointer</span><span class="w"> </span><span class="n">frame_data</span><span class="p">;</span><span class="w">       </span><span class="c1">// GLib pointer to frame data</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="n">gsize</span><span class="w"> </span><span class="n">frame_size</span><span class="p">;</span><span class="w">         </span><span class="c1">// Size of frame data in bytes</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="n">gint</span><span class="w"> </span><span class="n">width</span><span class="p">;</span><span class="w">               </span><span class="c1">// Image width in pixels</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="n">gint</span><span class="w"> </span><span class="n">height</span><span class="p">;</span><span class="w">              </span><span class="c1">// Image height in pixels</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">preload_entry</span><span class="w"> </span><span class="o">*</span><span class="n">next</span><span class="p">;</span><span class="w"> </span><span class="c1">// Next entry in cache (linked list)</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">}</span><span class="w"> </span><span class="n">preload_entry_t</span><span class="p">;</span>
+</code></pre></div>
+<p><strong>Note</strong>: Currently reserved for future implementation (see TO_IMPLEMENT.md).</p>
+<hr />
+<h2 id="state-management-api">State Management API<a class="headerlink" href="#state-management-api" title="Permanent link">&para;</a></h2>
+<p>The state management API provides persistent storage and retrieval of wallpaper configuration.</p>
+<h3 id="overview_1">Overview<a class="headerlink" href="#overview_1" title="Permanent link">&para;</a></h3>
+<p>State is saved as simple key=value text files (not JSON):
+- <strong>Location</strong>: <code>~/.local/state/gslapper/state-&lt;output&gt;.txt</code>
+- <strong>Format</strong>: Human-readable text
+- <strong>Atomic writes</strong>: Uses temp file + rename
+- <strong>Thread safety</strong>: File locking prevents corruption</p>
+<h3 id="data-structures_1">Data Structures<a class="headerlink" href="#data-structures_1" title="Permanent link">&para;</a></h3>
+<h4 id="wallpaper_state"><code>wallpaper_state</code><a class="headerlink" href="#wallpaper_state" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">wallpaper_state</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">output</span><span class="p">;</span><span class="w">        </span><span class="c1">// Monitor name (e.g., &quot;DP-1&quot;, &quot;DP-3&quot;)</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">path</span><span class="p">;</span><span class="w">         </span><span class="c1">// Full path to video or image file</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_image</span><span class="p">;</span><span class="w">      </span><span class="c1">// true = static image, false = video</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">options</span><span class="p">;</span><span class="w">       </span><span class="c1">// GStreamer options string (e.g., &quot;loop panscan=0.8&quot;)</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">position</span><span class="p">;</span><span class="w">    </span><span class="c1">// Video position in seconds (0.0 for images)</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">paused</span><span class="p">;</span><span class="w">        </span><span class="c1">// Pause state for videos (false by default)</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="p">};</span>
+</code></pre></div>
+<p><strong>Example State File</strong> (<code>state-DP-1.txt</code>):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>version=1
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>output=DP-1
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>path=/home/user/Videos/wallpaper.mp4
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>is_image=false
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>options=loop panscan=0.8
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>position=123.45
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>paused=0
+</code></pre></div></p>
+<hr />
+<h3 id="path-resolution">Path Resolution<a class="headerlink" href="#path-resolution" title="Permanent link">&para;</a></h3>
+<h4 id="get_state_file_pathconst-char-output_name"><code>get_state_file_path(const char *output_name)</code><a class="headerlink" href="#get_state_file_pathconst-char-output_name" title="Permanent link">&para;</a></h4>
+<p>Generate state file path for given output.</p>
+<p><strong>Parameters</strong>:
+- <code>output_name</code> - Monitor name (e.g., "DP-1"), or <code>NULL</code> for default</p>
+<p><strong>Returns</strong>:
+- Dynamically allocated string (must be freed by caller)
+- <code>NULL</code> on failure</p>
+<p><strong>Path Resolution Logic</strong>:
+1. Check <code>XDG_STATE_HOME</code> environment variable
+2. If not set, use <code>$HOME/.local/state/gslapper/</code>
+3. Append <code>state-&lt;output_name&gt;.txt</code> (or <code>state.txt</code> if <code>NULL</code>)</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;state.h&quot;</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_state_file_path</span><span class="p">(</span><span class="s">&quot;DP-1&quot;</span><span class="p">);</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;State file: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">);</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">path</span><span class="p">);</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h3 id="state-file-operations">State File Operations<a class="headerlink" href="#state-file-operations" title="Permanent link">&para;</a></h3>
+<h4 id="save_state_fileconst-char-path-const-struct-wallpaper_state-state"><code>save_state_file(const char *path, const struct wallpaper_state *state)</code><a class="headerlink" href="#save_state_fileconst-char-path-const-struct-wallpaper_state-state" title="Permanent link">&para;</a></h4>
+<p>Save wallpaper state to file.</p>
+<p><strong>Parameters</strong>:
+- <code>path</code> - Full path to state file
+- <code>state</code> - Pointer to <code>wallpaper_state</code> structure</p>
+<p><strong>Returns</strong>:
+- <code>0</code> on success
+- <code>-1</code> on failure</p>
+<p><strong>Behavior</strong>:
+1. Create backup of existing file (if any)
+2. Write to temporary file (<code>.tmp</code> suffix)
+3. Verify write completed
+4. Atomic rename (temp → actual file)
+5. Set permissions to <code>0600</code> (user-only)
+6. Use file locking to prevent concurrent writes</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">wallpaper_state</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="p">.</span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;DP-1&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="p">.</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/home/user/Videos/wallpaper.mp4&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="p">.</span><span class="n">is_image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="p">.</span><span class="n">options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;loop panscan=0.8&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="p">.</span><span class="n">position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">123.45</span><span class="p">,</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">    </span><span class="p">.</span><span class="n">paused</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="p">};</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">state_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_state_file_path</span><span class="p">(</span><span class="s">&quot;DP-1&quot;</span><span class="p">);</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">state_path</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">save_state_file</span><span class="p">(</span><span class="n">state_path</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;State saved successfully</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="p">}</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="n">free</span><span class="p">(</span><span class="n">state_path</span><span class="p">);</span>
+</code></pre></div></p>
+<hr />
+<h4 id="load_state_fileconst-char-path-struct-wallpaper_state-state"><code>load_state_file(const char *path, struct wallpaper_state *state)</code><a class="headerlink" href="#load_state_fileconst-char-path-struct-wallpaper_state-state" title="Permanent link">&para;</a></h4>
+<p>Load wallpaper state from file.</p>
+<p><strong>Parameters</strong>:
+- <code>path</code> - Full path to state file
+- <code>state</code> - Pointer to <code>wallpaper_state</code> structure to fill</p>
+<p><strong>Returns</strong>:
+- <code>0</code> on success
+- <code>-1</code> on failure (file not found, parse error, etc.)</p>
+<p><strong>Behavior</strong>:
+1. Open and lock file (shared lock)
+2. Read key=value pairs line by line
+3. Parse and populate <code>state</code> structure
+4. Validate file paths exist
+5. Unlock and close file</p>
+<p><strong>Parsed Keys</strong>:
+- <code>version</code> - State file version (currently 1)
+- <code>output</code> - Monitor name
+- <code>path</code> - Video/image file path
+- <code>is_image</code> - Boolean (0 or 1)
+- <code>options</code> - GStreamer options string
+- <code>position</code> - Video position in seconds
+- <code>paused</code> - Pause state (0 or 1)</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">wallpaper_state</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">state_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_state_file_path</span><span class="p">(</span><span class="s">&quot;DP-1&quot;</span><span class="p">);</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">state_path</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">load_state_file</span><span class="p">(</span><span class="n">state_path</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Restoring: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">path</span><span class="p">);</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Options: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">options</span><span class="p">);</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Position: %.2f</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">position</span><span class="p">);</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h4 id="free_wallpaper_statestruct-wallpaper_state-state"><code>free_wallpaper_state(struct wallpaper_state *state)</code><a class="headerlink" href="#free_wallpaper_statestruct-wallpaper_state-state" title="Permanent link">&para;</a></h4>
+<p>Free all dynamically allocated memory in <code>wallpaper_state</code> structure.</p>
+<p><strong>Parameters</strong>:
+- <code>state</code> - Pointer to <code>wallpaper_state</code> structure</p>
+<p><strong>Returns</strong>: void</p>
+<p><strong>Behavior</strong>:
+- Frees <code>state-&gt;output</code>
+- Frees <code>state-&gt;path</code>
+- Frees <code>state-&gt;options</code>
+- Does not free the structure itself (caller's responsibility)</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">wallpaper_state</span><span class="w"> </span><span class="o">*</span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">wallpaper_state</span><span class="p">));</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="c1">// ... fill state ...</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1">// Free allocated strings</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="n">free_wallpaper_state</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="c1">// Free structure itself</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="n">free</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+</code></pre></div></p>
+<hr />
+<h2 id="logging-api">Logging API<a class="headerlink" href="#logging-api" title="Permanent link">&para;</a></h2>
+<p>The logging API provides formatted output with color-coded severity levels.</p>
+<h3 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h3>
+<h4 id="cflp_successchar-msg"><code>cflp_success(char *msg, ...)</code><a class="headerlink" href="#cflp_successchar-msg" title="Permanent link">&para;</a></h4>
+<p>Log success message in green.</p>
+<p><strong>Parameters</strong>:
+- <code>msg</code> - Format string (printf-style)
+- <code>...</code> - Variable arguments</p>
+<p><strong>Color</strong>: Green (<code>\033[0;32m</code>)</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;cflogprinter.h&quot;</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">cflp_success</span><span class="p">(</span><span class="s">&quot;State saved to %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">state_path</span><span class="p">);</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1">// Output (green): ✓ State saved to /home/user/.local/state/gslapper/state.txt</span>
+</code></pre></div></p>
+<hr />
+<h4 id="cflp_errorchar-msg"><code>cflp_error(char *msg, ...)</code><a class="headerlink" href="#cflp_errorchar-msg" title="Permanent link">&para;</a></h4>
+<p>Log error message in red.</p>
+<p><strong>Parameters</strong>:
+- <code>msg</code> - Format string (printf-style)
+- <code>...</code> - Variable arguments</p>
+<p><strong>Color</strong>: Red (<code>\033[1;31m</code>, bold)</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">cflp_error</span><span class="p">(</span><span class="s">&quot;Failed to open file: %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">);</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="c1">// Output (red bold): ✗ Failed to open file: /path/to/file.txt</span>
+</code></pre></div></p>
+<hr />
+<h4 id="cflp_warningchar-msg"><code>cflp_warning(char *msg, ...)</code><a class="headerlink" href="#cflp_warningchar-msg" title="Permanent link">&para;</a></h4>
+<p>Log warning message in yellow.</p>
+<p><strong>Parameters</strong>:
+- <code>msg</code> - Format string (printf-style)
+- <code>...</code> - Variable arguments</p>
+<p><strong>Color</strong>: Yellow (<code>\033[0;33m</code>)</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">cflp_warning</span><span class="p">(</span><span class="s">&quot;Video codec not found, falling back to software decoding&quot;</span><span class="p">);</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c1">// Output (yellow): ⚠ Video codec not found, falling back to software decoding</span>
+</code></pre></div></p>
+<hr />
+<h4 id="cflp_infochar-msg"><code>cflp_info(char *msg, ...)</code><a class="headerlink" href="#cflp_infochar-msg" title="Permanent link">&para;</a></h4>
+<p>Log informational message (no color by default).</p>
+<p><strong>Parameters</strong>:
+- <code>msg</code> - Format string (printf-style)
+- <code>...</code> - Variable arguments</p>
+<p><strong>Color</strong>: None (default terminal color)</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">    </span><span class="n">cflp_info</span><span class="p">(</span><span class="s">&quot;Initializing GStreamer pipeline...&quot;</span><span class="p">);</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="p">}</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1">// Output (if VERBOSE): ℹ Initializing GStreamer pipeline...</span>
+</code></pre></div></p>
+<hr />
+<h4 id="cflp_customchar-color-char-msg"><code>cflp_custom(char *color, char *msg, ...)</code><a class="headerlink" href="#cflp_customchar-color-char-msg" title="Permanent link">&para;</a></h4>
+<p>Log message with custom color.</p>
+<p><strong>Parameters</strong>:
+- <code>color</code> - ANSI color code string
+- <code>msg</code> - Format string (printf-style)
+- <code>...</code> - Variable arguments</p>
+<p><strong>Available Colors</strong>:
+- <code>RED</code>, <code>GREEN</code>, <code>YELLOW</code>, <code>BLUE</code>, <code>MAGENTA</code>, <code>CYAN</code> (from <code>cflogprinter.h</code>)
+- <code>RESET</code> - Reset to default terminal color</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">cflp_custom</span><span class="p">(</span><span class="n">CYAN</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Loading image: %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">);</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">cflp_custom</span><span class="p">(</span><span class="n">MAGENTA</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Status: %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="n">cflp_custom</span><span class="p">(</span><span class="n">RESET</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Back to normal color&quot;</span><span class="p">);</span>
+</code></pre></div></p>
+<hr />
+<h3 id="color-constants">Color Constants<a class="headerlink" href="#color-constants" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="cp">#define RED         &quot;\033[1;31m&quot;    </span><span class="c1">// Bold red</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="cp">#define GREEN       &quot;\033[0;32m&quot;    </span><span class="c1">// Green</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="cp">#define YELLOW      &quot;\033[0;33m&quot;    </span><span class="c1">// Yellow</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="cp">#define BLUE        &quot;\033[0;34m&quot;    </span><span class="c1">// Blue</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="cp">#define MAGENTA     &quot;\033[0;35m&quot;    </span><span class="c1">// Magenta</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="cp">#define CYAN        &quot;\033[0;36m&quot;    </span><span class="c1">// Cyan</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="cp">#define RESET       &quot;\033[0m&quot;       </span><span class="c1">// Reset to default</span>
+</code></pre></div>
+<hr />
+<h2 id="internal-apis">Internal APIs<a class="headerlink" href="#internal-apis" title="Permanent link">&para;</a></h2>
+<p>This section documents internal functions and structures used by gSlapper's main implementation.</p>
+<h3 id="wayland-integration">Wayland Integration<a class="headerlink" href="#wayland-integration" title="Permanent link">&para;</a></h3>
+<h4 id="global-state-structure">Global State Structure<a class="headerlink" href="#global-state-structure" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">wl_state</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">wl_display</span><span class="w"> </span><span class="o">*</span><span class="n">display</span><span class="p">;</span><span class="w">           </span><span class="c1">// Wayland display connection</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">wl_compositor</span><span class="w"> </span><span class="o">*</span><span class="n">compositor</span><span class="p">;</span><span class="w">     </span><span class="c1">// Compositor interface</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">zwlr_layer_shell_v1</span><span class="w"> </span><span class="o">*</span><span class="n">layer_shell</span><span class="p">;</span><span class="w"> </span><span class="c1">// Layer shell protocol</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">wl_list</span><span class="w"> </span><span class="n">outputs</span><span class="p">;</span><span class="w">               </span><span class="c1">// List of display_output structures</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">monitor</span><span class="p">;</span><span class="w">                       </span><span class="c1">// User-selected output name (or &#39;*&#39;)</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">surface_layer</span><span class="p">;</span><span class="w">                    </span><span class="c1">// Layer level (background, bottom, top, overlay)</span>
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="p">};</span>
+</code></pre></div>
+<hr />
+<h4 id="display-output-structure">Display Output Structure<a class="headerlink" href="#display-output-structure" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">display_output</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">wl_name</span><span class="p">;</span><span class="w">                  </span><span class="c1">// Wayland output name (numeric)</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">wl_output</span><span class="w"> </span><span class="o">*</span><span class="n">wl_output</span><span class="p">;</span><span class="w">         </span><span class="c1">// Output interface</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">name</span><span class="p">;</span><span class="w">                         </span><span class="c1">// Output name string (e.g., &quot;DP-1&quot;)</span>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">identifier</span><span class="p">;</span><span class="w">                    </span><span class="c1">// Output model/serial string</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">wl_state</span><span class="w"> </span><span class="o">*</span><span class="n">state</span><span class="p">;</span><span class="w">              </span><span class="c1">// Parent state reference</span>
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">wl_surface</span><span class="w"> </span><span class="o">*</span><span class="n">surface</span><span class="p">;</span><span class="w">           </span><span class="c1">// Wayland surface</span>
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">zwlr_layer_surface_v1</span><span class="w"> </span><span class="o">*</span><span class="n">layer_surface</span><span class="p">;</span><span class="w"> </span><span class="c1">// Layer surface</span>
+<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">wl_egl_window</span><span class="w"> </span><span class="o">*</span><span class="n">egl_window</span><span class="p">;</span><span class="w">    </span><span class="c1">// EGL window</span>
+<a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a><span class="w">    </span><span class="n">EGLSurface</span><span class="w"> </span><span class="o">*</span><span class="n">egl_surface</span><span class="p">;</span><span class="w">             </span><span class="c1">// EGL surface</span>
+<a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>
+<a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="p">;</span><span class="w">             </span><span class="c1">// Output dimensions</span>
+<a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">scale</span><span class="p">;</span><span class="w">                     </span><span class="c1">// Output scale factor (DPI)</span>
+<a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a>
+<a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">wl_list</span><span class="w"> </span><span class="n">link</span><span class="p">;</span><span class="w">                 </span><span class="c1">// Link in state.outputs list</span>
+<a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a>
+<a id="__codelineno-22-18" name="__codelineno-22-18" href="#__codelineno-22-18"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">wl_callback</span><span class="w"> </span><span class="o">*</span><span class="n">frame_callback</span><span class="p">;</span><span class="w">   </span><span class="c1">// Frame callback</span>
+<a id="__codelineno-22-19" name="__codelineno-22-19" href="#__codelineno-22-19"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">redraw_needed</span><span class="p">;</span><span class="w">                  </span><span class="c1">// Flag for frame request</span>
+<a id="__codelineno-22-20" name="__codelineno-22-20" href="#__codelineno-22-20"></a><span class="p">};</span>
+</code></pre></div>
+<hr />
+<h3 id="gstreamer-pipeline">GStreamer Pipeline<a class="headerlink" href="#gstreamer-pipeline" title="Permanent link">&para;</a></h3>
+<h4 id="global-gstreamer-elements">Global GStreamer Elements<a class="headerlink" href="#global-gstreamer-elements" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="k">static</span><span class="w"> </span><span class="n">GstElement</span><span class="w"> </span><span class="o">*</span><span class="n">pipeline</span><span class="p">;</span><span class="w">             </span><span class="c1">// Main GStreamer pipeline</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="k">static</span><span class="w"> </span><span class="n">GstBus</span><span class="w"> </span><span class="o">*</span><span class="n">bus</span><span class="p">;</span><span class="w">                   </span><span class="c1">// Pipeline bus for events/messages</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="k">static</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">allocated_uri</span><span class="p">;</span><span class="w">            </span><span class="c1">// URI for current media (for cleanup)</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">using_waylandsink</span><span class="p">;</span><span class="w">        </span><span class="c1">// Whether using waylandsink for direct rendering</span>
+</code></pre></div>
+<hr />
+<h4 id="video-texture-management">Video Texture Management<a class="headerlink" href="#video-texture-management" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="k">static</span><span class="w"> </span><span class="n">GLuint</span><span class="w"> </span><span class="n">video_texture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">       </span><span class="c1">// OpenGL texture for video frames</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="k">static</span><span class="w"> </span><span class="n">GLuint</span><span class="w"> </span><span class="n">shader_program</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">       </span><span class="c1">// Default shader program</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="k">static</span><span class="w"> </span><span class="n">GLuint</span><span class="w"> </span><span class="n">transition_shader_program</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">// Transition effect shader</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="k">static</span><span class="w"> </span><span class="n">GLuint</span><span class="w"> </span><span class="n">vao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">vbo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">    </span><span class="c1">// Vertex array/buffer objects</span>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="c1">// Smart texture management to reduce reallocations</span>
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="k">static</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a><span class="w">    </span><span class="n">GLuint</span><span class="w"> </span><span class="n">texture</span><span class="p">;</span>
+<a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">current_width</span><span class="p">;</span>
+<a id="__codelineno-24-10" name="__codelineno-24-10" href="#__codelineno-24-10"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">current_height</span><span class="p">;</span>
+<a id="__codelineno-24-11" name="__codelineno-24-11" href="#__codelineno-24-11"></a><span class="w">    </span><span class="n">gboolean</span><span class="w"> </span><span class="n">initialized</span><span class="p">;</span>
+<a id="__codelineno-24-12" name="__codelineno-24-12" href="#__codelineno-24-12"></a><span class="p">}</span><span class="w"> </span><span class="n">texture_manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<a id="__codelineno-24-13" name="__codelineno-24-13" href="#__codelineno-24-13"></a>
+<a id="__codelineno-24-14" name="__codelineno-24-14" href="#__codelineno-24-14"></a><span class="c1">// Video frame data for thread-safe texture updates</span>
+<a id="__codelineno-24-15" name="__codelineno-24-15" href="#__codelineno-24-15"></a><span class="k">static</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-24-16" name="__codelineno-24-16" href="#__codelineno-24-16"></a><span class="w">    </span><span class="n">gboolean</span><span class="w"> </span><span class="n">has_new_frame</span><span class="p">;</span>
+<a id="__codelineno-24-17" name="__codelineno-24-17" href="#__codelineno-24-17"></a><span class="w">    </span><span class="n">gint</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="p">;</span>
+<a id="__codelineno-24-18" name="__codelineno-24-18" href="#__codelineno-24-18"></a><span class="w">    </span><span class="n">gpointer</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<a id="__codelineno-24-19" name="__codelineno-24-19" href="#__codelineno-24-19"></a><span class="w">    </span><span class="n">gsize</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
+<a id="__codelineno-24-20" name="__codelineno-24-20" href="#__codelineno-24-20"></a><span class="w">    </span><span class="n">gint</span><span class="w"> </span><span class="n">last_width</span><span class="p">,</span><span class="w"> </span><span class="n">last_height</span><span class="p">;</span><span class="w">     </span><span class="c1">// Track dimension changes</span>
+<a id="__codelineno-24-21" name="__codelineno-24-21" href="#__codelineno-24-21"></a><span class="p">}</span><span class="w"> </span><span class="n">video_frame_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+</code></pre></div>
+<hr />
+<h4 id="frame-rate-limiting">Frame Rate Limiting<a class="headerlink" href="#frame-rate-limiting" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">static</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">timespec</span><span class="w"> </span><span class="n">last_render_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="k">static</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">target_frame_time_ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">33333333</span><span class="p">;</span><span class="w">  </span><span class="c1">// Default ~30 FPS</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">frame_rate_cap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">30</span><span class="p">;</span><span class="w">                   </span><span class="c1">// Default 30 FPS</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">frames_skipped</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                     </span><span class="c1">// Adaptive skipping</span>
+</code></pre></div>
+<p><strong>Purpose</strong>: Reduce GPU usage by limiting rendering rate.</p>
+<p><strong>Default</strong>: 30 FPS (adjustable via <code>-r</code> CLI flag)</p>
+<hr />
+<h3 id="state-management-globals">State Management Globals<a class="headerlink" href="#state-management-globals" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">static</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">state_file_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">systemd_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">save_state_on_exit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">restore_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">save_state_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">restore_position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">restore_paused</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
+<hr />
+<h3 id="transition-effects">Transition Effects<a class="headerlink" href="#transition-effects" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="w">    </span><span class="n">TRANSITION_NONE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="w">    </span><span class="n">TRANSITION_FADE</span>
+<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="p">}</span><span class="w"> </span><span class="n">transition_type_t</span><span class="p">;</span>
+<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>
+<a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="w">    </span><span class="n">transition_type_t</span><span class="w"> </span><span class="n">type</span><span class="p">;</span><span class="w">       </span><span class="c1">// Transition effect type</span>
+<a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="p">;</span><span class="w">                 </span><span class="c1">// Currently in transition</span>
+<a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">;</span><span class="w">                </span><span class="c1">// Transitions globally enabled</span>
+<a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a><span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">duration</span><span class="p">;</span><span class="w">              </span><span class="c1">// Transition duration in seconds</span>
+<a id="__codelineno-27-11" name="__codelineno-27-11" href="#__codelineno-27-11"></a><span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">elapsed</span><span class="p">;</span><span class="w">               </span><span class="c1">// Time since transition started</span>
+<a id="__codelineno-27-12" name="__codelineno-27-12" href="#__codelineno-27-12"></a><span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">progress</span><span class="p">;</span><span class="w">              </span><span class="c1">// 0.0 to 1.0 (0% to 100%)</span>
+<a id="__codelineno-27-13" name="__codelineno-27-13" href="#__codelineno-27-13"></a>
+<a id="__codelineno-27-14" name="__codelineno-27-14" href="#__codelineno-27-14"></a><span class="w">    </span><span class="n">GLuint</span><span class="w"> </span><span class="n">old_texture</span><span class="p">;</span><span class="w">          </span><span class="c1">// Previous wallpaper texture</span>
+<a id="__codelineno-27-15" name="__codelineno-27-15" href="#__codelineno-27-15"></a><span class="w">    </span><span class="n">GLuint</span><span class="w"> </span><span class="n">new_texture</span><span class="p">;</span><span class="w">          </span><span class="c1">// New wallpaper texture</span>
+<a id="__codelineno-27-16" name="__codelineno-27-16" href="#__codelineno-27-16"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">old_width</span><span class="p">,</span><span class="w"> </span><span class="n">old_height</span><span class="p">;</span><span class="w">  </span><span class="c1">// Old wallpaper dimensions</span>
+<a id="__codelineno-27-17" name="__codelineno-27-17" href="#__codelineno-27-17"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">new_width</span><span class="p">,</span><span class="w"> </span><span class="n">new_height</span><span class="p">;</span><span class="w">  </span><span class="c1">// New wallpaper dimensions</span>
+<a id="__codelineno-27-18" name="__codelineno-27-18" href="#__codelineno-27-18"></a><span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">old_scale_x</span><span class="p">,</span><span class="w"> </span><span class="n">old_scale_y</span><span class="p">;</span><span class="w"> </span><span class="c1">// Old scaling factors</span>
+<a id="__codelineno-27-19" name="__codelineno-27-19" href="#__codelineno-27-19"></a><span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">alpha_old</span><span class="p">,</span><span class="w"> </span><span class="n">alpha_new</span><span class="p">;</span><span class="w">   </span><span class="c1">// Blend factors</span>
+<a id="__codelineno-27-20" name="__codelineno-27-20" href="#__codelineno-27-20"></a>
+<a id="__codelineno-27-21" name="__codelineno-27-21" href="#__codelineno-27-21"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">timespec</span><span class="w"> </span><span class="n">start_time</span><span class="p">;</span><span class="w">    </span><span class="c1">// Transition start time</span>
+<a id="__codelineno-27-22" name="__codelineno-27-22" href="#__codelineno-27-22"></a><span class="p">}</span><span class="w"> </span><span class="n">transition_state_t</span><span class="p">;</span>
+</code></pre></div>
+<p><strong>Note</strong>: Transitions only work between static images, not videos.</p>
+<hr />
+<h3 id="configuration-management">Configuration Management<a class="headerlink" href="#configuration-management" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="k">static</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="n">pauselist</span><span class="p">;</span><span class="w">          </span><span class="c1">// List of app names for auto-pause</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="n">stoplist</span><span class="p">;</span><span class="w">           </span><span class="c1">// List of app names for auto-stop</span>
+<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>
+<a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">;</span><span class="w">                   </span><span class="c1">// Saved argc for restart</span>
+<a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="n">argv_copy</span><span class="p">;</span><span class="w">           </span><span class="c1">// Saved argv for restart</span>
+<a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">save_info</span><span class="p">;</span><span class="w">            </span><span class="c1">// Saved command info</span>
+<a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>
+<a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">auto_pause</span><span class="p">;</span><span class="w">             </span><span class="c1">// Auto-pause when wallpaper hidden</span>
+<a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">auto_stop</span><span class="p">;</span><span class="w">              </span><span class="c1">// Auto-stop when wallpaper hidden</span>
+<a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a>
+<a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">is_paused</span><span class="p">;</span><span class="w">              </span><span class="c1">// Current pause state</span>
+<a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">frame_ready</span><span class="p">;</span><span class="w">            </span><span class="c1">// New frame available flag</span>
+<a id="__codelineno-28-14" name="__codelineno-28-14" href="#__codelineno-28-14"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">stop_render_loop</span><span class="p">;</span><span class="w">        </span><span class="c1">// Flag to stop rendering loop</span>
+<a id="__codelineno-28-15" name="__codelineno-28-15" href="#__codelineno-28-15"></a><span class="p">}</span><span class="w"> </span><span class="n">app_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+</code></pre></div>
+<hr />
+<h2 id="command-line-parsing">Command-Line Parsing<a class="headerlink" href="#command-line-parsing" title="Permanent link">&para;</a></h2>
+<h3 id="supported-options">Supported Options<a class="headerlink" href="#supported-options" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Short</th>
+<th>Long</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-h</code></td>
+<td><code>--help</code></td>
+<td>flag</td>
+<td>Display help message</td>
+</tr>
+<tr>
+<td><code>-v</code></td>
+<td><code>--verbose</code></td>
+<td>flag</td>
+<td>Be more verbose (-vv for higher verbosity)</td>
+</tr>
+<tr>
+<td><code>-f</code></td>
+<td><code>--fork</code></td>
+<td>flag</td>
+<td>Fork to background after starting</td>
+</tr>
+<tr>
+<td><code>-d</code></td>
+<td><code>--help-output</code></td>
+<td>flag</td>
+<td>Display all available outputs and quit</td>
+</tr>
+<tr>
+<td><code>-p</code></td>
+<td><code>--auto-pause</code></td>
+<td>flag</td>
+<td>Auto-pause when wallpaper hidden</td>
+</tr>
+<tr>
+<td><code>-s</code></td>
+<td><code>--auto-stop</code></td>
+<td>flag</td>
+<td>Auto-stop when wallpaper hidden</td>
+</tr>
+<tr>
+<td><code>-n</code></td>
+<td><code>--slideshow</code></td>
+<td>seconds</td>
+<td>Slideshow mode (TODO: not fully implemented)</td>
+</tr>
+<tr>
+<td><code>-l</code></td>
+<td><code>--layer</code></td>
+<td>string</td>
+<td>Shell surface layer (background, bottom, top, overlay)</td>
+</tr>
+<tr>
+<td><code>-o</code></td>
+<td><code>--gst-options</code></td>
+<td>string</td>
+<td>GStreamer options (see below)</td>
+</tr>
+<tr>
+<td><code>-r</code></td>
+<td><code>--fps-cap</code></td>
+<td>int</td>
+<td>Frame rate cap (30, 60, or 100 FPS)</td>
+</tr>
+<tr>
+<td><code>-I</code></td>
+<td><code>--ipc-socket</code></td>
+<td>path</td>
+<td>Enable IPC control via Unix socket</td>
+</tr>
+<tr>
+<td></td>
+<td><code>--transition-type</code></td>
+<td>string</td>
+<td>Transition effect (none, fade)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>--transition-duration</code></td>
+<td>float</td>
+<td>Transition duration in seconds (default: 0.5)</td>
+</tr>
+<tr>
+<td><code>-S</code></td>
+<td><code>--systemd</code></td>
+<td>flag</td>
+<td>Enable systemd service mode</td>
+</tr>
+<tr>
+<td><code>-R</code></td>
+<td><code>--restore</code></td>
+<td>flag</td>
+<td>Restore wallpaper from saved state</td>
+</tr>
+<tr>
+<td></td>
+<td><code>--save-state</code></td>
+<td>flag</td>
+<td>Save current state and exit</td>
+</tr>
+<tr>
+<td></td>
+<td><code>--state-file</code></td>
+<td>path</td>
+<td>Use custom state file path</td>
+</tr>
+<tr>
+<td></td>
+<td><code>--no-save-state</code></td>
+<td>flag</td>
+<td>Disable automatic state saving on exit</td>
+</tr>
+</tbody>
+</table>
+<h3 id="gstreamer-options-passed-via-o">GStreamer Options (passed via <code>-o</code>)<a class="headerlink" href="#gstreamer-options-passed-via-o" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>loop</code></td>
+<td>Seamless video looping</td>
+<td>Off</td>
+</tr>
+<tr>
+<td><code>fill</code></td>
+<td>Fill screen maintaining aspect ratio (crop excess)</td>
+<td>Default for images</td>
+</tr>
+<tr>
+<td><code>panscan=X</code></td>
+<td>Fit inside screen (0.0-1.0 scale factor)</td>
+<td>1.0 (full)</td>
+</tr>
+<tr>
+<td><code>stretch</code></td>
+<td>Fill screen ignoring aspect ratio</td>
+<td>Off</td>
+</tr>
+<tr>
+<td><code>original</code></td>
+<td>Display at native resolution</td>
+<td>Off</td>
+</tr>
+<tr>
+<td><code>no-audio</code></td>
+<td>Disable audio playback</td>
+<td>Off</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="helper-programs">Helper Programs<a class="headerlink" href="#helper-programs" title="Permanent link">&para;</a></h2>
+<h3 id="holderc">holder.c<a class="headerlink" href="#holderc" title="Permanent link">&para;</a></h3>
+<p><strong>Purpose</strong>: Gatekeeper process that checks stoplist conditions before main program runs.</p>
+<p><strong>Behavior</strong>:
+1. Reads stoplist from <code>~/.config/mpvpaper/stoplist</code>
+2. Monitors running applications
+3. Allows main program to run only if no stoplist app is active
+4. Manages process lifecycle transitions</p>
+<p><strong>Usage</strong>: Automatically invoked by main gSlapper binary (not user-facing).</p>
+<hr />
+<h2 id="thread-safety">Thread Safety<a class="headerlink" href="#thread-safety" title="Permanent link">&para;</a></h2>
+<h3 id="mutexes">Mutexes<a class="headerlink" href="#mutexes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mutex</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>video_mutex</code></td>
+<td>Protects <code>video_frame_data</code> and texture updates</td>
+</tr>
+<tr>
+<td><code>state_mutex</code></td>
+<td>Protects state file operations</td>
+</tr>
+<tr>
+<td>IPC queue lock</td>
+<td>Protects command queue (internal to ipc.c)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="thread-model">Thread Model<a class="headerlink" href="#thread-model" title="Permanent link">&para;</a></h3>
+<p>gSlapper uses multi-threading:
+- <strong>Main Thread</strong>: Wayland event loop, rendering, IPC command processing
+- <strong>GStreamer Bus Thread</strong>: Handles pipeline events (EOM, errors, state changes)
+- <strong>Pause/Stop Monitor Thread</strong>: Checks stoplist/pauselist conditions
+- <strong>IPC Server Thread</strong>: Accepts client connections and enqueues commands</p>
+<hr />
+<h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
+<h3 id="common-return-values">Common Return Values<a class="headerlink" href="#common-return-values" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td>Success</td>
+</tr>
+<tr>
+<td><code>-1</code></td>
+<td>Failure (check errno)</td>
+</tr>
+<tr>
+<td><code>NULL</code></td>
+<td>Failure (check logs)</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>Failure</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td>Success</td>
+</tr>
+</tbody>
+</table>
+<h3 id="error-logging">Error Logging<a class="headerlink" href="#error-logging" title="Permanent link">&para;</a></h3>
+<p>All errors are logged via <code>cflp_error()</code> with descriptive messages.</p>
+<p><strong>Common Error Scenarios</strong>:
+- <strong>Wayland connection failed</strong>: Check <code>WAYLAND_DISPLAY</code> environment variable
+- <strong>File not found</strong>: Check path in state file
+- <strong>GStreamer pipeline error</strong>: Check codec support, install <code>gst-plugins-ugly</code>
+- <strong>IPC socket error</strong>: Check socket path, permissions</p>
+<hr />
+<h2 id="building-with-these-apis">Building with these APIs<a class="headerlink" href="#building-with-these-apis" title="Permanent link">&para;</a></h2>
+<h3 id="example-custom-wallpaper-manager">Example: Custom Wallpaper Manager<a class="headerlink" href="#example-custom-wallpaper-manager" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ipc.h&quot;</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="w">    </span><span class="c1">// Start gSlapper with IPC</span>
+<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="w">    </span><span class="n">system</span><span class="p">(</span><span class="s">&quot;gslapper -I /tmp/gslapper.sock -o &#39;loop&#39; DP-1 /path/to/video.mp4 &amp;&quot;</span><span class="p">);</span>
+<a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="w">    </span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="w">  </span><span class="c1">// Wait for startup</span>
+<a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a>
+<a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a><span class="w">    </span><span class="c1">// Connect to IPC</span>
+<a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">socket</span><span class="p">(</span><span class="n">AF_UNIX</span><span class="p">,</span><span class="w"> </span><span class="n">SOCK_STREAM</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">sockaddr_un</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span>
+<a id="__codelineno-29-12" name="__codelineno-29-12" href="#__codelineno-29-12"></a><span class="w">    </span><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+<a id="__codelineno-29-13" name="__codelineno-29-13" href="#__codelineno-29-13"></a><span class="w">    </span><span class="n">addr</span><span class="p">.</span><span class="n">sun_family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AF_UNIX</span><span class="p">;</span>
+<a id="__codelineno-29-14" name="__codelineno-29-14" href="#__codelineno-29-14"></a><span class="w">    </span><span class="n">strncpy</span><span class="p">(</span><span class="n">addr</span><span class="p">.</span><span class="n">sun_path</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/tmp/gslapper.sock&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">.</span><span class="n">sun_path</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<a id="__codelineno-29-15" name="__codelineno-29-15" href="#__codelineno-29-15"></a>
+<a id="__codelineno-29-16" name="__codelineno-29-16" href="#__codelineno-29-16"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">connect</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">sockaddr</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">))</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-29-17" name="__codelineno-29-17" href="#__codelineno-29-17"></a><span class="w">        </span><span class="n">perror</span><span class="p">(</span><span class="s">&quot;Connect failed&quot;</span><span class="p">);</span>
+<a id="__codelineno-29-18" name="__codelineno-29-18" href="#__codelineno-29-18"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<a id="__codelineno-29-19" name="__codelineno-29-19" href="#__codelineno-29-19"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-29-20" name="__codelineno-29-20" href="#__codelineno-29-20"></a>
+<a id="__codelineno-29-21" name="__codelineno-29-21" href="#__codelineno-29-21"></a><span class="w">    </span><span class="c1">// Interactive control</span>
+<a id="__codelineno-29-22" name="__codelineno-29-22" href="#__codelineno-29-22"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">input</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+<a id="__codelineno-29-23" name="__codelineno-29-23" href="#__codelineno-29-23"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-29-24" name="__codelineno-29-24" href="#__codelineno-29-24"></a><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;&gt; &quot;</span><span class="p">);</span>
+<a id="__codelineno-29-25" name="__codelineno-29-25" href="#__codelineno-29-25"></a><span class="w">        </span><span class="n">fgets</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">input</span><span class="p">),</span><span class="w"> </span><span class="n">stdin</span><span class="p">);</span>
+<a id="__codelineno-29-26" name="__codelineno-29-26" href="#__codelineno-29-26"></a>
+<a id="__codelineno-29-27" name="__codelineno-29-27" href="#__codelineno-29-27"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;pause</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-29-28" name="__codelineno-29-28" href="#__codelineno-29-28"></a><span class="w">            </span><span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;pause</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">);</span>
+<a id="__codelineno-29-29" name="__codelineno-29-29" href="#__codelineno-29-29"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;resume</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-29-30" name="__codelineno-29-30" href="#__codelineno-29-30"></a><span class="w">            </span><span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;resume</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">);</span>
+<a id="__codelineno-29-31" name="__codelineno-29-31" href="#__codelineno-29-31"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;quit</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-29-32" name="__codelineno-29-32" href="#__codelineno-29-32"></a><span class="w">            </span><span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;stop</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+<a id="__codelineno-29-33" name="__codelineno-29-33" href="#__codelineno-29-33"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<a id="__codelineno-29-34" name="__codelineno-29-34" href="#__codelineno-29-34"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-29-35" name="__codelineno-29-35" href="#__codelineno-29-35"></a>
+<a id="__codelineno-29-36" name="__codelineno-29-36" href="#__codelineno-29-36"></a><span class="w">        </span><span class="c1">// Read response</span>
+<a id="__codelineno-29-37" name="__codelineno-29-37" href="#__codelineno-29-37"></a><span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="n">response</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+<a id="__codelineno-29-38" name="__codelineno-29-38" href="#__codelineno-29-38"></a><span class="w">        </span><span class="kt">ssize_t</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<a id="__codelineno-29-39" name="__codelineno-29-39" href="#__codelineno-29-39"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-29-40" name="__codelineno-29-40" href="#__codelineno-29-40"></a><span class="w">            </span><span class="n">response</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+<a id="__codelineno-29-41" name="__codelineno-29-41" href="#__codelineno-29-41"></a><span class="w">            </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span>
+<a id="__codelineno-29-42" name="__codelineno-29-42" href="#__codelineno-29-42"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-29-43" name="__codelineno-29-43" href="#__codelineno-29-43"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-29-44" name="__codelineno-29-44" href="#__codelineno-29-44"></a>
+<a id="__codelineno-29-45" name="__codelineno-29-45" href="#__codelineno-29-45"></a><span class="w">    </span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+<a id="__codelineno-29-46" name="__codelineno-29-46" href="#__codelineno-29-46"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<a id="__codelineno-29-47" name="__codelineno-29-47" href="#__codelineno-29-47"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="example-state-based-wallpaper-switcher">Example: State-Based Wallpaper Switcher<a class="headerlink" href="#example-state-based-wallpaper-switcher" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;state.h&quot;</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;dirent.h&gt;</span>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="kt">void</span><span class="w"> </span><span class="nf">switch_wallpaper</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">new_path</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">wallpaper_state</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">state_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_state_file_path</span><span class="p">(</span><span class="s">&quot;DP-1&quot;</span><span class="p">);</span>
+<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a>
+<a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a><span class="w">    </span><span class="c1">// Load current state</span>
+<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">state_path</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">load_state_file</span><span class="p">(</span><span class="n">state_path</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a><span class="w">        </span><span class="c1">// Update path</span>
+<a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a><span class="w">        </span><span class="n">free</span><span class="p">(</span><span class="n">state</span><span class="p">.</span><span class="n">path</span><span class="p">);</span>
+<a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a><span class="w">        </span><span class="n">state</span><span class="p">.</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strdup</span><span class="p">(</span><span class="n">new_path</span><span class="p">);</span>
+<a id="__codelineno-30-13" name="__codelineno-30-13" href="#__codelineno-30-13"></a>
+<a id="__codelineno-30-14" name="__codelineno-30-14" href="#__codelineno-30-14"></a><span class="w">        </span><span class="c1">// Save state</span>
+<a id="__codelineno-30-15" name="__codelineno-30-15" href="#__codelineno-30-15"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">save_state_file</span><span class="p">(</span><span class="n">state_path</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-30-16" name="__codelineno-30-16" href="#__codelineno-30-16"></a><span class="w">            </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;State updated: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">new_path</span><span class="p">);</span>
+<a id="__codelineno-30-17" name="__codelineno-30-17" href="#__codelineno-30-17"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-30-18" name="__codelineno-30-18" href="#__codelineno-30-18"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-30-19" name="__codelineno-30-19" href="#__codelineno-30-19"></a>
+<a id="__codelineno-30-20" name="__codelineno-30-20" href="#__codelineno-30-20"></a><span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">state_path</span><span class="p">);</span>
+<a id="__codelineno-30-21" name="__codelineno-30-21" href="#__codelineno-30-21"></a><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../architecture/">Architecture Documentation</a> - Detailed architecture overview</li>
+<li><a href="./command-line-options.md">Command Line Options</a> - User-facing CLI reference</li>
+<li><a href="./ipc-control.md">IPC Control Guide</a> - Using IPC from scripts</li>
+<li><a href="./persistent-wallpapers.md">Persistent Wallpapers</a> - State management usage</li>
+<li><a href="../../TO_IMPLEMENT.md">TO_IMPLEMENT.md</a> - Planned features and API additions</li>
+</ul>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 26, 2025 17:33:32 UTC">December 26, 2025</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Created">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 26, 2025 17:33:32 UTC">December 26, 2025</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

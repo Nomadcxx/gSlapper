@@ -12,13 +12,9 @@
         <meta name="author" content="Nomadcxx">
       
       
-        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/development/contributing/">
+        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/development/systemd-analysis/">
       
       
-        <link rel="prev" href="../building/">
-      
-      
-        <link rel="next" href="../api-reference/">
       
       
         
@@ -29,7 +25,7 @@
     
     
       
-        <title>Contributing - gSlapper Documentation</title>
+        <title>Systemd Service Analysis: Why Do We Need It? - gSlapper Documentation</title>
       
     
     
@@ -82,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#contributing" class="md-skip">
+        <a href="#systemd-service-analysis-why-do-we-need-it" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Contributing
+              Systemd Service Analysis: Why Do We Need It?
             
           </span>
         </div>
@@ -312,12 +308,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../index.md" class="md-tabs__link">
           
   
@@ -1048,10 +1042,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -1071,22 +1063,21 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1104,7 +1095,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1175,37 +1166,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Contributing
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
         
   
   
@@ -1221,253 +1185,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Started
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#development-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Setup
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code-style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Code Style
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#making-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Making Changes
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Making Changes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#adding-new-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding New Features
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#adding-new-ipc-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding New IPC Commands
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#adding-new-transition-effects" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding New Transition Effects
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#modifying-rendering-pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Modifying Rendering Pipeline
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Testing">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#basic-functionality" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Basic Functionality
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#test-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Test Scripts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ipc-testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPC Testing
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#commit-guidelines" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Guidelines
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Commit Guidelines">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#commit-message-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Message Format
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pull-request-process" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pull Request Process
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#areas-for-contribution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Areas for Contribution
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reporting-issues" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reporting Issues
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#questions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Questions?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#license" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        License
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1684,55 +1401,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
+  <a href="#what-does-the-systemd-service-actually-do" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Getting Started
+        What Does the Systemd Service Actually Do?
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#development-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Setup
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code-style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Code Style
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#making-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Making Changes
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Making Changes">
+    <nav class="md-nav" aria-label="What Does the Systemd Service Actually Do?">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#adding-new-features" class="md-nav__link">
+  <a href="#1-automatic-startup-on-login" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding New Features
+        1. Automatic Startup on Login
       
     </span>
   </a>
@@ -1740,10 +1424,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#adding-new-ipc-commands" class="md-nav__link">
+  <a href="#2-environment-variable-management" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding New IPC Commands
+        2. Environment Variable Management
       
     </span>
   </a>
@@ -1751,10 +1435,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#adding-new-transition-effects" class="md-nav__link">
+  <a href="#3-automatic-restart-on-failure" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding New Transition Effects
+        3. Automatic Restart on Failure
       
     </span>
   </a>
@@ -1762,10 +1446,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#modifying-rendering-pipeline" class="md-nav__link">
+  <a href="#4-state-restoration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Modifying Rendering Pipeline
+        4. State Restoration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-process-lifecycle-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Process Lifecycle Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-systemd-notifications-systemd-flag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Systemd Notifications (--systemd flag)
       
     </span>
   </a>
@@ -1778,22 +1484,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
+  <a href="#why-swww-doesnt-need-systemd-service" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Testing
+        Why swww Doesn't Need Systemd Service
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Testing">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-gslapper-benefits-from-systemd-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why gSlapper Benefits from Systemd Service
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#can-we-just-run-gslapper-restore-without-systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can We Just Run gslapper --restore Without Systemd?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-with-vs-without-systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison: With vs Without Systemd
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparison: With vs Without Systemd">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#basic-functionality" class="md-nav__link">
+  <a href="#without-systemd-manualshell-script" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Functionality
+        Without Systemd (Manual/Shell Script)
       
     </span>
   </a>
@@ -1801,21 +1540,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#test-scripts" class="md-nav__link">
+  <a href="#with-systemd-service" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Test Scripts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ipc-testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPC Testing
+        With Systemd Service
       
     </span>
   </a>
@@ -1828,38 +1556,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#commit-guidelines" class="md-nav__link">
+  <a href="#what-systemd-flag-actually-does" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Commit Guidelines
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Commit Guidelines">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#commit-message-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Message Format
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pull-request-process" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pull Request Process
+        What --systemd Flag Actually Does
       
     </span>
   </a>
@@ -1867,10 +1567,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#areas-for-contribution" class="md-nav__link">
+  <a href="#recommendation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Areas for Contribution
+        Recommendation
       
     </span>
   </a>
@@ -1878,32 +1578,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#reporting-issues" class="md-nav__link">
+  <a href="#implementation-strategy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reporting Issues
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#questions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Questions?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#license" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        License
+        Implementation Strategy
       
     </span>
   </a>
@@ -1930,144 +1608,158 @@
   
 
 
-<h1 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h1>
-<p>Thank you for your interest in contributing to gSlapper! This guide will help you get started.</p>
-<h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Fork the repository</strong> on GitHub</li>
-<li><strong>Clone your fork</strong>:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/YOUR_USERNAME/gSlapper.git
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>gSlapper
-</code></pre></div></li>
-<li><strong>Create a branch</strong> for your changes:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature/your-feature-name
-</code></pre></div></li>
-</ol>
-<h2 id="development-setup">Development Setup<a class="headerlink" href="#development-setup" title="Permanent link">&para;</a></h2>
-<p>See <a href="../building/">Building from Source</a> for setup instructions.</p>
-<h2 id="code-style">Code Style<a class="headerlink" href="#code-style" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>C code</strong> follows K&amp;R style with 4-space indentation</li>
-<li><strong>GStreamer objects</strong> use <code>g_</code> prefix (GLib naming)</li>
-<li><strong>Wayland objects</strong> use <code>wl_</code> prefix</li>
-<li><strong>Static functions</strong> at file scope</li>
-<li><strong>Global state</strong> in <code>global_state</code> pointer</li>
-<li><strong>Thread communication</strong> via <code>wakeup_pipe</code></li>
-</ul>
-<h2 id="making-changes">Making Changes<a class="headerlink" href="#making-changes" title="Permanent link">&para;</a></h2>
-<h3 id="adding-new-features">Adding New Features<a class="headerlink" href="#adding-new-features" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Plan your changes</strong> - Consider architecture and impact</li>
-<li><strong>Update documentation</strong> - Add/update relevant docs</li>
-<li><strong>Add tests</strong> - Create test scripts if applicable</li>
-<li><strong>Test thoroughly</strong> - Test on different compositors and setups</li>
-</ol>
-<h3 id="adding-new-ipc-commands">Adding New IPC Commands<a class="headerlink" href="#adding-new-ipc-commands" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Define command handler</strong> in <code>src/main.c</code>'s <code>process_ipc_commands()</code> function</li>
-<li><strong>Parse command arguments</strong> from <code>cmd_line</code> string</li>
-<li><strong>Validate inputs</strong> and check state</li>
-<li><strong>Implement command logic</strong> with thread safety in mind</li>
-<li><strong>Send response</strong> via <code>ipc_send_response(client_fd, response)</code></li>
-<li><strong>Free command</strong> with <code>free(cmd-&gt;cmd_line)</code> and <code>free(cmd)</code></li>
-</ol>
-<p>See existing commands like <code>set-transition</code> or <code>change</code> for examples.</p>
-<h3 id="adding-new-transition-effects">Adding New Transition Effects<a class="headerlink" href="#adding-new-transition-effects" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Add transition type</strong> to <code>transition_type_t</code> enum</li>
-<li><strong>Implement transition function</strong> (similar to <code>update_transition()</code>)</li>
-<li><strong>Update command parser</strong> in IPC <code>set-transition</code> handler</li>
-<li><strong>Add command-line option</strong> parsing in <code>parse_command_line()</code></li>
-<li><strong>Test</strong> with automated and visual tests</li>
-</ol>
-<h3 id="modifying-rendering-pipeline">Modifying Rendering Pipeline<a class="headerlink" href="#modifying-rendering-pipeline" title="Permanent link">&para;</a></h3>
-<ol>
-<li>Locate rendering code in <code>render()</code> function</li>
-<li>Ensure EGL context is current before OpenGL calls</li>
-<li>Lock <code>video_mutex</code> when accessing <code>video_frame_data</code> or <code>transition_state</code></li>
-<li>Update vertex data with <code>update_vertex_data()</code> for scaling changes</li>
-</ol>
-<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
-<h3 id="basic-functionality">Basic Functionality<a class="headerlink" href="#basic-functionality" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Test video playback</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>./build/gslapper<span class="w"> </span>-v<span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Test image display</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>./build/gslapper<span class="w"> </span>-v<span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Test with IPC enabled</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>./build/gslapper<span class="w"> </span>-I<span class="w"> </span>/tmp/test.sock<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+<h1 id="systemd-service-analysis-why-do-we-need-it">Systemd Service Analysis: Why Do We Need It?<a class="headerlink" href="#systemd-service-analysis-why-do-we-need-it" title="Permanent link">&para;</a></h1>
+<h2 id="what-does-the-systemd-service-actually-do">What Does the Systemd Service Actually Do?<a class="headerlink" href="#what-does-the-systemd-service-actually-do" title="Permanent link">&para;</a></h2>
+<h3 id="1-automatic-startup-on-login">1. Automatic Startup on Login<a class="headerlink" href="#1-automatic-startup-on-login" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="na">After</span><span class="o">=</span><span class="s">graphical-session.target</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="na">Wants</span><span class="o">=</span><span class="s">graphical-session.target</span>
 </code></pre></div>
-<h3 id="test-scripts">Test Scripts<a class="headerlink" href="#test-scripts" title="Permanent link">&para;</a></h3>
-<p>Run the included test scripts:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Video format testing</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>./test-all-formats.sh
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Image format testing</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>./test-images.sh
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Wallpaper modes testing</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>./test-wallpaper-modes.sh
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># Transition effects testing</span>
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>./test-transitions-comprehensive.sh
+- Starts gSlapper automatically when graphical session is ready
+- No need to manually run <code>gslapper</code> after each login/reboot</p>
+<h3 id="2-environment-variable-management">2. Environment Variable Management<a class="headerlink" href="#2-environment-variable-management" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="na">EnvironmentFile</span><span class="o">=</span><span class="s">%h/.config/gslapper/environment</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="na">Environment</span><span class="o">=</span><span class="s">XDG_RUNTIME_DIR=%t</span>
 </code></pre></div>
-<h3 id="ipc-testing">IPC Testing<a class="headerlink" href="#ipc-testing" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Start with IPC enabled</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>./build/gslapper<span class="w"> </span>-I<span class="w"> </span>/tmp/test.sock<span class="w"> </span>-vv<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># From another terminal, test commands</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;query&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/test.sock
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/test.sock
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;resume&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/test.sock
+- Provides <code>WAYLAND_DISPLAY</code> and <code>XDG_RUNTIME_DIR</code> automatically
+- Ensures Wayland connection works in systemd context
+- Without this, gSlapper can't connect to Wayland compositor</p>
+<h3 id="3-automatic-restart-on-failure">3. Automatic Restart on Failure<a class="headerlink" href="#3-automatic-restart-on-failure" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="na">Restart</span><span class="o">=</span><span class="s">on-failure</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="na">RestartSec</span><span class="o">=</span><span class="s">5</span>
 </code></pre></div>
-<h2 id="commit-guidelines">Commit Guidelines<a class="headerlink" href="#commit-guidelines" title="Permanent link">&para;</a></h2>
+- If gSlapper crashes or exits unexpectedly, systemd restarts it
+- Provides resilience - wallpaper keeps running</p>
+<h3 id="4-state-restoration">4. State Restoration<a class="headerlink" href="#4-state-restoration" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/gslapper --systemd --restore &#39;*&#39;</span>
+</code></pre></div>
+- <code>--restore</code> flag loads saved state from <code>~/.local/state/gslapper/</code>
+- Resumes wallpaper at last position (videos) or shows last image
+- Without this, you'd need to manually set wallpaper after each boot</p>
+<h3 id="5-process-lifecycle-management">5. Process Lifecycle Management<a class="headerlink" href="#5-process-lifecycle-management" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Write clear commit messages</strong> - Explain what and why</li>
-<li><strong>Keep commits focused</strong> - One logical change per commit</li>
-<li><strong>Test before committing</strong> - Ensure changes work</li>
-<li><strong>Update documentation</strong> - Keep docs in sync with code</li>
+<li><code>systemctl start/stop/restart</code> - Control wallpaper service</li>
+<li><code>systemctl reload</code> - Saves state and restarts (SIGHUP)</li>
+<li><code>journalctl</code> - View logs</li>
+<li>Integration with system shutdown/reboot</li>
 </ul>
-<h3 id="commit-message-format">Commit Message Format<a class="headerlink" href="#commit-message-format" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Short summary (50 chars or less)
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>More detailed explanation if needed. Wrap at 72 characters.
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Explain what the change does and why.
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>- Bullet points for multiple changes
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>- Reference issues if applicable
+<h3 id="6-systemd-notifications-systemd-flag">6. Systemd Notifications (--systemd flag)<a class="headerlink" href="#6-systemd-notifications-systemd-flag" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="cp">#ifdef HAVE_SYSTEMD</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">systemd_mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="n">sd_notify</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;READY=1&quot;</span><span class="p">);</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="cp">#endif</span>
 </code></pre></div>
-<h2 id="pull-request-process">Pull Request Process<a class="headerlink" href="#pull-request-process" title="Permanent link">&para;</a></h2>
+- Tells systemd when gSlapper is ready
+- Allows <code>Type=notify</code> for better startup coordination
+- Systemd knows when wallpaper is actually displayed (not just process started)</p>
+<h2 id="why-swww-doesnt-need-systemd-service">Why swww Doesn't Need Systemd Service<a class="headerlink" href="#why-swww-doesnt-need-systemd-service" title="Permanent link">&para;</a></h2>
+<p><strong>swww-daemon architecture:</strong>
+- <strong>Long-running daemon</strong> - Process stays alive indefinitely
+- <strong>Manual startup</strong> - Users run <code>swww-daemon &amp;</code> in shell config or manually
+- <strong>Persistent</strong> - Once started, it runs until killed
+- <strong>No state restoration needed</strong> - Daemon maintains state in memory</p>
+<p><strong>Why swww users might still use systemd:</strong>
+- Convenience - automatic startup
+- Process management - restart on failure
+- But it's <strong>optional</strong> - daemon works fine without it</p>
+<h2 id="why-gslapper-benefits-from-systemd-service">Why gSlapper Benefits from Systemd Service<a class="headerlink" href="#why-gslapper-benefits-from-systemd-service" title="Permanent link">&para;</a></h2>
+<p><strong>gSlapper architecture:</strong>
+- <strong>One process per wallpaper</strong> - Process exits when wallpaper stops
+- <strong>Not a daemon</strong> - Designed to exit when done (like mpvpaper)
+- <strong>State-based</strong> - Relies on saved state files for restoration
+- <strong>Needs restart</strong> - Must be restarted after reboot to restore wallpaper</p>
+<p><strong>Without systemd service:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># User must manually do this after every login:</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>gslapper<span class="w"> </span>--restore<span class="w"> </span>DP-1
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># or</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
+</code></pre></div></p>
+<p><strong>With systemd service:</strong>
+- Automatic - wallpaper restores on login
+- No manual intervention needed
+- Works seamlessly with state restoration</p>
+<h2 id="can-we-just-run-gslapper-restore-without-systemd">Can We Just Run <code>gslapper --restore</code> Without Systemd?<a class="headerlink" href="#can-we-just-run-gslapper-restore-without-systemd" title="Permanent link">&para;</a></h2>
+<p><strong>Yes, technically:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># In ~/.bashrc or ~/.zshrc:</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>gslapper<span class="w"> </span>--restore<span class="w"> </span>DP-1<span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div></p>
+<p><strong>But you lose:</strong>
+1. ❌ Automatic restart on failure
+2. ❌ Proper environment variable management
+3. ❌ Process lifecycle management
+4. ❌ Integration with system shutdown
+5. ❌ Logging via journalctl
+6. ❌ Coordination with graphical session startup
+7. ❌ Resource limits and security settings</p>
+<p><strong>Advantages of shell script approach:</strong>
+1. ✅ Simpler - no systemd knowledge needed
+2. ✅ Works on systems without systemd
+3. ✅ More control over startup timing</p>
+<p><strong>Advantages of systemd service:</strong>
+1. ✅ Automatic startup on login
+2. ✅ Automatic restart on failure
+3. ✅ Proper environment management
+4. ✅ Process lifecycle management
+5. ✅ Better integration with system
+6. ✅ Logging and monitoring
+7. ✅ Resource limits and security</p>
+<h2 id="comparison-with-vs-without-systemd">Comparison: With vs Without Systemd<a class="headerlink" href="#comparison-with-vs-without-systemd" title="Permanent link">&para;</a></h2>
+<h3 id="without-systemd-manualshell-script">Without Systemd (Manual/Shell Script)<a class="headerlink" href="#without-systemd-manualshell-script" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># User must:</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="m">1</span>.<span class="w"> </span>Create<span class="w"> </span>environment<span class="w"> </span>file<span class="w"> </span>manually
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="m">2</span>.<span class="w"> </span>Run<span class="w"> </span>gslapper<span class="w"> </span><span class="k">in</span><span class="w"> </span>shell<span class="w"> </span>config<span class="w"> </span>or<span class="w"> </span>manually
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="m">3</span>.<span class="w"> </span>Handle<span class="w"> </span>failures<span class="w"> </span>manually
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="m">4</span>.<span class="w"> </span>No<span class="w"> </span>automatic<span class="w"> </span>restart
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="m">5</span>.<span class="w"> </span>No<span class="w"> </span>process<span class="w"> </span>management
+</code></pre></div>
+<h3 id="with-systemd-service">With Systemd Service<a class="headerlink" href="#with-systemd-service" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># User:</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="m">1</span>.<span class="w"> </span>Enable<span class="w"> </span>service<span class="w"> </span>once:<span class="w"> </span>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>gslapper.service
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="m">2</span>.<span class="w"> </span>Done<span class="w"> </span>-<span class="w"> </span>automatic<span class="w"> </span>on<span class="w"> </span>every<span class="w"> </span>login
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="m">3</span>.<span class="w"> </span>Automatic<span class="w"> </span>restart<span class="w"> </span>on<span class="w"> </span>failure
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="m">4</span>.<span class="w"> </span>Full<span class="w"> </span>process<span class="w"> </span>management
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="m">5</span>.<span class="w"> </span>Integrated<span class="w"> </span>with<span class="w"> </span>system
+</code></pre></div>
+<h2 id="what-systemd-flag-actually-does">What --systemd Flag Actually Does<a class="headerlink" href="#what-systemd-flag-actually-does" title="Permanent link">&para;</a></h2>
+<p>The <code>--systemd</code> flag enables systemd-specific features:</p>
 <ol>
-<li><strong>Ensure your code works</strong> - Test on your system</li>
-<li><strong>Update documentation</strong> - Keep docs current</li>
-<li><strong>Write a clear PR description</strong> - Explain changes and motivation</li>
-<li><strong>Reference issues</strong> - Link to related issues if applicable</li>
-<li><strong>Wait for review</strong> - Be responsive to feedback</li>
+<li><strong>Systemd notifications</strong> - <code>sd_notify(READY=1)</code> when wallpaper is ready</li>
+<li><strong>Proper exit handling</strong> - Notifies systemd when stopping</li>
+<li><strong>Signal handling</strong> - SIGHUP for reload (saves state, restarts)</li>
+<li><strong>Logging context</strong> - Better integration with journalctl</li>
 </ol>
-<h2 id="areas-for-contribution">Areas for Contribution<a class="headerlink" href="#areas-for-contribution" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Bug fixes</strong> - Report and fix issues</li>
-<li><strong>Performance improvements</strong> - Optimize rendering or memory usage</li>
-<li><strong>New features</strong> - Add requested functionality</li>
-<li><strong>Documentation</strong> - Improve docs and examples</li>
-<li><strong>Testing</strong> - Add test coverage</li>
-<li><strong>Code quality</strong> - Refactor and improve code</li>
-</ul>
-<h2 id="reporting-issues">Reporting Issues<a class="headerlink" href="#reporting-issues" title="Permanent link">&para;</a></h2>
-<p>When reporting issues, please include:</p>
-<ul>
-<li><strong>gSlapper version</strong> - <code>gslapper --version</code> or git commit</li>
-<li><strong>System information</strong> - OS, compositor, GPU</li>
-<li><strong>Steps to reproduce</strong> - Clear reproduction steps</li>
-<li><strong>Expected behavior</strong> - What should happen</li>
-<li><strong>Actual behavior</strong> - What actually happens</li>
-<li><strong>Logs</strong> - Output with <code>-vv</code> flag if applicable</li>
-</ul>
-<h2 id="questions">Questions?<a class="headerlink" href="#questions" title="Permanent link">&para;</a></h2>
-<p>Feel free to open an issue for questions or discussions about contributions.</p>
-<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
-<p>By contributing, you agree that your contributions will be licensed under the MIT License.</p>
+<p><strong>Without --systemd flag:</strong>
+- gSlapper still works
+- But systemd doesn't know when it's "ready"
+- <code>Type=notify</code> won't work properly
+- Less integration with systemd lifecycle</p>
+<p><strong>With --systemd flag:</strong>
+- Full systemd integration
+- Proper readiness notification
+- Better process management</p>
+<h2 id="recommendation">Recommendation<a class="headerlink" href="#recommendation" title="Permanent link">&para;</a></h2>
+<p><strong>We SHOULD provide a default systemd service because:</strong></p>
+<ol>
+<li><strong>gSlapper is not a daemon</strong> - Unlike swww-daemon, it exits when done</li>
+<li><strong>State restoration requires restart</strong> - Need to restart after reboot</li>
+<li><strong>Better user experience</strong> - Automatic wallpaper on login</li>
+<li><strong>Process management</strong> - Restart on failure, proper lifecycle</li>
+<li><strong>Environment management</strong> - Wayland variables handled correctly</li>
+<li><strong>Standard practice</strong> - Most Wayland wallpaper tools use systemd</li>
+</ol>
+<p><strong>But we should:</strong>
+- Make it easy to customize (template service, clear docs)
+- Provide instructions for manual setup (shell script alternative)
+- Explain advantages/disadvantages clearly
+- Allow users to disable if they prefer manual control</p>
+<h2 id="implementation-strategy">Implementation Strategy<a class="headerlink" href="#implementation-strategy" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Default service</strong> - Install and enable by default (post-install hook)</li>
+<li><strong>Template service</strong> - Provide <code>gslapper@.service</code> for per-monitor</li>
+<li><strong>Clear documentation</strong> - Explain what it does and how to customize</li>
+<li><strong>Comments in service file</strong> - Inline instructions for customization</li>
+<li><strong>Alternative docs</strong> - Show shell script approach for non-systemd users</li>
+</ol>
 
 
 

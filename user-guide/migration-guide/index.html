@@ -1,0 +1,3243 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Complete documentation for gSlapper - GStreamer-based wallpaper player for Wayland">
+      
+      
+        <meta name="author" content="Nomadcxx">
+      
+      
+        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/user-guide/migration-guide/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Migration Guide - gSlapper Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Code:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Fira Code";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="green" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#migration-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gSlapper Documentation" class="md-header__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gSlapper Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Migration Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="green" data-md-color-accent="green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="green"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Nomadcxx/gSlapper" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Nomadcxx/gSlapper
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../advanced/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Advanced
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../development/index.md" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../TO_IMPLEMENT.md" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Project
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gSlapper Documentation" class="md-nav__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gSlapper Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Nomadcxx/gSlapper" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Nomadcxx/gSlapper
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../video-wallpapers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Video Wallpapers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../static-images/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Static Images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scaling-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scaling Modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ipc-control/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IPC Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command-line-options/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command Line Options
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../persistent-wallpapers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistent Wallpapers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../advanced/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Advanced
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/transitions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transitions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/multi-monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Monitor Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/index.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    None
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/building/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building from Source
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/systemd-service/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systemd Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Project
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../TO_IMPLEMENT.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TO IMPLEMENT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-migrate-to-gslapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Migrate to gSlapper?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migrating-from-swww" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migrating from swww
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migrating from swww">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swww-vs-gslapper-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swww vs gSlapper Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swww-commands-gslapper-equivalents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swww Commands → gSlapper Equivalents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="swww Commands → gSlapper Equivalents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#video-wallpapers-new-in-gslapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Video Wallpapers (NEW in gSlapper)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scaling-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scaling Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#daemonservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Daemon/Service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cache-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cache Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swww-config-gslapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swww Config → gSlapper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-checklist-swww-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Checklist - swww Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migrating-from-mpvpaper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migrating from mpvpaper
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migrating from mpvpaper">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mpvpaper-vs-gslapper-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mpvpaper vs gSlapper Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-switch-from-mpvpaper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Switch from mpvpaper?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mpvpaper-commands-gslapper-equivalents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mpvpaper Commands → gSlapper Equivalents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="mpvpaper Commands → gSlapper Equivalents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-usage_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalingpanscan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scaling/Panscan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto-pausestop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-Pause/Stop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPC Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mpvpaper-systemd-gslapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mpvpaper Systemd → gSlapper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-checklist-mpvpaper-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Checklist - mpvpaper Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migrating-from-hyprpaper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migrating from hyprpaper
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migrating from hyprpaper">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hyprpaper-vs-gslapper-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hyprpaper vs gSlapper Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hyprpaper-commands-gslapper-equivalents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hyprpaper Commands → gSlapper Equivalents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="hyprpaper Commands → gSlapper Equivalents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-usage_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#different-wallpapers-per-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Different Wallpapers per Monitor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hyprpaper-config-gslapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hyprpaper Config → gSlapper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-checklist-hyprpaper-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Checklist - hyprpaper Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migrating-from-swaybg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migrating from swaybg
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migrating from swaybg">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swaybg-vs-gslapper-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swaybg vs gSlapper Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swaybg-commands-gslapper-equivalents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swaybg Commands → gSlapper Equivalents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="swaybg Commands → gSlapper Equivalents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-usage_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sway-config-gslapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sway Config → gSlapper
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-checklist-swaybg-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Checklist - swaybg Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migrating-from-feh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migrating from feh
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migrating from feh">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#feh-vs-gslapper-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        feh vs gSlapper Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feh-commands-gslapper-equivalents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        feh Commands → gSlapper Equivalents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="feh Commands → gSlapper Equivalents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-usage_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feh-random-wallpaper-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        feh Random Wallpaper Scripts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feh-integration-in-compositors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        feh Integration in Compositors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-checklist-feh-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Checklist - feh Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-common-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference: Common Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Reference: Common Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-static-wallpaper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Static Wallpaper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-video-wallpaper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Video Wallpaper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fade-transition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fade Transition
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-migration-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Migration Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting Migration Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#compositor-still-starts-old-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compositor Still Starts Old Tool
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-wallpaper-tools-running" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiple Wallpaper Tools Running
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wallpaper-not-showing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wallpaper Not Showing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transition-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transition Not Working
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-comparison-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature Comparison Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="migration-guide">Migration Guide<a class="headerlink" href="#migration-guide" title="Permanent link">&para;</a></h1>
+<p>This guide helps users migrate from other wallpaper tools to gSlapper. Whether you're coming from swww, mpvpaper, hyprpaper, swaybg, or feh, we'll show you how to make the switch smoothly.</p>
+<h2 id="why-migrate-to-gslapper">Why Migrate to gSlapper?<a class="headerlink" href="#why-migrate-to-gslapper" title="Permanent link">&para;</a></h2>
+<p><strong>Key Advantages</strong>:
+- ✅ <strong>Video + Static Support</strong> - One tool for both animated and static wallpapers
+- ✅ <strong>GStreamer Backend</strong> - More efficient than libmpv, better NVIDIA compatibility
+- ✅ <strong>Minimal Resource Usage</strong> - Smart texture management and frame rate limiting
+- ✅ <strong>Wayland Native</strong> - Built for wlroots compositors (Hyprland, Sway, River, Niri)
+- ✅ <strong>IPC Control</strong> - Runtime control via Unix sockets
+- ✅ <strong>Persistent State</strong> - Automatic wallpaper restoration on login
+- ✅ <strong>Smooth Transitions</strong> - Fade effects between static images</p>
+<hr />
+<h2 id="migrating-from-swww">Migrating from swww<a class="headerlink" href="#migrating-from-swww" title="Permanent link">&para;</a></h2>
+<h3 id="swww-vs-gslapper-comparison">swww vs gSlapper Comparison<a class="headerlink" href="#swww-vs-gslapper-comparison" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>swww</th>
+<th>gSlapper</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Static Images</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Video Wallpapers</strong></td>
+<td>❌ (images only)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Daemon</strong></td>
+<td><code>swww-daemon</code></td>
+<td>Optional systemd service</td>
+</tr>
+<tr>
+<td><strong>Transitions</strong></td>
+<td>✅ (fade)</td>
+<td>✅ (fade)</td>
+</tr>
+<tr>
+<td><strong>Scaling</strong></td>
+<td>Limited</td>
+<td>Full (fill, stretch, original, panscan)</td>
+</tr>
+<tr>
+<td><strong>Multi-Monitor</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>IPC Control</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Resource Usage</strong></td>
+<td>Medium</td>
+<td>Low (smart management)</td>
+</tr>
+<tr>
+<td><strong>Video Support</strong></td>
+<td>GIF only</td>
+<td>Full GStreamer (MP4, MKV, WebM)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="swww-commands-gslapper-equivalents">swww Commands → gSlapper Equivalents<a class="headerlink" href="#swww-commands-gslapper-equivalents" title="Permanent link">&para;</a></h3>
+<h4 id="basic-usage">Basic Usage<a class="headerlink" href="#basic-usage" title="Permanent link">&para;</a></h4>
+<p><strong>swww:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Set wallpaper on all monitors</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>swww<span class="w"> </span>img<span class="w"> </span>/path/to/image.jpg
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Set on specific monitor</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>swww<span class="w"> </span>img<span class="w"> </span>-o<span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># With transition</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>swww<span class="w"> </span>img<span class="w"> </span>-t<span class="w"> </span>fade<span class="w"> </span>--transition-step<span class="w"> </span><span class="m">90</span><span class="w"> </span>/path/to/image.jpg
+</code></pre></div></p>
+<p><strong>gSlapper (static images):</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Set wallpaper on all monitors</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span>/path/to/image.jpg
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Set on specific monitor</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># With transition</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>--transition-type<span class="w"> </span>fade<span class="w"> </span>--transition-duration<span class="w"> </span><span class="m">0</span>.5<span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
+</code></pre></div></p>
+<h4 id="video-wallpapers-new-in-gslapper">Video Wallpapers (NEW in gSlapper)<a class="headerlink" href="#video-wallpapers-new-in-gslapper" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Set video wallpaper with looping</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Video with custom scaling</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop panscan=0.8&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
+</code></pre></div>
+<h4 id="scaling-modes">Scaling Modes<a class="headerlink" href="#scaling-modes" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>swww</th>
+<th>gSlapper</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--no-resize</code></td>
+<td><code>-o "original"</code></td>
+<td>Native resolution</td>
+</tr>
+<tr>
+<td><code>--cover</code></td>
+<td><code>-o "fill"</code></td>
+<td>Cover screen, crop excess</td>
+</tr>
+<tr>
+<td><code>--contain</code></td>
+<td><code>-o "panscan=1.0"</code></td>
+<td>Fit inside, keep aspect</td>
+</tr>
+</tbody>
+</table>
+<h4 id="daemonservice">Daemon/Service<a class="headerlink" href="#daemonservice" title="Permanent link">&para;</a></h4>
+<p><strong>swww:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Start daemon manually</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>swww-daemon
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Or via systemd</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>swww-daemon.service
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>start<span class="w"> </span>swww-daemon.service
+</code></pre></div></p>
+<p><strong>gSlapper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># No daemon needed for static images (one-shot like swww init)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># But you can use systemd for persistence:</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Create environment file</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;WAYLAND_DISPLAY=</span><span class="nv">$WAYLAND_DISPLAY</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>~/.config/gslapper/environment
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Enable service</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper.service
+</code></pre></div></p>
+<h4 id="cache-management">Cache Management<a class="headerlink" href="#cache-management" title="Permanent link">&para;</a></h4>
+<p><strong>swww:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>swww<span class="w"> </span>clear-cache
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>swww<span class="w"> </span>img<span class="w"> </span>--no-cache<span class="w"> </span>/path/to/image.jpg
+</code></pre></div></p>
+<p><strong>gSlapper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># gSlapper doesn&#39;t use a persistent cache</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># Transitions are handled in-memory</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># TODO: Preload cache coming soon (see TO_IMPLEMENT.md)</span>
+</code></pre></div></p>
+<h3 id="swww-config-gslapper">swww Config → gSlapper<a class="headerlink" href="#swww-config-gslapper" title="Permanent link">&para;</a></h3>
+<p><strong>swww config (<code>~/.config/swww/init.sh</code>):</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>swww<span class="w"> </span>init
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>swww<span class="w"> </span>img<span class="w"> </span>/path/to/wallpaper.jpg
+</code></pre></div></p>
+<p><strong>gSlapper equivalent:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># Method 1: One-shot (no daemon)</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span>/path/to/wallpaper.jpg
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># Method 2: Systemd service for persistence</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1"># See: Persistent Wallpapers guide</span>
+</code></pre></div></p>
+<h3 id="migration-checklist-swww-users">Migration Checklist - swww Users<a class="headerlink" href="#migration-checklist-swww-users" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Replace <code>swww img</code> commands with <code>gslapper -o "fill"</code> for static images</li>
+<li>[ ] Use <code>gslapper -o "loop"</code> for video wallpapers (new capability)</li>
+<li>[ ] Update compositor startup scripts</li>
+<li><strong>Hyprland</strong>: Change <code>exec-once = swww img ...</code> to <code>exec-once = gslapper ...</code></li>
+<li><strong>Sway</strong>: Change <code>exec swww img ...</code> to <code>exec gslapper ...</code></li>
+<li>[ ] Disable <code>swww-daemon</code> if using gSlapper service:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>disable<span class="w"> </span>swww-daemon.service
+</code></pre></div></li>
+<li>[ ] Update shell aliases (if any):
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Old</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">wp</span><span class="o">=</span><span class="s1">&#39;swww img ~/Pictures/wallpaper.jpg&#39;</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># New</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">wp</span><span class="o">=</span><span class="s1">&#39;gslapper -o &quot;fill&quot; ~/Pictures/wallpaper.jpg&#39;</span>
+</code></pre></div></li>
+</ul>
+<hr />
+<h2 id="migrating-from-mpvpaper">Migrating from mpvpaper<a class="headerlink" href="#migrating-from-mpvpaper" title="Permanent link">&para;</a></h2>
+<h3 id="mpvpaper-vs-gslapper-comparison">mpvpaper vs gSlapper Comparison<a class="headerlink" href="#mpvpaper-vs-gslapper-comparison" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>mpvpaper</th>
+<th>gSlapper</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Static Images</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Video Wallpapers</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Backend</strong></td>
+<td>libmpv</td>
+<td>GStreamer</td>
+</tr>
+<tr>
+<td><strong>Memory Leaks</strong></td>
+<td>⚠️ Issues on NVIDIA</td>
+<td>✅ Fixed</td>
+</tr>
+<tr>
+<td><strong>GPU Resource Usage</strong></td>
+<td>High</td>
+<td>Optimized</td>
+</tr>
+<tr>
+<td><strong>Multi-Monitor</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>IPC Control</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Transitions</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Scaling Modes</strong></td>
+<td>Limited</td>
+<td>Full (fill, stretch, original, panscan)</td>
+</tr>
+<tr>
+<td><strong>Persistent State</strong></td>
+<td>No</td>
+<td>✅ Automatic</td>
+</tr>
+</tbody>
+</table>
+<h3 id="why-switch-from-mpvpaper">Why Switch from mpvpaper?<a class="headerlink" href="#why-switch-from-mpvpaper" title="Permanent link">&para;</a></h3>
+<p><strong>Known Issues Fixed in gSlapper:</strong>
+- ✅ <strong>NVIDIA Memory Leaks</strong> - GStreamer backend solves libmpv memory issues
+- ✅ <strong>GPU Resource Usage</strong> - Smart texture management reduces VRAM consumption
+- ✅ <strong>Static Image Transitions</strong> - Fade effects not available in mpvpaper
+- ✅ <strong>Persistent State</strong> - Automatic wallpaper restoration, no manual scripts needed</p>
+<h3 id="mpvpaper-commands-gslapper-equivalents">mpvpaper Commands → gSlapper Equivalents<a class="headerlink" href="#mpvpaper-commands-gslapper-equivalents" title="Permanent link">&para;</a></h3>
+<h4 id="basic-usage_1">Basic Usage<a class="headerlink" href="#basic-usage_1" title="Permanent link">&para;</a></h4>
+<p><strong>mpvpaper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Video wallpaper</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>mpvpaper<span class="w"> </span>-f<span class="w"> </span>--loop<span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># Video with options</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>mpvpaper<span class="w"> </span>-f<span class="w"> </span>--loop<span class="w"> </span>--panscan<span class="o">=</span><span class="m">1</span>.0<span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="c1"># Static image</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>mpvpaper<span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
+</code></pre></div></p>
+<p><strong>gSlapper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Video wallpaper</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>gslapper<span class="w"> </span>-f<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Video with options</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>gslapper<span class="w"> </span>-f<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop panscan=1.0&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="c1"># Static image (fill mode by default)</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>gslapper<span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="c1"># Or explicit fill mode</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
+</code></pre></div></p>
+<h4 id="scalingpanscan">Scaling/Panscan<a class="headerlink" href="#scalingpanscan" title="Permanent link">&para;</a></h4>
+<p><strong>mpvpaper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Full stretch</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>mpvpaper<span class="w"> </span>-f<span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># Panscan (0.0 = fit, 1.0 = fill)</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>mpvpaper<span class="w"> </span>-f<span class="w"> </span>--panscan<span class="o">=</span><span class="m">0</span>.5<span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+</code></pre></div></p>
+<p><strong>gSlapper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Full stretch</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>gslapper<span class="w"> </span>-f<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;stretch&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># Panscan (0.0 = fit, 1.0 = fill)</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>gslapper<span class="w"> </span>-f<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;panscan=0.5&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+</code></pre></div></p>
+<h4 id="auto-pausestop">Auto-Pause/Stop<a class="headerlink" href="#auto-pausestop" title="Permanent link">&para;</a></h4>
+<p><strong>mpvpaper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Uses ~/.config/mpvpaper/pauselist and stoplist</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="c1"># Add application names to files</span>
+</code></pre></div></p>
+<p><strong>gSlapper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Same configuration files</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;firefox&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.config/mpvpaper/pauselist
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;games&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.config/mpvpaper/stoplist
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="c1"># Or use command-line flags</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>gslapper<span class="w"> </span>-p<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4<span class="w">  </span><span class="c1"># Auto-pause</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>gslapper<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4<span class="w">  </span><span class="c1"># Auto-stop</span>
+</code></pre></div></p>
+<h4 id="ipc-control">IPC Control<a class="headerlink" href="#ipc-control" title="Permanent link">&para;</a></h4>
+<p><strong>mpvpaper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># No built-in IPC</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c1"># Requires external tools or scripts</span>
+</code></pre></div></p>
+<p><strong>gSlapper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Start with IPC socket</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>gslapper<span class="w"> </span>-I<span class="w"> </span>/tmp/gslapper.sock<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># Control via IPC</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;resume&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;change /new/video.mp4&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+</code></pre></div></p>
+<h3 id="mpvpaper-systemd-gslapper">mpvpaper Systemd → gSlapper<a class="headerlink" href="#mpvpaper-systemd-gslapper" title="Permanent link">&para;</a></h3>
+<p><strong>mpvpaper service:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">[Unit]</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="na">Description</span><span class="o">=</span><span class="s">mpvpaper service</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="na">After</span><span class="o">=</span><span class="s">graphical-session.target</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="k">[Service]</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="na">Type</span><span class="o">=</span><span class="s">simple</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/mpvpaper -f --loop DP-1 /path/to/video.mp4</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="na">Restart</span><span class="o">=</span><span class="s">on-failure</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="k">[Install]</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="na">WantedBy</span><span class="o">=</span><span class="s">default.target</span>
+</code></pre></div></p>
+<p><strong>gSlapper equivalent:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="k">[Unit]</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="na">Description</span><span class="o">=</span><span class="s">gSlapper Wallpaper Service</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="na">After</span><span class="o">=</span><span class="s">graphical-session.target</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="na">Wants</span><span class="o">=</span><span class="s">graphical-session.target</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="k">[Service]</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="na">Type</span><span class="o">=</span><span class="s">notify</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/gslapper --systemd --restore DP-1</span>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="na">ExecReload</span><span class="o">=</span><span class="s">/bin/kill -HUP $MAINPID</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="na">Restart</span><span class="o">=</span><span class="s">on-failure</span>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="na">RestartSec</span><span class="o">=</span><span class="s">5</span>
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="na">TimeoutStopSec</span><span class="o">=</span><span class="s">30</span>
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="na">EnvironmentFile</span><span class="o">=</span><span class="s">%h/.config/gslapper/environment</span>
+<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="na">Environment</span><span class="o">=</span><span class="s">XDG_RUNTIME_DIR=%t</span>
+<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a>
+<a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a><span class="na">MemoryMax</span><span class="o">=</span><span class="s">512M</span>
+<a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a><span class="na">CPUQuota</span><span class="o">=</span><span class="s">50%</span>
+<a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a><span class="na">NoNewPrivileges</span><span class="o">=</span><span class="s">true</span>
+<a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a><span class="na">PrivateTmp</span><span class="o">=</span><span class="s">true</span>
+<a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a>
+<a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a><span class="k">[Install]</span>
+<a id="__codelineno-20-23" name="__codelineno-20-23" href="#__codelineno-20-23"></a><span class="na">WantedBy</span><span class="o">=</span><span class="s">default.target</span>
+</code></pre></div></p>
+<p><strong>Key Differences:</strong>
+- <code>--systemd --restore</code> enables state persistence
+- <code>Type=notify</code> for systemd readiness
+- Resource limits for better management
+- SIGHUP reload support for state saving</p>
+<h3 id="migration-checklist-mpvpaper-users">Migration Checklist - mpvpaper Users<a class="headerlink" href="#migration-checklist-mpvpaper-users" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Replace <code>mpvpaper</code> with <code>gslapper</code> in all scripts</li>
+<li>[ ] Update systemd services
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>disable<span class="w"> </span>mpvpaper.service
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>gslapper.service
+</code></pre></div></li>
+<li>[ ] Create environment file for gSlapper:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.config/gslapper
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;WAYLAND_DISPLAY=</span><span class="nv">$WAYLAND_DISPLAY</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>~/.config/gslapper/environment
+</code></pre></div></li>
+<li>[ ] Test video playback (should work better on NVIDIA)</li>
+<li>[ ] Try fade transitions with static images</li>
+<li>[ ] Set up IPC socket for runtime control</li>
+<li>[ ] Update compositor startup scripts</li>
+</ul>
+<hr />
+<h2 id="migrating-from-hyprpaper">Migrating from hyprpaper<a class="headerlink" href="#migrating-from-hyprpaper" title="Permanent link">&para;</a></h2>
+<h3 id="hyprpaper-vs-gslapper-comparison">hyprpaper vs gSlapper Comparison<a class="headerlink" href="#hyprpaper-vs-gslapper-comparison" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>hyprpaper</th>
+<th>gSlapper</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Static Images</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Video Wallpapers</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Hyprland Only</strong></td>
+<td>✅</td>
+<td>✅ (but works on any wlroots compositor)</td>
+</tr>
+<tr>
+<td><strong>Daemon</strong></td>
+<td>✅ (<code>hyprpaper</code>)</td>
+<td>Optional systemd service</td>
+</tr>
+<tr>
+<td><strong>Preloading</strong></td>
+<td>✅</td>
+<td>⚠️ TODO (coming soon)</td>
+</tr>
+<tr>
+<td><strong>Transitions</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Scaling</strong></td>
+<td>Basic</td>
+<td>Full (fill, stretch, original, panscan)</td>
+</tr>
+<tr>
+<td><strong>IPC Control</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Multi-Monitor</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hyprpaper-commands-gslapper-equivalents">hyprpaper Commands → gSlapper Equivalents<a class="headerlink" href="#hyprpaper-commands-gslapper-equivalents" title="Permanent link">&para;</a></h3>
+<h4 id="basic-usage_2">Basic Usage<a class="headerlink" href="#basic-usage_2" title="Permanent link">&para;</a></h4>
+<p><strong>hyprpaper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># Start daemon</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>hyprpaper<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># Preload images</span>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>hyprpaper<span class="w"> </span>preload<span class="w"> </span>/path/to/image1.jpg
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>hyprpaper<span class="w"> </span>preload<span class="w"> </span>/path/to/image2.jpg
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="c1"># Set wallpaper</span>
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>hyprpaper<span class="w"> </span>wallpaper<span class="w"> </span><span class="s2">&quot;DP-1,/path/to/image1.jpg&quot;</span>
+<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>hyprpaper<span class="w"> </span>wallpaper<span class="w"> </span><span class="s2">&quot;DP-2,/path/to/image2.jpg&quot;</span>
+</code></pre></div></p>
+<p><strong>gSlapper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># Set wallpaper directly (no daemon required)</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image1.jpg
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="c1"># For multiple monitors (different wallpapers)</span>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image1.jpg<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-2<span class="w"> </span>/path/to/image2.jpg<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>
+<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a><span class="c1"># Or use systemd service for persistence</span>
+<a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a><span class="c1"># See: Persistent Wallpapers guide</span>
+</code></pre></div></p>
+<h4 id="different-wallpapers-per-monitor">Different Wallpapers per Monitor<a class="headerlink" href="#different-wallpapers-per-monitor" title="Permanent link">&para;</a></h4>
+<p><strong>hyprpaper (<code>~/.config/hypr/hyprpaper.conf</code>):</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="nv">wallpaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>DP-1,/path/to/image1.jpg
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="nv">wallpaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>DP-2,/path/to/image2.jpg
+</code></pre></div></p>
+<p><strong>gSlapper (systemd template services):</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1"># Enable per-monitor services</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper@DP-1.service
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper@DP-2.service
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="c1"># Each service has its own state file</span>
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a><span class="c1"># Set wallpapers manually first</span>
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image1.jpg<span class="w">  </span><span class="c1"># Ctrl+C</span>
+<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-2<span class="w"> </span>/path/to/image2.jpg<span class="w">  </span><span class="c1"># Ctrl+C</span>
+</code></pre></div></p>
+<h3 id="hyprpaper-config-gslapper">hyprpaper Config → gSlapper<a class="headerlink" href="#hyprpaper-config-gslapper" title="Permanent link">&para;</a></h3>
+<p><strong>hyprpaper config (<code>~/.config/hypr/hyprpaper.conf</code>):</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="nv">wallpaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>DP-1,/path/to/wallpaper.jpg
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="nv">wallpaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>DP-2,/path/to/wallpaper2.jpg
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="nv">splash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+</code></pre></div></p>
+<p><strong>gSlapper equivalent (Hyprland config):</strong></p>
+<p><strong>Method 1: Compositor startup (quick setup)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1"># ~/.config/hypr/hyprland.conf</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>exec-once<span class="w"> </span><span class="o">=</span><span class="w"> </span>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/wallpaper.jpg
+</code></pre></div></p>
+<p><strong>Method 2: Systemd service (recommended)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># Create environment</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;WAYLAND_DISPLAY=</span><span class="nv">$WAYLAND_DISPLAY</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>~/.config/gslapper/environment
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="c1"># Enable services</span>
+<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper@DP-1.service
+<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper@DP-2.service
+</code></pre></div></p>
+<p><strong>Method 3: Shell script (for manual control)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="c1"># ~/.config/hypr/set-wallpapers.sh</span>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/wallpaper.jpg<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-2<span class="w"> </span>/path/to/wallpaper2.jpg<span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div></p>
+<h3 id="migration-checklist-hyprpaper-users">Migration Checklist - hyprpaper Users<a class="headerlink" href="#migration-checklist-hyprpaper-users" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Kill <code>hyprpaper</code> daemon:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>pkill<span class="w"> </span>hyprpaper
+</code></pre></div></li>
+<li>[ ] Remove from Hyprland config:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="c1"># Comment out in ~/.config/hypr/hyprland.conf</span>
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="c1"># exec-once = hyprpaper &amp;</span>
+</code></pre></div></li>
+<li>[ ] Set up gSlapper via systemd (recommended) or compositor config</li>
+<li>[ ] Test with static images first</li>
+<li>[ ] Try video wallpapers (new feature not available in hyprpaper)</li>
+<li>[ ] Try fade transitions</li>
+<li>[ ] Remove hyprpaper config file if not needed</li>
+</ul>
+<hr />
+<h2 id="migrating-from-swaybg">Migrating from swaybg<a class="headerlink" href="#migrating-from-swaybg" title="Permanent link">&para;</a></h2>
+<h3 id="swaybg-vs-gslapper-comparison">swaybg vs gSlapper Comparison<a class="headerlink" href="#swaybg-vs-gslapper-comparison" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>swaybg</th>
+<th>gSlapper</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Static Images</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Video Wallpapers</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Sway Only</strong></td>
+<td>✅</td>
+<td>✅ (but works on any Wayland compositor)</td>
+</tr>
+<tr>
+<td><strong>Daemon</strong></td>
+<td>✅ (runs in bg)</td>
+<td>Optional systemd service</td>
+</tr>
+<tr>
+<td><strong>Transitions</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Scaling</strong></td>
+<td><code>stretch</code>/<code>fill</code> only</td>
+<td>Full modes</td>
+</tr>
+<tr>
+<td><strong>IPC Control</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Multi-Monitor</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<h3 id="swaybg-commands-gslapper-equivalents">swaybg Commands → gSlapper Equivalents<a class="headerlink" href="#swaybg-commands-gslapper-equivalents" title="Permanent link">&para;</a></h3>
+<h4 id="basic-usage_3">Basic Usage<a class="headerlink" href="#basic-usage_3" title="Permanent link">&para;</a></h4>
+<p><strong>swaybg:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="c1"># Single monitor</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>swaybg<span class="w"> </span>-i<span class="w"> </span>/path/to/image.jpg<span class="w"> </span>-m<span class="w"> </span>fill
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>
+<a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="c1"># Multiple monitors (different wallpapers)</span>
+<a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a>swaybg<span class="w"> </span>-i<span class="w"> </span>/path/to/image1.jpg<span class="w"> </span>-o<span class="w"> </span>DP-1<span class="w"> </span>-m<span class="w"> </span>fill<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a><span class="w">         </span>-i<span class="w"> </span>/path/to/image2.jpg<span class="w"> </span>-o<span class="w"> </span>DP-2<span class="w"> </span>-m<span class="w"> </span>fill
+<a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a>
+<a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a><span class="c1"># Scale modes</span>
+<a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a>swaybg<span class="w"> </span>-i<span class="w"> </span>/path/to/image.jpg<span class="w"> </span>-m<span class="w"> </span>stretch
+<a id="__codelineno-33-10" name="__codelineno-33-10" href="#__codelineno-33-10"></a>swaybg<span class="w"> </span>-i<span class="w"> </span>/path/to/image.jpg<span class="w"> </span>-m<span class="w"> </span>fit
+</code></pre></div></p>
+<p><strong>gSlapper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="c1"># Single monitor</span>
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
+<a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>
+<a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="c1"># Multiple monitors</span>
+<a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image1.jpg<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-2<span class="w"> </span>/path/to/image2.jpg<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a>
+<a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a><span class="c1"># Scale modes</span>
+<a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;stretch&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
+<a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;original&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
+<a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;panscan=1.0&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg<span class="w">  </span><span class="c1"># Fit</span>
+</code></pre></div></p>
+<h4 id="sway-config-gslapper">Sway Config → gSlapper<a class="headerlink" href="#sway-config-gslapper" title="Permanent link">&para;</a></h4>
+<p><strong>swaybg in Sway config (<code>~/.config/sway/config</code>):</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="c1"># Single wallpaper</span>
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>output<span class="w"> </span>*<span class="w"> </span><span class="nb">bg</span><span class="w"> </span>/path/to/wallpaper.jpg<span class="w"> </span>fill
+<a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>
+<a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a><span class="c1"># Different per monitor</span>
+<a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>output<span class="w"> </span>DP-1<span class="w"> </span><span class="nb">bg</span><span class="w"> </span>/path/to/wallpaper1.jpg<span class="w"> </span>fill
+<a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a>output<span class="w"> </span>DP-2<span class="w"> </span><span class="nb">bg</span><span class="w"> </span>/path/to/wallpaper2.jpg<span class="w"> </span>fill
+<a id="__codelineno-35-7" name="__codelineno-35-7" href="#__codelineno-35-7"></a>
+<a id="__codelineno-35-8" name="__codelineno-35-8" href="#__codelineno-35-8"></a><span class="c1"># Scale modes</span>
+<a id="__codelineno-35-9" name="__codelineno-35-9" href="#__codelineno-35-9"></a>output<span class="w"> </span>DP-1<span class="w"> </span><span class="nb">bg</span><span class="w"> </span>/path/to/wallpaper.jpg<span class="w"> </span>stretch
+<a id="__codelineno-35-10" name="__codelineno-35-10" href="#__codelineno-35-10"></a>output<span class="w"> </span>DP-1<span class="w"> </span><span class="nb">bg</span><span class="w"> </span>/path/to/wallpaper.jpg<span class="w"> </span>fit
+</code></pre></div></p>
+<p><strong>gSlapper equivalent:</strong></p>
+<p><strong>Method 1: Exec in sway config</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="c1"># Single wallpaper</span>
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="nb">exec</span><span class="w"> </span>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span>/path/to/wallpaper.jpg
+<a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>
+<a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="c1"># Different per monitor (script)</span>
+<a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="nb">exec</span><span class="w"> </span>~/.config/sway/set-wallpapers.sh
+</code></pre></div></p>
+<p><strong>Method 2: Systemd service (recommended)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="c1"># Create environment</span>
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;WAYLAND_DISPLAY=</span><span class="nv">$WAYLAND_DISPLAY</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>~/.config/gslapper/environment
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>
+<a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a><span class="c1"># Enable services</span>
+<a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper.service<span class="w">  </span><span class="c1"># Single</span>
+<a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a><span class="c1"># Or per monitor:</span>
+<a id="__codelineno-37-7" name="__codelineno-37-7" href="#__codelineno-37-7"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper@DP-1.service
+<a id="__codelineno-37-8" name="__codelineno-37-8" href="#__codelineno-37-8"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper@DP-2.service
+</code></pre></div></p>
+<p><strong>Method 3: Script for sway exec</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="c1"># ~/.config/sway/set-wallpapers.sh</span>
+<a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/wallpaper1.jpg<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-2<span class="w"> </span>/path/to/wallpaper2.jpg<span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div></p>
+<h3 id="migration-checklist-swaybg-users">Migration Checklist - swaybg Users<a class="headerlink" href="#migration-checklist-swaybg-users" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Remove <code>output * bg</code> lines from sway config:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="c1"># Comment out in ~/.config/sway/config</span>
+<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="c1"># output * bg /path/to/wallpaper.jpg fill</span>
+</code></pre></div></li>
+<li>[ ] Kill any running swaybg instances:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>pkill<span class="w"> </span>swaybg
+</code></pre></div></li>
+<li>[ ] Set up gSlapper via systemd (recommended) or sway exec</li>
+<li>[ ] Test static image wallpaper</li>
+<li>[ ] Try video wallpapers (new feature)</li>
+<li>[ ] Try fade transitions</li>
+<li>[ ] Enable IPC socket if you want runtime control</li>
+</ul>
+<hr />
+<h2 id="migrating-from-feh">Migrating from feh<a class="headerlink" href="#migrating-from-feh" title="Permanent link">&para;</a></h2>
+<h3 id="feh-vs-gslapper-comparison">feh vs gSlapper Comparison<a class="headerlink" href="#feh-vs-gslapper-comparison" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>feh</th>
+<th>gSlapper</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Static Images</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Video Wallpapers</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>X11 Tool</strong></td>
+<td>✅</td>
+<td>❌ (Wayland only)</td>
+</tr>
+<tr>
+<td><strong>Xwayland Compatible</strong></td>
+<td>✅</td>
+<td>✅ (native Wayland better)</td>
+</tr>
+<tr>
+<td><strong>Image Browser</strong></td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>Transitions</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Scaling</strong></td>
+<td>Full modes</td>
+<td>Full modes</td>
+</tr>
+<tr>
+<td><strong>IPC Control</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Multi-Monitor</strong></td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: feh is an X11 tool. If you're using Wayland with Xwayland, gSlapper (native Wayland) will provide better performance and integration.</p>
+<h3 id="feh-commands-gslapper-equivalents">feh Commands → gSlapper Equivalents<a class="headerlink" href="#feh-commands-gslapper-equivalents" title="Permanent link">&para;</a></h3>
+<h4 id="basic-usage_4">Basic Usage<a class="headerlink" href="#basic-usage_4" title="Permanent link">&para;</a></h4>
+<p><strong>feh:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="c1"># Set wallpaper</span>
+<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>feh<span class="w"> </span>--bg-fill<span class="w"> </span>/path/to/image.jpg
+<a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>
+<a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a><span class="c1"># Specific monitor (with xrandr)</span>
+<a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a>feh<span class="w"> </span>--bg-fill<span class="w"> </span>/path/to/image.jpg<span class="w"> </span>--output-name<span class="w"> </span>DP-1
+<a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a>
+<a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a><span class="c1"># Scale modes</span>
+<a id="__codelineno-41-8" name="__codelineno-41-8" href="#__codelineno-41-8"></a>feh<span class="w"> </span>--bg-scale<span class="w"> </span>/path/to/image.jpg<span class="w">    </span><span class="c1"># Fit inside</span>
+<a id="__codelineno-41-9" name="__codelineno-41-9" href="#__codelineno-41-9"></a>feh<span class="w"> </span>--bg-tile<span class="w"> </span>/path/to/image.jpg<span class="w">     </span><span class="c1"># Tile</span>
+<a id="__codelineno-41-10" name="__codelineno-41-10" href="#__codelineno-41-10"></a>feh<span class="w"> </span>--bg-center<span class="w"> </span>/path/to/image.jpg<span class="w">   </span><span class="c1"># Center</span>
+</code></pre></div></p>
+<p><strong>gSlapper:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="c1"># Set wallpaper</span>
+<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
+<a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>
+<a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a><span class="c1"># Scale modes</span>
+<a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;panscan=1.0&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg<span class="w">  </span><span class="c1"># Fit</span>
+<a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;original&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg<span class="w">     </span><span class="c1"># Center/native</span>
+</code></pre></div></p>
+<h4 id="feh-random-wallpaper-scripts">feh Random Wallpaper Scripts<a class="headerlink" href="#feh-random-wallpaper-scripts" title="Permanent link">&para;</a></h4>
+<p><strong>feh script:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a><span class="c1"># feh random wallpaper</span>
+<a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a><span class="nv">DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/Pictures/Wallpapers&quot;</span>
+<a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a><span class="nv">IMAGE</span><span class="o">=</span><span class="k">$(</span>find<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DIR</span><span class="s2">&quot;</span><span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span><span class="p">|</span><span class="w"> </span>shuf<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="k">)</span>
+<a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a>feh<span class="w"> </span>--bg-fill<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$IMAGE</span><span class="s2">&quot;</span>
+</code></pre></div></p>
+<p><strong>gSlapper equivalent:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a><span class="c1"># gSlapper random wallpaper</span>
+<a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a><span class="nv">DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/Pictures/Wallpapers&quot;</span>
+<a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a><span class="nv">IMAGE</span><span class="o">=</span><span class="k">$(</span>find<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DIR</span><span class="s2">&quot;</span><span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span><span class="p">|</span><span class="w"> </span>shuf<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="k">)</span>
+<a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$IMAGE</span><span class="s2">&quot;</span>
+</code></pre></div></p>
+<h3 id="feh-integration-in-compositors">feh Integration in Compositors<a class="headerlink" href="#feh-integration-in-compositors" title="Permanent link">&para;</a></h3>
+<p><strong>Sway with feh:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a><span class="c1"># ~/.config/sway/config</span>
+<a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a><span class="nb">exec</span><span class="w"> </span>feh<span class="w"> </span>--bg-fill<span class="w"> </span>/path/to/wallpaper.jpg
+</code></pre></div></p>
+<p><strong>gSlapper equivalent:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="c1"># ~/.config/sway/config</span>
+<a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a><span class="nb">exec</span><span class="w"> </span>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span>/path/to/wallpaper.jpg
+</code></pre></div></p>
+<h3 id="migration-checklist-feh-users">Migration Checklist - feh Users<a class="headerlink" href="#migration-checklist-feh-users" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Ensure you're using Wayland (native Wayland is better than Xwayland)</li>
+<li>[ ] Remove feh from compositor config</li>
+<li>[ ] Kill any running feh instances:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>pkill<span class="w"> </span>feh
+</code></pre></div></li>
+<li>[ ] Set up gSlapper (see tool-specific guides above)</li>
+<li>[ ] Test with static images</li>
+<li>[ ] Try video wallpapers (new feature)</li>
+<li>[ ] Try fade transitions</li>
+<li>[ ] Keep feh for image browsing if you like it (both can coexist)</li>
+</ul>
+<hr />
+<h2 id="quick-reference-common-commands">Quick Reference: Common Commands<a class="headerlink" href="#quick-reference-common-commands" title="Permanent link">&para;</a></h2>
+<h3 id="setting-static-wallpaper">Setting Static Wallpaper<a class="headerlink" href="#setting-static-wallpaper" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>swww</td>
+<td><code>swww img /path/to/image.jpg</code></td>
+</tr>
+<tr>
+<td>mpvpaper</td>
+<td><code>mpvpaper DP-1 /path/to/image.jpg</code></td>
+</tr>
+<tr>
+<td>hyprpaper</td>
+<td><code>hyprpaper wallpaper "DP-1,/path/to/image.jpg"</code></td>
+</tr>
+<tr>
+<td>swaybg</td>
+<td><code>swaybg -i /path/to/image.jpg -m fill -o DP-1</code></td>
+</tr>
+<tr>
+<td>feh</td>
+<td><code>feh --bg-fill /path/to/image.jpg</code></td>
+</tr>
+<tr>
+<td><strong>gSlapper</strong></td>
+<td><code>gslapper -o "fill" DP-1 /path/to/image.jpg</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="setting-video-wallpaper">Setting Video Wallpaper<a class="headerlink" href="#setting-video-wallpaper" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>swww</td>
+<td>❌ Not supported</td>
+</tr>
+<tr>
+<td>mpvpaper</td>
+<td><code>mpvpaper -f --loop DP-1 /path/to/video.mp4</code></td>
+</tr>
+<tr>
+<td>hyprpaper</td>
+<td>❌ Not supported</td>
+</tr>
+<tr>
+<td>swaybg</td>
+<td>❌ Not supported</td>
+</tr>
+<tr>
+<td>feh</td>
+<td>❌ Not supported</td>
+</tr>
+<tr>
+<td><strong>gSlapper</strong></td>
+<td><code>gslapper -o "loop" DP-1 /path/to/video.mp4</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="fade-transition">Fade Transition<a class="headerlink" href="#fade-transition" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>swww</td>
+<td><code>swww img -t fade /path/to/image.jpg</code></td>
+</tr>
+<tr>
+<td>mpvpaper</td>
+<td>❌ Not supported</td>
+</tr>
+<tr>
+<td>hyprpaper</td>
+<td>❌ Not supported</td>
+</tr>
+<tr>
+<td>swaybg</td>
+<td>❌ Not supported</td>
+</tr>
+<tr>
+<td>feh</td>
+<td>❌ Not supported</td>
+</tr>
+<tr>
+<td><strong>gSlapper</strong></td>
+<td><code>gslapper --transition-type fade --transition-duration 0.5 DP-1 /path/to/image.jpg</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="troubleshooting-migration-issues">Troubleshooting Migration Issues<a class="headerlink" href="#troubleshooting-migration-issues" title="Permanent link">&para;</a></h2>
+<h3 id="compositor-still-starts-old-tool">Compositor Still Starts Old Tool<a class="headerlink" href="#compositor-still-starts-old-tool" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Old wallpaper tool still runs on startup</p>
+<p><strong>Solution</strong>:
+1. Check compositor config files:
+   - Hyprland: <code>~/.config/hypr/hyprland.conf</code>
+   - Sway: <code>~/.config/sway/config</code>
+   - River: <code>~/.config/river/init</code>
+   - Niri: <code>~/.config/niri/config.kdl</code></p>
+<ol>
+<li>
+<p>Remove or comment out old tool:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a><span class="c1"># Old</span>
+<a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a><span class="c1"># exec-once = hyprpaper &amp;</span>
+<a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a>
+<a id="__codelineno-48-4" name="__codelineno-48-4" href="#__codelineno-48-4"></a><span class="c1"># New</span>
+<a id="__codelineno-48-5" name="__codelineno-48-5" href="#__codelineno-48-5"></a>exec-once<span class="w"> </span><span class="o">=</span><span class="w"> </span>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span>/path/to/wallpaper.jpg
+</code></pre></div></p>
+</li>
+<li>
+<p>Kill running instances:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>pkill<span class="w"> </span>hyprpaper
+<a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>pkill<span class="w"> </span>swaybg
+<a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a>pkill<span class="w"> </span>swww-daemon
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="multiple-wallpaper-tools-running">Multiple Wallpaper Tools Running<a class="headerlink" href="#multiple-wallpaper-tools-running" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Conflicts between multiple wallpaper tools</p>
+<p><strong>Solution</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a><span class="c1"># Check for running tools</span>
+<a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;swww|mpvpaper|hyprpaper|swaybg|feh|gslapper&quot;</span>
+<a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a>
+<a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a><span class="c1"># Kill old tools</span>
+<a id="__codelineno-50-5" name="__codelineno-50-5" href="#__codelineno-50-5"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>stop<span class="w"> </span>swww-daemon.service
+<a id="__codelineno-50-6" name="__codelineno-50-6" href="#__codelineno-50-6"></a>pkill<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;mpvpaper|hyprpaper|swaybg|feh&quot;</span>
+<a id="__codelineno-50-7" name="__codelineno-50-7" href="#__codelineno-50-7"></a>
+<a id="__codelineno-50-8" name="__codelineno-50-8" href="#__codelineno-50-8"></a><span class="c1"># Start gSlapper</span>
+<a id="__codelineno-50-9" name="__codelineno-50-9" href="#__codelineno-50-9"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span>/path/to/wallpaper.jpg
+</code></pre></div></p>
+<h3 id="wallpaper-not-showing">Wallpaper Not Showing<a class="headerlink" href="#wallpaper-not-showing" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: gSlapper starts but no wallpaper visible</p>
+<p><strong>Solutions</strong>:
+1. Check output name:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a>gslapper<span class="w"> </span>-d<span class="w">  </span><span class="c1"># List available outputs</span>
+</code></pre></div></p>
+<ol>
+<li>
+<p>Check if file exists and is readable:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a><span class="nb">test</span><span class="w"> </span>-f<span class="w"> </span>/path/to/wallpaper.jpg<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;OK&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Missing&quot;</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Check logs:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a><span class="c1"># With verbose flag</span>
+<a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a>gslapper<span class="w"> </span>-vv<span class="w"> </span>DP-1<span class="w"> </span>/path/to/wallpaper.jpg
+<a id="__codelineno-53-3" name="__codelineno-53-3" href="#__codelineno-53-3"></a>
+<a id="__codelineno-53-4" name="__codelineno-53-4" href="#__codelineno-53-4"></a><span class="c1"># Systemd logs</span>
+<a id="__codelineno-53-5" name="__codelineno-53-5" href="#__codelineno-53-5"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>-u<span class="w"> </span>gslapper.service<span class="w"> </span>-f
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="transition-not-working">Transition Not Working<a class="headerlink" href="#transition-not-working" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Fade transition doesn't appear</p>
+<p><strong>Cause</strong>: Transitions only work between static images, not videos</p>
+<p><strong>Solution</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a><span class="c1"># Correct - static image to static image</span>
+<a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>--transition-type<span class="w"> </span>fade<span class="w"> </span>DP-1<span class="w"> </span>image1.jpg
+<a id="__codelineno-54-3" name="__codelineno-54-3" href="#__codelineno-54-3"></a><span class="c1"># Then:</span>
+<a id="__codelineno-54-4" name="__codelineno-54-4" href="#__codelineno-54-4"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;change /path/to/image2.jpg&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<a id="__codelineno-54-5" name="__codelineno-54-5" href="#__codelineno-54-5"></a>
+<a id="__codelineno-54-6" name="__codelineno-54-6" href="#__codelineno-54-6"></a><span class="c1"># Incorrect - video wallpaper</span>
+<a id="__codelineno-54-7" name="__codelineno-54-7" href="#__codelineno-54-7"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4<span class="w">  </span><span class="c1"># No transition</span>
+</code></pre></div></p>
+<hr />
+<h2 id="additional-resources">Additional Resources<a class="headerlink" href="#additional-resources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><a href="./getting-started/quick-start.md">Quick Start Guide</a></strong> - Get started with gSlapper</li>
+<li><strong><a href="./user-guide/command-line-options.md">Command Line Options</a></strong> - Full CLI reference</li>
+<li><strong><a href="./systemd-service-setup.md">Systemd Service Setup</a></strong> - Persistent wallpapers guide</li>
+<li><strong><a href="./user-guide/persistent-wallpapers.md">Persistent Wallpapers</a></strong> - Advanced persistence methods</li>
+<li><strong><a href="./user-guide/ipc-control.md">IPC Control</a></strong> - Runtime control guide</li>
+<li><strong><a href="./advanced/troubleshooting.md">Troubleshooting</a></strong> - Common issues and solutions</li>
+</ul>
+<hr />
+<h2 id="feature-comparison-summary">Feature Comparison Summary<a class="headerlink" href="#feature-comparison-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>swww</th>
+<th>mpvpaper</th>
+<th>hyprpaper</th>
+<th>swaybg</th>
+<th>feh</th>
+<th>gSlapper</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Static Images</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Video Wallpapers</strong></td>
+<td>❌</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Transitions</strong></td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>IPC Control</strong></td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Preload Cache</strong></td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>⚠️ TODO</td>
+</tr>
+<tr>
+<td><strong>Persistent State</strong></td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>NVIDIA Friendly</strong></td>
+<td>✅</td>
+<td>⚠️</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>GPU Optimized</strong></td>
+<td>Medium</td>
+<td>High</td>
+<td>Low</td>
+<td>Low</td>
+<td>Low</td>
+<td><strong>Low</strong></td>
+</tr>
+<tr>
+<td><strong>Backend</strong></td>
+<td>Custom</td>
+<td>libmpv</td>
+<td>Custom</td>
+<td>Custom</td>
+<td>X11</td>
+<td>GStreamer</td>
+</tr>
+<tr>
+<td><strong>Multi-Monitor</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p><strong>gSlapper combines the best features:</strong>
+- Static images + videos (like mpvpaper)
+- Transitions (like swww)
+- IPC control (like swww)
+- Low GPU usage (better than mpvpaper)
+- No NVIDIA memory leaks (unlike mpvpaper)
+- Wayland native (unlike feh)</p>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 26, 2025 17:33:32 UTC">December 26, 2025</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Created">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 26, 2025 17:33:32 UTC">December 26, 2025</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

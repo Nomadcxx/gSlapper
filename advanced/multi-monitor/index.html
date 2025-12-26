@@ -820,7 +820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/persistent-wallpapers.md" class="md-nav__link">
+      <a href="../../user-guide/persistent-wallpapers/" class="md-nav__link">
         
   
   
@@ -1089,13 +1089,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#best-practices" class="md-nav__link">
+  <a href="#recommended-approach" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Best Practices
+        Recommended Approach
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Recommended Approach">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-systemd-template-service-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Systemd Template Service (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-same-wallpaper-on-all-monitors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Same Wallpaper on All Monitors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-manual-backgrounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 3: Manual Backgrounding
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1352,7 +1391,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/api-reference.md" class="md-nav__link">
+      <a href="../../development/api-reference/" class="md-nav__link">
         
   
   
@@ -1408,7 +1447,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/systemd-service.md" class="md-nav__link">
+      <a href="../../development/systemd-service/" class="md-nav__link">
         
   
   
@@ -1622,13 +1661,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#best-practices" class="md-nav__link">
+  <a href="#recommended-approach" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Best Practices
+        Recommended Approach
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Recommended Approach">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-systemd-template-service-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Systemd Template Service (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-same-wallpaper-on-all-monitors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Same Wallpaper on All Monitors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-manual-backgrounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 3: Manual Backgrounding
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1722,50 +1800,75 @@
 </code></pre></div>
 <h2 id="display-scaling">Display Scaling<a class="headerlink" href="#display-scaling" title="Permanent link">&para;</a></h2>
 <p>gSlapper automatically handles display scaling. Each monitor's scale factor is detected and applied correctly.</p>
-<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Use background mode</strong> - Add <code>-f</code> flag when running multiple instances</li>
-<li><strong>Unique IPC sockets</strong> - Use different socket paths for each monitor</li>
-<li><strong>Resource management</strong> - Multiple video wallpapers use more GPU/CPU resources</li>
-<li><strong>Startup scripts</strong> - Use systemd user services or shell scripts to manage multiple instances</li>
-</ol>
+<h2 id="recommended-approach">Recommended Approach<a class="headerlink" href="#recommended-approach" title="Permanent link">&para;</a></h2>
+<p>For multi-monitor setups, we recommend <strong>one of the following</strong> (choose based on your needs):</p>
+<h3 id="option-1-systemd-template-service-recommended">Option 1: Systemd Template Service (Recommended)<a class="headerlink" href="#option-1-systemd-template-service-recommended" title="Permanent link">&para;</a></h3>
+<p><strong>Best for</strong>: Automatic startup, persistent wallpapers, reliable management</p>
+<p><strong>Setup</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Enable per-monitor services</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper@DP-1.service
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>gslapper@HDMI-1.service
+</code></pre></div></p>
+<p><strong>Advantages</strong>:
+- ✅ Automatic startup on login
+- ✅ Independent wallpaper restoration per monitor
+- ✅ Automatic restart on failure
+- ✅ Easy to manage with systemctl</p>
+<p><strong>See also</strong>: <a href="../../systemd-service-setup/">Systemd Service Setup</a> for full guide</p>
+<h3 id="option-2-same-wallpaper-on-all-monitors">Option 2: Same Wallpaper on All Monitors<a class="headerlink" href="#option-2-same-wallpaper-on-all-monitors" title="Permanent link">&para;</a></h3>
+<p><strong>Best for</strong>: Simple setup, single wallpaper across displays</p>
+<p><strong>Setup</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span>/path/to/video.mp4
+</code></pre></div></p>
+<p><strong>Advantages</strong>:
+- ✅ Simple (one command)
+- ✅ Low resource usage (single pipeline)
+- ✅ Easy to change wallpaper</p>
+<h3 id="option-3-manual-backgrounding">Option 3: Manual Backgrounding<a class="headerlink" href="#option-3-manual-backgrounding" title="Permanent link">&para;</a></h3>
+<p><strong>Best for</strong>: Testing, temporary setups, manual control</p>
+<p><strong>Best Practices</strong>:
+1. Use <code>-f</code> flag to background each instance
+2. Use unique IPC socket paths for each monitor
+3. Monitor GPU/CPU usage (multiple video wallpapers = higher usage)
+4. Use startup script to manage multiple instances</p>
+<p><strong>Setup</strong> (see <a href="#example-startup-script">Example Startup Script</a> below)</p>
 <h2 id="example-startup-script">Example Startup Script<a class="headerlink" href="#example-startup-script" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="ch">#!/bin/bash</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># ~/.local/bin/start-wallpapers.sh</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Kill existing instances</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>pkill<span class="w"> </span>gslapper
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Wait a moment</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>sleep<span class="w"> </span><span class="m">1</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># Start wallpapers for each monitor</span>
-<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>gslapper<span class="w"> </span>-f<span class="w"> </span>-I<span class="w"> </span>/tmp/gslapper-dp1.sock<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>~/Videos/wallpaper1.mp4<span class="w"> </span><span class="p">&amp;</span>
-<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>sleep<span class="w"> </span><span class="m">0</span>.5
-<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
-<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>gslapper<span class="w"> </span>-f<span class="w"> </span>-I<span class="w"> </span>/tmp/gslapper-hdmi1.sock<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>HDMI-1<span class="w"> </span>~/Videos/wallpaper2.mp4<span class="w"> </span><span class="p">&amp;</span>
-<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>sleep<span class="w"> </span><span class="m">0</span>.5
-<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>
-<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>gslapper<span class="w"> </span>-f<span class="w"> </span>-I<span class="w"> </span>/tmp/gslapper-edp1.sock<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>eDP-1<span class="w"> </span>~/Pictures/wallpaper.jpg<span class="w"> </span><span class="p">&amp;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># ~/.local/bin/start-wallpapers.sh</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Kill existing instances</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>pkill<span class="w"> </span>gslapper
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># Wait a moment</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>sleep<span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="c1"># Start wallpapers for each monitor</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>gslapper<span class="w"> </span>-f<span class="w"> </span>-I<span class="w"> </span>/tmp/gslapper-dp1.sock<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>~/Videos/wallpaper1.mp4<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>sleep<span class="w"> </span><span class="m">0</span>.5
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>gslapper<span class="w"> </span>-f<span class="w"> </span>-I<span class="w"> </span>/tmp/gslapper-hdmi1.sock<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>HDMI-1<span class="w"> </span>~/Videos/wallpaper2.mp4<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>sleep<span class="w"> </span><span class="m">0</span>.5
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>gslapper<span class="w"> </span>-f<span class="w"> </span>-I<span class="w"> </span>/tmp/gslapper-edp1.sock<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>eDP-1<span class="w"> </span>~/Pictures/wallpaper.jpg<span class="w"> </span><span class="p">&amp;</span>
 </code></pre></div>
 <h2 id="systemd-user-service">Systemd User Service<a class="headerlink" href="#systemd-user-service" title="Permanent link">&para;</a></h2>
 <p>Create <code>~/.config/systemd/user/wallpapers.service</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">[Unit]</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="na">Description</span><span class="o">=</span><span class="s">Wallpapers for all monitors</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="na">After</span><span class="o">=</span><span class="s">graphical-session.target</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="k">[Service]</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="na">Type</span><span class="o">=</span><span class="s">forking</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">/home/user/.local/bin/start-wallpapers.sh</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="na">ExecStop</span><span class="o">=</span><span class="s">/usr/bin/pkill gslapper</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="na">Restart</span><span class="o">=</span><span class="s">on-failure</span>
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="k">[Install]</span>
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="na">WantedBy</span><span class="o">=</span><span class="s">default.target</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">[Unit]</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="na">Description</span><span class="o">=</span><span class="s">Wallpapers for all monitors</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="na">After</span><span class="o">=</span><span class="s">graphical-session.target</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">[Service]</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="na">Type</span><span class="o">=</span><span class="s">forking</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">/home/user/.local/bin/start-wallpapers.sh</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="na">ExecStop</span><span class="o">=</span><span class="s">/usr/bin/pkill gslapper</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="na">Restart</span><span class="o">=</span><span class="s">on-failure</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="k">[Install]</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="na">WantedBy</span><span class="o">=</span><span class="s">default.target</span>
 </code></pre></div>
 <p>Enable and start:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>wallpapers.service
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>start<span class="w"> </span>wallpapers.service
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>wallpapers.service
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>start<span class="w"> </span>wallpapers.service
 </code></pre></div></p>
 
 
@@ -1789,7 +1892,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 26, 2025 15:22:48 UTC">December 26, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 26, 2025 17:33:32 UTC">December 26, 2025</span>
   </span>
 
     
@@ -1799,7 +1902,7 @@
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 26, 2025 15:22:48 UTC">December 26, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 26, 2025 17:33:32 UTC">December 26, 2025</span>
   </span>
 
     
