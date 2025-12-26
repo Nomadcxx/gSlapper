@@ -65,3 +65,7 @@ gslapper -o "fill" DP-3 /path/to/image2.jpg &
 ## Transitions
 
 gSlapper supports smooth fade transitions between images. See [Transitions](../advanced/transitions.md) for details.
+
+## Making Image Wallpapers Persistent
+
+To make your image wallpaper automatically restore after reboot or login, see the [Persistent Wallpapers](./persistent-wallpapers.md) guide. The guide covers multiple methods including systemd service setup, shell scripts, and compositor-specific configuration.

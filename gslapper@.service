@@ -1,0 +1,43 @@
+[Unit]
+Description=gSlapper Wallpaper Service for %i
+Documentation=https://nomadcxx.github.io/gSlapper/
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Service]
+# Type=notify allows systemd to know when gSlapper is ready (wallpaper displayed)
+Type=notify
+
+# ExecStart: Command to run gSlapper
+# --systemd: Enables systemd notifications
+# --restore: Restores wallpaper from saved state file
+# %i: Systemd template parameter (output name, e.g., DP-1, DP-3)
+#
+# CUSTOMIZATION:
+# - Add IPC socket: Add --ipc-socket /run/user/%U/gslapper-%i.sock
+# - Add options: Add -o "loop panscan=0.8" before %i
+# - Custom state file: Add --state-file %h/.local/state/gslapper/custom-%i.txt
+ExecStart=/usr/bin/gslapper --systemd --restore %i
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Restart policy
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+
+# CRITICAL: Wayland environment variables
+# Create: echo "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" > ~/.config/gslapper/environment
+EnvironmentFile=%h/.config/gslapper/environment
+Environment=XDG_RUNTIME_DIR=%t
+
+# Resource limits
+MemoryMax=512M
+CPUQuota=50%
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+# Enable per monitor: systemctl --user enable gslapper@DP-1.service
+WantedBy=default.target

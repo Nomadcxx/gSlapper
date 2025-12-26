@@ -5,27 +5,49 @@ After=graphical-session.target
 Wants=graphical-session.target
 
 [Service]
+# Type=notify allows systemd to know when gSlapper is ready (wallpaper displayed)
+# Change to Type=simple if you don't want readiness notification
 Type=notify
-ExecStart=/usr/bin/gslapper --systemd --restore
+
+# ExecStart: Command to run gSlapper
+# --systemd: Enables systemd notifications (READY=1 when wallpaper is displayed)
+# --restore: Restores wallpaper from saved state file (~/.local/state/gslapper/)
+# '*': Restores to all monitors (same wallpaper on all)
+#
+# CUSTOMIZATION OPTIONS:
+# - For single monitor: Replace '*' with output name (e.g., 'DP-1')
+# - For per-monitor services: Use gslapper@.service template instead
+# - Add IPC socket: Add --ipc-socket /run/user/%U/gslapper.sock
+# - Add options: Add -o "loop panscan=0.8" before output name
+ExecStart=/usr/bin/gslapper --systemd --restore '*'
 ExecReload=/bin/kill -HUP $MAINPID
+
+# Restart policy: Restart on failure (crash, unexpected exit)
+# Change to Restart=always to always restart, or Restart=no to disable
 Restart=on-failure
 RestartSec=5
 TimeoutStopSec=30
 
 # CRITICAL: Wayland environment variables
-# Load from user environment file (required - see documentation)
+# EnvironmentFile: Loads WAYLAND_DISPLAY from ~/.config/gslapper/environment
+# Create this file: echo "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" > ~/.config/gslapper/environment
 EnvironmentFile=%h/.config/gslapper/environment
 
-# CRITICAL: XDG runtime directory (required for Wayland)
+# CRITICAL: XDG runtime directory (required for Wayland socket access)
+# %t expands to /run/user/$UID (systemd user runtime directory)
 Environment=XDG_RUNTIME_DIR=%t
 
-# Resource limits
+# Resource limits (optional - adjust as needed)
+# MemoryMax: Maximum memory usage (512M default)
+# CPUQuota: CPU usage limit (50% = half of one CPU core)
 MemoryMax=512M
 CPUQuota=50%
 
-# Security
+# Security settings (optional)
 NoNewPrivileges=true
 PrivateTmp=true
 
 [Install]
+# Enable service to start automatically on login
+# Run: systemctl --user enable gslapper.service
 WantedBy=default.target

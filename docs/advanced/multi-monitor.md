@@ -72,12 +72,54 @@ echo "change /path/to/new.mp4" | nc -U /tmp/gslapper-hdmi1.sock
 
 gSlapper automatically handles display scaling. Each monitor's scale factor is detected and applied correctly.
 
-## Best Practices
+## Recommended Approach
 
-1. **Use background mode** - Add `-f` flag when running multiple instances
-2. **Unique IPC sockets** - Use different socket paths for each monitor
-3. **Resource management** - Multiple video wallpapers use more GPU/CPU resources
-4. **Startup scripts** - Use systemd user services or shell scripts to manage multiple instances
+For multi-monitor setups, we recommend **one of the following** (choose based on your needs):
+
+### Option 1: Systemd Template Service (Recommended)
+
+**Best for**: Automatic startup, persistent wallpapers, reliable management
+
+**Setup**:
+```bash
+# Enable per-monitor services
+systemctl --user enable --now gslapper@DP-1.service
+systemctl --user enable --now gslapper@HDMI-1.service
+```
+
+**Advantages**:
+- ✅ Automatic startup on login
+- ✅ Independent wallpaper restoration per monitor
+- ✅ Automatic restart on failure
+- ✅ Easy to manage with systemctl
+
+**See also**: [Systemd Service Setup](../systemd-service-setup.md) for full guide
+
+### Option 2: Same Wallpaper on All Monitors
+
+**Best for**: Simple setup, single wallpaper across displays
+
+**Setup**:
+```bash
+gslapper -o "loop" '*' /path/to/video.mp4
+```
+
+**Advantages**:
+- ✅ Simple (one command)
+- ✅ Low resource usage (single pipeline)
+- ✅ Easy to change wallpaper
+
+### Option 3: Manual Backgrounding
+
+**Best for**: Testing, temporary setups, manual control
+
+**Best Practices**:
+1. Use `-f` flag to background each instance
+2. Use unique IPC socket paths for each monitor
+3. Monitor GPU/CPU usage (multiple video wallpapers = higher usage)
+4. Use startup script to manage multiple instances
+
+**Setup** (see [Example Startup Script](#example-startup-script) below)
 
 ## Example Startup Script
 

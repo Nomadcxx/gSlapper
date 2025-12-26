@@ -21,14 +21,16 @@ gslapper -o "loop" '*' /path/to/video.mp4
 
 Full documentation available at: https://nomadcxx.github.io/gSlapper/
 
-**Systemd Service:** See [systemd-service.md](docs/systemd-service.md) for automatic wallpaper management at login.
+**Persistent Wallpapers:** See [Persistent Wallpapers](docs/user-guide/persistent-wallpapers.md) for setting wallpapers that survive reboot (systemd service, shell scripts, compositor config).
+
+**Systemd Service:** See [Systemd Service Setup](docs/systemd-service-setup.md) for automatic wallpaper restoration at login.
 
 ## Features
 
 - **Video & Image Support** - Play videos (MP4, MKV, WebM) and display static images (JPEG, PNG, WebP, GIF)
 - **Smooth Transitions** - Fade transitions between static images
 - **Multi-Monitor** - Independent wallpaper control for each display
-- **High Performance** - 10x faster than mpvpaper with efficient GPU resource management
+- **High Performance** - Efficient GPU resource management with smart texture management and frame rate limiting
 - **IPC Control** - Runtime control via Unix domain socket (pause, resume, change wallpaper)
 - **Flexible Scaling** - Fill, stretch, original, and panscan modes for perfect display
 - **NVIDIA Optimized** - Fixes memory leaks and improves compatibility on NVIDIA Wayland systems

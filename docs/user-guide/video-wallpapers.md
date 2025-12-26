@@ -85,3 +85,7 @@ gslapper -f -o "loop" DP-1 /path/to/video.mp4
 
 !!! note "Codec Support"
     Ensure you have `gst-plugins-ugly` and `gst-libav` installed for H.264/H.265 support.
+
+## Making Video Wallpapers Persistent
+
+To make your video wallpaper automatically restore after reboot or login, see the [Persistent Wallpapers](./persistent-wallpapers.md) guide. The guide covers multiple methods including systemd service setup, shell scripts, and compositor-specific configuration.

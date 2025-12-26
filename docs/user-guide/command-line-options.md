@@ -116,6 +116,66 @@ Set transition duration in seconds (default: 0.5).
 gslapper --transition-type fade --transition-duration 2.0 -I /tmp/sock DP-1 image.jpg
 ```
 
+## Systemd Options
+
+### `-S, --systemd`
+
+Enable systemd service mode. Enables systemd readiness notifications.
+
+```bash
+gslapper -S --restore DP-1 /path/to/video.mp4
+```
+
+**Use Case**: Only needed when running as systemd user service. The service files (`gslapper.service`, `gslapper@.service`) automatically include this flag.
+
+### `-R, --restore`
+
+Restore wallpaper from saved state file.
+
+```bash
+# Restore for specific output
+gslapper -R DP-1
+
+# Restore for all monitors
+gslapper -R '*'
+```
+
+**Behavior**: Loads state from `~/.local/state/gslapper/state-<output>.txt` (or `state.txt` for `'*')` and resumes wallpaper with saved video position and pause state.
+
+## State Management Options
+
+### `--save-state`
+
+Save current wallpaper state and exit.
+
+```bash
+gslapper -o "loop" DP-1 /path/to/video.mp4
+# Later, save state
+gslapper --save-state
+```
+
+**Use Case**: Manual state save without stopping gSlapper. Also available via IPC: `echo "save-state" | nc -U /tmp/sock`.
+
+### `--state-file <path>`
+
+Use custom state file path (instead of default).
+
+```bash
+gslapper --state-file /tmp/my-state.txt --restore DP-1
+```
+
+**Default Location**: `~/.local/state/gslapper/state-<output>.txt` (or `$XDG_STATE_HOME/gslapper/` if set).
+
+### `--no-save-state`
+
+Disable automatic state saving on exit.
+
+```bash
+gslapper --no-save-state -o "loop" DP-1 /path/to/video.mp4
+```
+
+**Use Case**: Testing or temporary wallpapers where you don't want state saved.
+
 ## Examples
 
 ```bash

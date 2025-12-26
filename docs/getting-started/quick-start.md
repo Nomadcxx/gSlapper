@@ -38,9 +38,18 @@ Run in the background:
 gslapper -f -o "loop" DP-1 /path/to/video.mp4
 ```
 
+## Making Wallpapers Persistent
+
+To make your wallpaper survive reboots and logins, see the [Persistent Wallpapers](../user-guide/persistent-wallpapers.md) guide. It covers:
+- Systemd service setup (recommended)
+- Shell script startup
+- Compositor-specific configuration
+- Manual restoration
+
 ## Next Steps
 
-- Learn about [Video Wallpapers](user-guide/video-wallpapers.md)
-- Explore [Static Images](user-guide/static-images.md)
-- Set up [IPC Control](user-guide/ipc-control.md) for runtime control
-- Check [Scaling Modes](user-guide/scaling-modes.md) for display options
+- Learn about [Video Wallpapers](../user-guide/video-wallpapers.md)
+- Explore [Static Images](../user-guide/static-images.md)
+- Set up [Persistent Wallpapers](../user-guide/persistent-wallpapers.md) for automatic restoration
+- Set up [IPC Control](../user-guide/ipc-control.md) for runtime control
+- Check [Scaling Modes](../user-guide/scaling-modes.md) for display options

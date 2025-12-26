@@ -34,7 +34,11 @@ package() {
     # Install documentation
     install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
     
-    # Install systemd user service
+    # Install systemd user service (default - will be enabled post-install)
     install -Dm644 gslapper.service \
         "${pkgdir}/usr/lib/systemd/user/gslapper.service"
+    
+    # Install systemd template service for per-monitor instances
+    install -Dm644 gslapper@.service \
+        "${pkgdir}/usr/lib/systemd/user/gslapper@.service"
 }
