@@ -12,9 +12,10 @@
 
 - [Installation](getting-started/installation.md) - Get gSlapper installed on your system
 - [Quick Start](getting-started/quick-start.md) - Get up and running in minutes
-- [Video Wallpapers](user-guide/video-wallpapers.md) - Set up animated wallpapers
-- [Static Images](user-guide/static-images.md) - Use images as wallpapers
-- [IPC Control](user-guide/ipc-control.md) - Control gSlapper at runtime
+- [Getting Started Guide](getting-started/index.md) - Setup and configuration
+- [User Guide](user-guide/index.md) - Complete tutorial and features
+- [Advanced Topics](advanced/index.md) - Prerequisites and advanced features
+- [Systemd Service](systemd-service-setup.md) - Automatic wallpaper restoration
 - [Troubleshooting](advanced/troubleshooting.md) - Common issues and solutions
 
 ## Key Features

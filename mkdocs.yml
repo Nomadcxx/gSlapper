@@ -30,6 +30,7 @@ theme:
     - navigation.sections
     - navigation.expand
     - navigation.top
+    - navigation.indexes
     - search.suggest
     - search.highlight
     - content.code.copy
@@ -57,24 +58,33 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting Started:
+    - getting-started/index.md
     - Installation: getting-started/installation.md
     - Quick Start: getting-started/quick-start.md
     - Configuration: getting-started/configuration.md
   - User Guide:
+    - user-guide/index.md
     - Video Wallpapers: user-guide/video-wallpapers.md
     - Static Images: user-guide/static-images.md
     - Scaling Modes: user-guide/scaling-modes.md
     - IPC Control: user-guide/ipc-control.md
     - Command Line Options: user-guide/command-line-options.md
+    - Persistent Wallpapers: user-guide/persistent-wallpapers.md
   - Advanced:
+    - advanced/index.md
     - Transitions: advanced/transitions.md
     - Multi-Monitor Setup: advanced/multi-monitor.md
     - Performance Tuning: advanced/performance.md
     - Troubleshooting: advanced/troubleshooting.md
   - Development:
+    - development/index.md
     - Building from Source: development/building.md
     - Contributing: development/contributing.md
+    - API Reference: development/api-reference.md
     - Architecture: development/architecture.md
+    - Systemd Service: development/systemd-service.md
+  - Project:
+    - TO IMPLEMENT: TO_IMPLEMENT.md
 
 plugins:
   - search
