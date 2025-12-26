@@ -90,3 +90,42 @@ void cache_stats(size_t *used_bytes, size_t *max_bytes, int *entry_count) {
     if (entry_count) *entry_count = g_cache->entry_count;
     pthread_mutex_unlock(&g_cache->mutex);
 }
+
+// Find entry by path (internal, caller must hold mutex)
+static cache_entry_t *find_entry(const char *path) {
+    if (!g_cache || !path) return NULL;
+
+    cache_entry_t *entry = g_cache->entries;
+    while (entry) {
+        if (strcmp(entry->path, path) == 0) {
+            return entry;
+        }
+        entry = entry->next;
+    }
+    return NULL;
+}
+
+cache_entry_t *cache_get(const char *path) {
+    if (!g_cache || !g_cache->enabled || !path) return NULL;
+
+    pthread_mutex_lock(&g_cache->mutex);
+
+    cache_entry_t *entry = find_entry(path);
+    if (entry) {
+        // Update LRU timestamp
+        entry->last_used = get_timestamp_ns();
+    }
+
+    pthread_mutex_unlock(&g_cache->mutex);
+    return entry;
+}
+
+bool cache_contains(const char *path) {
+    if (!g_cache || !g_cache->enabled || !path) return false;
+
+    pthread_mutex_lock(&g_cache->mutex);
+    bool found = (find_entry(path) != NULL);
+    pthread_mutex_unlock(&g_cache->mutex);
+
+    return found;
+}
