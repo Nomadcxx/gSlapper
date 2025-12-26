@@ -12,31 +12,31 @@
         <meta name="author" content="Nomadcxx">
       
       
-        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/user-guide/ipc-control/">
+        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/user-guide/">
       
       
-        <link rel="prev" href="../scaling-modes/">
+        <link rel="prev" href="../getting-started/configuration/">
       
       
-        <link rel="next" href="../command-line-options/">
+        <link rel="next" href="video-wallpapers/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>IPC Control - gSlapper Documentation</title>
+        <title>User Guide - gSlapper Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -55,9 +55,9 @@
       
     
     
-      <link rel="stylesheet" href="../../css/extra.css">
+      <link rel="stylesheet" href="../css/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ipc-control" class="md-skip">
+        <a href="#user-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -96,7 +96,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="gSlapper Documentation" class="md-header__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+    <a href=".." title="gSlapper Documentation" class="md-header__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              IPC Control
+              User Guide
             
           </span>
         </div>
@@ -229,7 +229,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href=".." class="md-tabs__link">
         
   
   
@@ -250,7 +250,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../getting-started/" class="md-tabs__link">
+        <a href="../getting-started/" class="md-tabs__link">
           
   
   
@@ -274,7 +274,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+        <a href="./" class="md-tabs__link">
           
   
   
@@ -296,7 +296,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../advanced/" class="md-tabs__link">
+        <a href="../advanced/" class="md-tabs__link">
           
   
   
@@ -318,7 +318,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../development/index.md" class="md-tabs__link">
+        <a href="../development/index.md" class="md-tabs__link">
           
   
   
@@ -340,7 +340,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../TO_IMPLEMENT.md" class="md-tabs__link">
+        <a href="../TO_IMPLEMENT.md" class="md-tabs__link">
           
   
   
@@ -376,7 +376,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="gSlapper Documentation" class="md-nav__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+    <a href=".." title="gSlapper Documentation" class="md-nav__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -406,7 +406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -464,7 +464,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../getting-started/" class="md-nav__link ">
+            <a href="../getting-started/" class="md-nav__link ">
               
   
   
@@ -508,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/installation/" class="md-nav__link">
+      <a href="../getting-started/installation/" class="md-nav__link">
         
   
   
@@ -536,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/quick-start/" class="md-nav__link">
+      <a href="../getting-started/quick-start/" class="md-nav__link">
         
   
   
@@ -564,7 +564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/configuration/" class="md-nav__link">
+      <a href="../getting-started/configuration/" class="md-nav__link">
         
   
   
@@ -639,7 +639,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="./" class="md-nav__link md-nav__link--active">
               
   
   
@@ -657,7 +657,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link md-nav__link--active" for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -683,7 +683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../video-wallpapers/" class="md-nav__link">
+      <a href="video-wallpapers/" class="md-nav__link">
         
   
   
@@ -711,7 +711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-images/" class="md-nav__link">
+      <a href="static-images/" class="md-nav__link">
         
   
   
@@ -739,7 +739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../scaling-modes/" class="md-nav__link">
+      <a href="scaling-modes/" class="md-nav__link">
         
   
   
@@ -764,37 +764,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    IPC Control
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="ipc-control/" class="md-nav__link">
         
   
   
@@ -810,186 +783,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#enabling-ipc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Enabling IPC
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sending-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sending Commands
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#available-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Available Commands
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Available Commands">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pause" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        pause
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resume" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        resume
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#query" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        query
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#change-path" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        change &lt;path&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stop" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        stop
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set-transition-type" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        set-transition &lt;type&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set-transition-duration-seconds" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        set-transition-duration &lt;seconds&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-transition" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get-transition
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#response-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response Format
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-script" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Script
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#future-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Future Commands
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1002,7 +795,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../command-line-options/" class="md-nav__link">
+      <a href="command-line-options/" class="md-nav__link">
         
   
   
@@ -1030,7 +823,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistent-wallpapers.md" class="md-nav__link">
+      <a href="persistent-wallpapers.md" class="md-nav__link">
         
   
   
@@ -1098,7 +891,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../advanced/" class="md-nav__link ">
+            <a href="../advanced/" class="md-nav__link ">
               
   
   
@@ -1142,7 +935,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/transitions/" class="md-nav__link">
+      <a href="../advanced/transitions/" class="md-nav__link">
         
   
   
@@ -1170,7 +963,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/multi-monitor/" class="md-nav__link">
+      <a href="../advanced/multi-monitor/" class="md-nav__link">
         
   
   
@@ -1198,7 +991,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/performance/" class="md-nav__link">
+      <a href="../advanced/performance/" class="md-nav__link">
         
   
   
@@ -1226,7 +1019,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/troubleshooting/" class="md-nav__link">
+      <a href="../advanced/troubleshooting/" class="md-nav__link">
         
   
   
@@ -1329,7 +1122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/index.md" class="md-nav__link">
+      <a href="../development/index.md" class="md-nav__link">
         
   
   
@@ -1357,7 +1150,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/building/" class="md-nav__link">
+      <a href="../development/building/" class="md-nav__link">
         
   
   
@@ -1385,7 +1178,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/contributing/" class="md-nav__link">
+      <a href="../development/contributing/" class="md-nav__link">
         
   
   
@@ -1413,7 +1206,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/api-reference.md" class="md-nav__link">
+      <a href="../development/api-reference.md" class="md-nav__link">
         
   
   
@@ -1441,7 +1234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/architecture/" class="md-nav__link">
+      <a href="../development/architecture/" class="md-nav__link">
         
   
   
@@ -1469,7 +1262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/systemd-service.md" class="md-nav__link">
+      <a href="../development/systemd-service.md" class="md-nav__link">
         
   
   
@@ -1562,7 +1355,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../TO_IMPLEMENT.md" class="md-nav__link">
+      <a href="../TO_IMPLEMENT.md" class="md-nav__link">
         
   
   
@@ -1617,44 +1410,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#enabling-ipc" class="md-nav__link">
+  <a href="#tutorial-sections" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Enabling IPC
+        Tutorial Sections
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sending-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sending Commands
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#available-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Available Commands
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Available Commands">
+    <nav class="md-nav" aria-label="Tutorial Sections">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#pause" class="md-nav__link">
+  <a href="#first-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        pause
+        First Steps
       
     </span>
   </a>
@@ -1662,10 +1433,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#resume" class="md-nav__link">
+  <a href="#core-features" class="md-nav__link">
     <span class="md-ellipsis">
       
-        resume
+        Core Features
       
     </span>
   </a>
@@ -1673,10 +1444,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#query" class="md-nav__link">
+  <a href="#advanced-features" class="md-nav__link">
     <span class="md-ellipsis">
       
-        query
+        Advanced Features
       
     </span>
   </a>
@@ -1684,54 +1455,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#change-path" class="md-nav__link">
+  <a href="#migration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        change &lt;path&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stop" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        stop
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set-transition-type" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        set-transition &lt;type&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set-transition-duration-seconds" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        set-transition-duration &lt;seconds&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-transition" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get-transition
+        Migration
       
     </span>
   </a>
@@ -1740,39 +1467,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#response-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response Format
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-script" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Script
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#future-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Future Commands
-      
-    </span>
-  </a>
   
 </li>
       
@@ -1796,109 +1490,38 @@
   
 
 
-<h1 id="ipc-control">IPC Control<a class="headerlink" href="#ipc-control" title="Permanent link">&para;</a></h1>
-<p>gSlapper supports runtime control via Unix domain sockets, allowing you to control playback from scripts or other applications.</p>
-<h2 id="enabling-ipc">Enabling IPC<a class="headerlink" href="#enabling-ipc" title="Permanent link">&para;</a></h2>
-<p>Start gSlapper with the <code>-I</code> or <code>--ipc-socket</code> option:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gslapper<span class="w"> </span>-I<span class="w"> </span>/tmp/gslapper.sock<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>video.mp4
-</code></pre></div>
-<h2 id="sending-commands">Sending Commands<a class="headerlink" href="#sending-commands" title="Permanent link">&para;</a></h2>
-<p>Use <code>nc</code> (netcat) or <code>socat</code> to send commands:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Using nc</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Using socat</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>UNIX-CONNECT:/tmp/gslapper.sock
-</code></pre></div>
-<h2 id="available-commands">Available Commands<a class="headerlink" href="#available-commands" title="Permanent link">&para;</a></h2>
-<h3 id="pause"><code>pause</code><a class="headerlink" href="#pause" title="Permanent link">&para;</a></h3>
-<p>Pause video playback.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-</code></pre></div>
-<p><strong>Response:</strong> <code>OK</code></p>
-<h3 id="resume"><code>resume</code><a class="headerlink" href="#resume" title="Permanent link">&para;</a></h3>
-<p>Resume paused playback.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;resume&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-</code></pre></div>
-<p><strong>Response:</strong> <code>OK</code></p>
-<h3 id="query"><code>query</code><a class="headerlink" href="#query" title="Permanent link">&para;</a></h3>
-<p>Get current state and wallpaper path.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;query&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-</code></pre></div>
-<p><strong>Response:</strong> <code>STATUS: playing image /path/to/wallpaper.jpg</code> or <code>STATUS: paused video /path/to/video.mp4</code></p>
-<h3 id="change-path"><code>change &lt;path&gt;</code><a class="headerlink" href="#change-path" title="Permanent link">&para;</a></h3>
-<p>Switch to a different wallpaper.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;change /path/to/new/video.mp4&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-</code></pre></div>
-<p><strong>Response:</strong> <code>OK: transition started</code> (if transitions enabled) or <code>OK</code></p>
-<h3 id="stop"><code>stop</code><a class="headerlink" href="#stop" title="Permanent link">&para;</a></h3>
-<p>Stop gSlapper.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;stop&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-</code></pre></div>
-<p><strong>Response:</strong> <code>OK</code> (gSlapper exits)</p>
-<h3 id="set-transition-type"><code>set-transition &lt;type&gt;</code><a class="headerlink" href="#set-transition-type" title="Permanent link">&para;</a></h3>
-<p>Set transition effect type. Options: <code>none</code>, <code>fade</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition fade&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition none&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-</code></pre></div>
-<p><strong>Response:</strong> <code>OK</code> or <code>ERROR: &lt;message&gt;</code></p>
-<div class="admonition note">
-<p class="admonition-title">Transitions</p>
-<p>Transitions only work between static images. Videos always use instant switch regardless of transition settings.</p>
-</div>
-<h3 id="set-transition-duration-seconds"><code>set-transition-duration &lt;seconds&gt;</code><a class="headerlink" href="#set-transition-duration-seconds" title="Permanent link">&para;</a></h3>
-<p>Set transition duration in seconds (0.0-5.0).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition-duration 2.0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-</code></pre></div>
-<p><strong>Response:</strong> <code>OK</code> or <code>ERROR: &lt;message&gt;</code></p>
-<h3 id="get-transition"><code>get-transition</code><a class="headerlink" href="#get-transition" title="Permanent link">&para;</a></h3>
-<p>Query current transition settings.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;get-transition&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-</code></pre></div>
-<p><strong>Response:</strong> <code>TRANSITION: &lt;type&gt; &lt;enabled|disabled&gt; &lt;duration&gt;</code></p>
-<p>Example: <code>TRANSITION: fade enabled 1.50</code></p>
-<h2 id="response-format">Response Format<a class="headerlink" href="#response-format" title="Permanent link">&para;</a></h2>
+<h1 id="user-guide">User Guide<a class="headerlink" href="#user-guide" title="Permanent link">&para;</a></h1>
+<p>This tutorial shows you how to use gSlapper with most of its features, step by step.</p>
+<p>Each section gradually builds on previous ones, but it's structured to separate topics, so that you can go directly to any specific one to solve your specific wallpaper needs.</p>
+<p>It is also built to work as a future reference so you can come back and see exactly what you need.</p>
+<h2 id="tutorial-sections">Tutorial Sections<a class="headerlink" href="#tutorial-sections" title="Permanent link">&para;</a></h2>
+<h3 id="first-steps">First Steps<a class="headerlink" href="#first-steps" title="Permanent link">&para;</a></h3>
+<p>Basic setup and running gSlapper with video or static wallpapers.</p>
 <ul>
-<li><code>OK</code> - Command succeeded</li>
-<li><code>OK: &lt;message&gt;</code> - Command succeeded with additional info</li>
-<li><code>ERROR: &lt;message&gt;</code> - Command failed with error message</li>
-<li><code>STATUS: &lt;state&gt; &lt;type&gt; &lt;path&gt;</code> - Query response</li>
-<li><code>TRANSITION: &lt;type&gt; &lt;enabled|disabled&gt; &lt;duration&gt;</code> - Transition query response</li>
+<li><a href="video-wallpapers/">First Steps - Basic Video Wallpaper</a></li>
+<li><a href="static-images/">Static Images - Getting Started</a></li>
 </ul>
-<h2 id="example-script">Example Script<a class="headerlink" href="#example-script" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="ch">#!/bin/bash</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nv">SOCKET</span><span class="o">=</span><span class="s2">&quot;/tmp/gslapper.sock&quot;</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">case</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="w"> </span><span class="k">in</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span>pause<span class="o">)</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span>resume<span class="o">)</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;resume&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span>next<span class="o">)</span>
-<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;change /path/to/next/video.mp4&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">    </span>status<span class="o">)</span>
-<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;query&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">    </span>transition<span class="o">)</span>
-<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition fade&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition-duration 2.0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">    </span>*<span class="o">)</span>
-<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Usage: </span><span class="nv">$0</span><span class="s2"> {pause|resume|next|status|transition}&quot;</span>
-<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">        </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
-<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="k">esac</span>
-</code></pre></div>
-<h2 id="future-commands">Future Commands<a class="headerlink" href="#future-commands" title="Permanent link">&para;</a></h2>
-<p>The following commands are planned for future releases:</p>
+<h3 id="core-features">Core Features<a class="headerlink" href="#core-features" title="Permanent link">&para;</a></h3>
+<p>Essential functionality for everyday wallpaper management.</p>
 <ul>
-<li><code>preload &lt;path&gt;</code> - Preload image into cache</li>
-<li><code>unload &lt;path&gt;</code> - Remove image from cache</li>
-<li><code>list</code> - List preloaded images</li>
+<li><a href="scaling-modes/">Scaling Modes</a> - Fill, stretch, original, panscan</li>
+<li><a href="../advanced/multi-monitor/">Multi-Monitor Setup</a> - Independent control per display</li>
+<li><a href="persistent-wallpapers.md">Persistent Wallpapers</a> - Survive reboots and logins</li>
 </ul>
+<h3 id="advanced-features">Advanced Features<a class="headerlink" href="#advanced-features" title="Permanent link">&para;</a></h3>
+<p>Additional capabilities for power users and complex setups.</p>
+<ul>
+<li><a href="ipc-control/">IPC Control</a> - Runtime control via Unix socket</li>
+<li><a href="../advanced/transitions/">Transitions</a> - Smooth wallpaper transitions</li>
+<li><a href="command-line-options/">Command Line Options</a> - All available flags</li>
+</ul>
+<h3 id="migration">Migration<a class="headerlink" href="#migration" title="Permanent link">&para;</a></h3>
+<p>Coming from other wallpaper tools?</p>
+<ul>
+<li><a href="migration-guide.md">Migration Guide</a> - Switching from swww or mpvpaper</li>
+</ul>
+<hr />
+<p><strong>Tip</strong>: Each page has progressive navigation. Use the links below each section to continue your learning journey.</p>
 
 
 
@@ -1986,10 +1609,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
