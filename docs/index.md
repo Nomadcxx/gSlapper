@@ -19,13 +19,13 @@
 
 ## Key Features
 
-- ✅ **Video Wallpapers** - Play MP4, MKV, WebM, and other video formats
-- ✅ **Static Images** - Support for JPEG, PNG, WebP, GIF
-- ✅ **Fade Transitions** - Smooth transitions between wallpapers
-- ✅ **Multi-Monitor** - Full support for multiple displays
-- ✅ **IPC Control** - Runtime control via Unix socket
-- ✅ **Scaling Modes** - Fill, stretch, original, and panscan options
-- ✅ **Wayland Native** - Built for wlroots compositors (Hyprland, Sway, etc.)
+- **Video Wallpapers** - Plays MP4, MKV, WebM, and other video formats
+- **Static Images** - Supports JPEG, PNG, WebP, and GIF
+- **Fade Transitions** - Smooth transitions between wallpapers
+- **Multi-Monitor** - Works with multiple displays independently
+- **IPC Control** - Change wallpapers at runtime via Unix socket
+- **Scaling Modes** - Choose between fill, stretch, original, and panscan
+- **Wayland Native** - Built for wlroots compositors like Hyprland and Sway
 
 ## Why GStreamer?
 
