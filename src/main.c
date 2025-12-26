@@ -2857,6 +2857,9 @@ static void layer_surface_configure(void *data, struct zwlr_layer_surface_v1 *su
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+        // Ensure new outputs get their initial render in image mode
+        output->redraw_needed = true;
+
         // Start render loop
         render(output);
     } else {
