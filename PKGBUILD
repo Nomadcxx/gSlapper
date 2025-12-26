@@ -33,4 +33,8 @@ package() {
 
     # Install documentation
     install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+    
+    # Install systemd user service
+    install -Dm644 gslapper.service \
+        "${pkgdir}/usr/lib/systemd/user/gslapper.service"
 }
