@@ -1962,9 +1962,16 @@ static void execute_ipc_commands(void) {
                         if (VERBOSE)
                             cflp_info("IPC: Change command completed");
                     } else {
-                        // No transition - proceed with normal change
-                        // Update argv with new video path for restart
-                        if (halt_info.argv_copy && halt_info.argc > 0) {
+                        // No transition - check if this is an image (can reload directly)
+                        if (is_image_mode && is_image_file(arg)) {
+                            // For images, reload pipeline directly without restart
+                            if (reload_image_pipeline(arg)) {
+                                ipc_send_response(cmd->client_fd, "OK\n");
+                            } else {
+                                ipc_send_response(cmd->client_fd, "ERROR: failed to load image\n");
+                            }
+                        } else if (halt_info.argv_copy && halt_info.argc > 0) {
+                            // For videos or when auto-stop enabled, update path and restart
                             free(halt_info.argv_copy[halt_info.argc - 1]);
                             halt_info.argv_copy[halt_info.argc - 1] = strdup(arg);
                             if (!halt_info.argv_copy[halt_info.argc - 1]) {
@@ -1979,7 +1986,7 @@ static void execute_ipc_commands(void) {
                                 stop_slapper();
                             }
                         } else {
-                            ipc_send_response(cmd->client_fd, "ERROR: cannot update path\n");
+                            ipc_send_response(cmd->client_fd, "ERROR: cannot update path (use --auto-stop for video changes)\n");
                         }
                     }
                 }
