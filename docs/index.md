@@ -6,32 +6,39 @@
 
 <br>
 
-**gSlapper** is a high-performance wallpaper manager for Wayland that combines the best of [swww](https://github.com/Horus645/swww) and [mpvpaper](https://github.com/GhostNaN/mpvpaper). It uses GStreamer instead of libmpv, providing faster performance, better efficiency, and fixes memory leaks on NVIDIA Wayland systems while offering superior multi-monitor support.
+**gSlapper** is a wallpaper utility for Wayland that combines the best of [swww](https://github.com/Horus645/swww) and [mpvpaper](https://github.com/GhostNaN/mpvpaper) by allowing both static and video wallpapers. It uses GStreamer instead of libmpv making it more efficient and NVIDIA friendly for Wayland.
 
-## Quick Links
+## Quick Start
 
-- [Installation](getting-started/installation.md) - Get gSlapper installed on your system
-- [Quick Start](getting-started/quick-start.md) - Get up and running in minutes
-- [Getting Started Guide](getting-started/index.md) - Setup and configuration
-- [User Guide](user-guide/index.md) - Complete tutorial and features
-- [Advanced Topics](advanced/index.md) - Prerequisites and advanced features
-- [Systemd Service](systemd-service-setup.md) - Automatic wallpaper restoration
-- [Troubleshooting](advanced/troubleshooting.md) - Common issues and solutions
+```bash
+# Video wallpaper
+gslapper -o "loop" DP-1 /path/to/video.mp4
 
-## Key Features
+# Static image wallpaper
+gslapper -o "fill" DP-1 /path/to/image.jpg
 
-- **Video Wallpapers** - Plays MP4, MKV, WebM, and other video formats
-- **Static Images** - Supports JPEG, PNG, WebP, and GIF
+# All monitors
+gslapper -o "loop" '*' /path/to/video.mp4
+```
+
+## Documentation
+
+- [Installation](getting-started/installation.md)
+- [User Guide](user-guide/index.md)
+- [Command Line Options](user-guide/command-line-options.md)
+- [IPC Control](user-guide/ipc-control.md)
+- [Systemd Service](systemd-service-setup.md)
+- [Troubleshooting](advanced/troubleshooting.md)
+
+## Features
+
+- **Video & Image Support** - Play videos (MP4, MKV, WebM) and display static images (JPEG, PNG, WebP, GIF)
 - **Instant Switching** - RAM cache for near-instant wallpaper changes
-- **Fade Transitions** - Smooth transitions between wallpapers
-- **Multi-Monitor** - Works with multiple displays independently
-- **IPC Control** - Change wallpapers at runtime via Unix socket
-- **Scaling Modes** - Choose between fill, stretch, original, and panscan
-- **Wayland Native** - Built for wlroots compositors like Hyprland and Sway
-
-## Why GStreamer?
-
-gSlapper replaces libmpv with GStreamer to solve memory leaks on NVIDIA Wayland systems, improve GPU resource management, and provide more reliable multi-monitor support. GStreamer offers mature Wayland/EGL integration and proper hardware acceleration.
+- **Smooth Transitions** - Fade transitions between static images
+- **Multi-Monitor** - Independent wallpaper control for each display
+- **IPC Control** - Runtime control via Unix domain socket (pause, resume, change wallpaper)
+- **Flexible Scaling** - Fill, stretch, original, and panscan modes
+- **NVIDIA Optimized** - Fixes memory leaks and improves compatibility on NVIDIA Wayland systems
 
 ## License
 
