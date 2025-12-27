@@ -2058,6 +2058,65 @@ static void execute_ipc_commands(void) {
                 }
             }
         }
+        // Cache commands
+        else if (strcmp(cmd_name, "cache-list") == 0) {
+            char response[8192];
+            cache_list(response, sizeof(response));
+            ipc_send_response(cmd->client_fd, response);
+        }
+        else if (strcmp(cmd_name, "cache-stats") == 0) {
+            char response[256];
+            cache_stats_str(response, sizeof(response));
+            ipc_send_response(cmd->client_fd, response);
+        }
+        else if (strcmp(cmd_name, "unload") == 0) {
+            if (!arg || strlen(arg) == 0) {
+                ipc_send_response(cmd->client_fd, "ERROR: missing argument (path, 'all', or 'unused')\n");
+            } else if (strcmp(arg, "all") == 0) {
+                cache_clear();
+                ipc_send_response(cmd->client_fd, "OK: cache cleared\n");
+            } else if (strcmp(arg, "unused") == 0) {
+                cache_clear_unused();
+                ipc_send_response(cmd->client_fd, "OK: unused entries cleared\n");
+            } else {
+                cache_remove(arg);
+                ipc_send_response(cmd->client_fd, "OK: removed from cache\n");
+            }
+        }
+        else if (strcmp(cmd_name, "preload") == 0) {
+            if (!arg || strlen(arg) == 0) {
+                ipc_send_response(cmd->client_fd, "ERROR: missing path argument\n");
+            } else if (access(arg, R_OK) != 0) {
+                ipc_send_response(cmd->client_fd, "ERROR: file not accessible\n");
+            } else if (!is_image_file(arg)) {
+                ipc_send_response(cmd->client_fd, "ERROR: not a valid image file\n");
+            } else if (cache_contains(arg)) {
+                ipc_send_response(cmd->client_fd, "OK: already cached\n");
+            } else {
+                // TODO: Full preload implementation requires separate decode pipeline
+                // For now, images are auto-cached when displayed via 'change' command
+                ipc_send_response(cmd->client_fd, "ERROR: preload not yet implemented, use 'change' to display and auto-cache\n");
+            }
+        }
+        else if (strcmp(cmd_name, "listactive") == 0) {
+            char response[4096];
+            size_t offset = 0;
+            struct display_output *o;
+            wl_list_for_each(o, &global_state->outputs, link) {
+                if (o->layer_surface && video_path) {
+                    int written = snprintf(response + offset, sizeof(response) - offset,
+                                          "%s %s\n", o->name, video_path);
+                    if (written > 0 && offset + written < sizeof(response)) {
+                        offset += written;
+                    }
+                }
+            }
+            if (offset == 0) {
+                ipc_send_response(cmd->client_fd, "No active wallpapers\n");
+            } else {
+                ipc_send_response(cmd->client_fd, response);
+            }
+        }
         else {
             ipc_send_response(cmd->client_fd, "ERROR: unknown command\n");
         }
