@@ -11,7 +11,7 @@ makedepends=('meson' 'ninja' 'wayland-protocols')
 optdepends=('gst-plugins-ugly: additional codec support'
             'gst-libav: FFmpeg-based codec support')
 source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/v${pkgver}.tar.gz")
-sha256sums=('8a8f38ddca90c49d277329131f5687a92b2e236a3599660c66f7cae4cf1371e1')
+sha256sums=('7b8039cbb83d12ef900659cef367df34ff83a998e2cbef41583c5df249b3aa25')
 install=${pkgname}.install
 
 prepare() {
