@@ -78,6 +78,38 @@ Enable IPC control via Unix socket.
 gslapper -I /tmp/gslapper.sock DP-1 video.mp4
 ```
 
+## Cache Options
+
+### `--cache-size SIZE_MB`
+
+Enable image cache with specified size in MB. Caches decoded RGBA image data in RAM for instant wallpaper switching.
+
+```bash
+# 256 MB cache (recommended for ~10-30 images depending on resolution)
+gslapper --cache-size 256 -I /tmp/gslapper.sock DP-1 /path/to/image.jpg
+
+# Switch images instantly via IPC
+echo "change /path/to/other.jpg" | nc -U /tmp/gslapper.sock
+```
+
+**Default:** `0` (disabled)
+
+**Recommended Values:**
+- `128` MB - For smaller image collections (~5-15 images at 4K)
+- `256` MB - General purpose (~10-30 images at 4K)
+- `512` MB - Large collections or many high-resolution images
+
+**Features:**
+- Automatic caching when images are displayed
+- LRU (Least Recently Used) eviction when cache is full
+- Cache hits result in near-instant wallpaper changes
+- Query cache usage via IPC: `cache-stats`, `cache-list`
+
+**Notes:**
+- Only works with static images (JPEG, PNG, WebP, etc.)
+- Videos are not cached (use GStreamer pipeline directly)
+- Cache is cleared on exit
+
 ## Video Options
 
 ### `-o, --gst-options "OPTIONS"`

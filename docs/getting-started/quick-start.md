@@ -38,6 +38,27 @@ Run in the background:
 gslapper -f -o "loop" DP-1 /path/to/video.mp4
 ```
 
+## With Image Cache (Instant Switching)
+
+Cache images in RAM for near-instant wallpaper changes:
+
+```bash
+# Start with cache enabled (256 MB)
+gslapper --cache-size 256 -I /tmp/gslapper.sock DP-1 /path/to/image1.jpg
+
+# Switch to another image instantly (via IPC)
+echo "change /path/to/image2.jpg" | nc -U /tmp/gslapper.sock
+
+# Check cache usage
+echo "cache-stats" | nc -U /tmp/gslapper.sock
+```
+
+**What happens:**
+- First image is automatically cached when displayed
+- Subsequent `change` commands cache new images on-the-fly
+- Switching back to a cached image is near-instant (no re-decode)
+- LRU eviction removes least-recently-used images when cache is full
+
 ## Making Wallpapers Persistent
 
 To make your wallpaper survive reboots and logins, see the [Persistent Wallpapers](../user-guide/persistent-wallpapers.md) guide. It covers:

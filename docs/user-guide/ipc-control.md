@@ -148,10 +148,59 @@ case "$1" in
 esac
 ```
 
-## Future Commands
+## Cache Management Commands
 
-The following commands are planned for future releases:
+These commands require `--cache-size` to be enabled.
 
-- `preload <path>` - Preload image into cache
-- `unload <path>` - Remove image from cache
-- `list` - List preloaded images
+### `cache-list`
+
+List all cached images with dimensions and sizes.
+
+```bash
+echo "cache-list" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** List of cached images, one per line:
+```
+/path/to/image1.jpg 3840x2160 31.64 MB [*]
+/path/to/image2.png 2560x1440 14.06 MB
+```
+
+The `[*]` marker indicates currently displayed image.
+
+### `cache-stats`
+
+Show cache usage statistics.
+
+```bash
+echo "cache-stats" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** `45.70/256.00 MB (2 images)` or `Cache disabled`
+
+### `unload <target>`
+
+Remove images from cache. Target can be:
+- `unused` - Remove all images not currently displayed
+- `all` - Clear entire cache (including displayed image)
+- `<path>` - Remove specific image by path
+
+```bash
+echo "unload unused" | nc -U /tmp/gslapper.sock
+echo "unload all" | nc -U /tmp/gslapper.sock
+echo "unload /path/to/image.jpg" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** `OK: Unloaded N image(s)` or `ERROR: <message>`
+
+### `listactive`
+
+Show currently displayed wallpaper(s) and output(s).
+
+```bash
+echo "listactive" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** `ACTIVE: <output> <type> <path>`
+
+Example: `ACTIVE: DP-1 image /home/user/wallpaper.jpg`

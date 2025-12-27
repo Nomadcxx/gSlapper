@@ -22,6 +22,7 @@
 
 - **Video Wallpapers** - Plays MP4, MKV, WebM, and other video formats
 - **Static Images** - Supports JPEG, PNG, WebP, and GIF
+- **Instant Switching** - RAM cache for near-instant wallpaper changes
 - **Fade Transitions** - Smooth transitions between wallpapers
 - **Multi-Monitor** - Works with multiple displays independently
 - **IPC Control** - Change wallpapers at runtime via Unix socket

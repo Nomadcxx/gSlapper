@@ -74,9 +74,13 @@ opencode.json
 gslapper-*.tar.gz
 gslapper-*.tar.gz.opencode.json
 
-# Development documentation
+# Development documentation (internal research/notes - not for public docs)
 docs/plans/
 docs/VERIFICATION_*.md
+docs/README.md
+docs/development/*-analysis.md
+docs/development/*-comparison.md
+docs/development/gstreamer-*.md
 CODE_REVIEW.md
 GAP_ANALYSIS.md
 IMPLEMENTATION_PLAN.md
