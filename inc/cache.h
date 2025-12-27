@@ -61,6 +61,9 @@ void cache_stats(size_t *used_bytes, size_t *max_bytes, int *entry_count);
 // Format cache list for IPC response (caller provides buffer)
 void cache_list(char *buffer, size_t buflen);
 
+// Format cache stats for IPC response (caller provides buffer)
+void cache_stats_str(char *buffer, size_t buflen);
+
 // Check if path is in cache
 bool cache_contains(const char *path);
 

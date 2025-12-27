@@ -246,3 +246,183 @@ cache_entry_t *cache_add(const char *path, unsigned char *data,
     pthread_mutex_unlock(&g_cache->mutex);
     return entry;
 }
+
+void cache_remove(const char *path) {
+    if (!g_cache || !path) return;
+
+    pthread_mutex_lock(&g_cache->mutex);
+
+    cache_entry_t *prev = NULL;
+    cache_entry_t *entry = g_cache->entries;
+
+    while (entry) {
+        if (strcmp(entry->path, path) == 0) {
+            // Remove from list
+            if (prev) {
+                prev->next = entry->next;
+            } else {
+                g_cache->entries = entry->next;
+            }
+
+            g_cache->total_size -= entry->size;
+            g_cache->entry_count--;
+
+            cflp_info("Cache removed: %s", path);
+
+            free(entry->path);
+            free(entry->data);
+            free(entry);
+            break;
+        }
+        prev = entry;
+        entry = entry->next;
+    }
+
+    pthread_mutex_unlock(&g_cache->mutex);
+}
+
+void cache_clear(void) {
+    if (!g_cache) return;
+
+    pthread_mutex_lock(&g_cache->mutex);
+
+    cache_entry_t *entry = g_cache->entries;
+    int count = 0;
+
+    while (entry) {
+        cache_entry_t *next = entry->next;
+        free(entry->path);
+        free(entry->data);
+        free(entry);
+        entry = next;
+        count++;
+    }
+
+    g_cache->entries = NULL;
+    g_cache->total_size = 0;
+    g_cache->entry_count = 0;
+
+    pthread_mutex_unlock(&g_cache->mutex);
+
+    cflp_info("Cache cleared: %d entries removed", count);
+}
+
+void cache_clear_unused(void) {
+    if (!g_cache) return;
+
+    pthread_mutex_lock(&g_cache->mutex);
+
+    cache_entry_t *prev = NULL;
+    cache_entry_t *entry = g_cache->entries;
+    int count = 0;
+
+    while (entry) {
+        cache_entry_t *next = entry->next;
+
+        if (!entry->currently_displayed) {
+            // Remove from list
+            if (prev) {
+                prev->next = next;
+            } else {
+                g_cache->entries = next;
+            }
+
+            g_cache->total_size -= entry->size;
+            g_cache->entry_count--;
+            count++;
+
+            free(entry->path);
+            free(entry->data);
+            free(entry);
+        } else {
+            prev = entry;
+        }
+
+        entry = next;
+    }
+
+    pthread_mutex_unlock(&g_cache->mutex);
+
+    cflp_info("Cache cleared unused: %d entries removed", count);
+}
+
+void cache_set_displayed(const char *path, bool displayed) {
+    if (!g_cache || !path) return;
+
+    pthread_mutex_lock(&g_cache->mutex);
+
+    cache_entry_t *entry = find_entry(path);
+    if (entry) {
+        entry->currently_displayed = displayed;
+    }
+
+    pthread_mutex_unlock(&g_cache->mutex);
+}
+
+void cache_list(char *buffer, size_t buflen) {
+    if (!buffer || buflen == 0) return;
+
+    buffer[0] = '\0';
+
+    if (!g_cache) {
+        snprintf(buffer, buflen, "Cache not initialized\n");
+        return;
+    }
+
+    pthread_mutex_lock(&g_cache->mutex);
+
+    if (!g_cache->enabled) {
+        pthread_mutex_unlock(&g_cache->mutex);
+        snprintf(buffer, buflen, "Cache disabled\n");
+        return;
+    }
+
+    if (!g_cache->entries) {
+        pthread_mutex_unlock(&g_cache->mutex);
+        snprintf(buffer, buflen, "Cache empty\n");
+        return;
+    }
+
+    size_t offset = 0;
+    cache_entry_t *entry = g_cache->entries;
+
+    while (entry && offset < buflen - 1) {
+        int written = snprintf(buffer + offset, buflen - offset,
+                               "%s %dx%d %.2fMB%s\n",
+                               entry->path,
+                               entry->width, entry->height,
+                               (double)entry->size / (1024 * 1024),
+                               entry->currently_displayed ? " *" : "");
+        if (written < 0 || (size_t)written >= buflen - offset) {
+            break;  // Buffer full
+        }
+        offset += written;
+        entry = entry->next;
+    }
+
+    pthread_mutex_unlock(&g_cache->mutex);
+}
+
+void cache_stats_str(char *buffer, size_t buflen) {
+    if (!buffer || buflen == 0) return;
+
+    if (!g_cache) {
+        snprintf(buffer, buflen, "Cache not initialized\n");
+        return;
+    }
+
+    pthread_mutex_lock(&g_cache->mutex);
+
+    if (!g_cache->enabled) {
+        pthread_mutex_unlock(&g_cache->mutex);
+        snprintf(buffer, buflen, "Cache disabled\n");
+        return;
+    }
+
+    snprintf(buffer, buflen, "%.2f/%.2f MB (%d images)\n",
+             (double)g_cache->total_size / (1024 * 1024),
+             (double)g_cache->max_size / (1024 * 1024),
+             g_cache->entry_count);
+
+    pthread_mutex_unlock(&g_cache->mutex);
+}
