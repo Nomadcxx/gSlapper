@@ -1,8 +1,8 @@
 # Maintainer: Nomadcxx <noovie@gmail.com>
 pkgname=gslapper
-pkgver=1.3.0
+pkgver=1.4.0
 pkgrel=1
-pkgdesc="Wallpaper utility for Wayland that natively handles video and static wallpapers (designed to replace mpvpaper and swww)"
+pkgdesc="Wallpaper utility for Wayland with video/image support and instant switching via RAM cache"
 arch=('x86_64')
 url="https://github.com/Nomadcxx/gSlapper"
 license=('MIT')
