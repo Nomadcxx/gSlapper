@@ -976,13 +976,63 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#future-commands" class="md-nav__link">
+  <a href="#cache-management-commands" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Future Commands
+        Cache Management Commands
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Cache Management Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cache-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cache-list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cache-stats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cache-stats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unload-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unload &lt;target&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        listactive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1766,13 +1816,63 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#future-commands" class="md-nav__link">
+  <a href="#cache-management-commands" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Future Commands
+        Cache Management Commands
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Cache Management Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cache-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cache-list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cache-stats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cache-stats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unload-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unload &lt;target&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        listactive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1892,13 +1992,38 @@
 <a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">        </span><span class="p">;;</span>
 <a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="k">esac</span>
 </code></pre></div>
-<h2 id="future-commands">Future Commands<a class="headerlink" href="#future-commands" title="Permanent link">&para;</a></h2>
-<p>The following commands are planned for future releases:</p>
-<ul>
-<li><code>preload &lt;path&gt;</code> - Preload image into cache</li>
-<li><code>unload &lt;path&gt;</code> - Remove image from cache</li>
-<li><code>list</code> - List preloaded images</li>
-</ul>
+<h2 id="cache-management-commands">Cache Management Commands<a class="headerlink" href="#cache-management-commands" title="Permanent link">&para;</a></h2>
+<p>These commands require <code>--cache-size</code> to be enabled.</p>
+<h3 id="cache-list"><code>cache-list</code><a class="headerlink" href="#cache-list" title="Permanent link">&para;</a></h3>
+<p>List all cached images with dimensions and sizes.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;cache-list&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+</code></pre></div>
+<p><strong>Response:</strong> List of cached images, one per line:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>/path/to/image1.jpg 3840x2160 31.64 MB [*]
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>/path/to/image2.png 2560x1440 14.06 MB
+</code></pre></div></p>
+<p>The <code>[*]</code> marker indicates currently displayed image.</p>
+<h3 id="cache-stats"><code>cache-stats</code><a class="headerlink" href="#cache-stats" title="Permanent link">&para;</a></h3>
+<p>Show cache usage statistics.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;cache-stats&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+</code></pre></div>
+<p><strong>Response:</strong> <code>45.70/256.00 MB (2 images)</code> or <code>Cache disabled</code></p>
+<h3 id="unload-target"><code>unload &lt;target&gt;</code><a class="headerlink" href="#unload-target" title="Permanent link">&para;</a></h3>
+<p>Remove images from cache. Target can be:
+- <code>unused</code> - Remove all images not currently displayed
+- <code>all</code> - Clear entire cache (including displayed image)
+- <code>&lt;path&gt;</code> - Remove specific image by path</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;unload unused&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;unload all&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;unload /path/to/image.jpg&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+</code></pre></div>
+<p><strong>Response:</strong> <code>OK: Unloaded N image(s)</code> or <code>ERROR: &lt;message&gt;</code></p>
+<h3 id="listactive"><code>listactive</code><a class="headerlink" href="#listactive" title="Permanent link">&para;</a></h3>
+<p>Show currently displayed wallpaper(s) and output(s).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;listactive&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+</code></pre></div>
+<p><strong>Response:</strong> <code>ACTIVE: &lt;output&gt; &lt;type&gt; &lt;path&gt;</code></p>
+<p>Example: <code>ACTIVE: DP-1 image /home/user/wallpaper.jpg</code></p>
 
 
 
@@ -1921,7 +2046,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 26, 2025 17:33:32 UTC">December 26, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 27, 2025 05:51:59 UTC">December 27, 2025</span>
   </span>
 
     
@@ -1931,7 +2056,7 @@
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 26, 2025 17:33:32 UTC">December 26, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 27, 2025 05:51:59 UTC">December 27, 2025</span>
   </span>
 
     
