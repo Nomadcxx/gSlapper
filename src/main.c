@@ -2318,7 +2318,13 @@ static void on_decodebin_pad_added(GstElement *decodebin, GstPad *pad, gpointer 
 static bool reload_image_pipeline(const char *new_path) {
     if (VERBOSE)
         cflp_info("Reloading image pipeline for: %s", new_path);
-    
+
+    // Track old path for cache display status update
+    char old_resolved_path[PATH_MAX] = {0};
+    if (video_path) {
+        realpath(video_path, old_resolved_path);
+    }
+
     // Clean up old pipeline if it exists
     if (pipeline) {
         gst_element_set_state(pipeline, GST_STATE_NULL);
@@ -2330,10 +2336,10 @@ static bool reload_image_pipeline(const char *new_path) {
         gst_object_unref(pipeline);
         pipeline = NULL;
     }
-    
+
     // Reset image capture flag
     image_frame_captured = false;
-    
+
     // Update video_path
     if (video_path) {
         free(video_path);
@@ -2344,16 +2350,43 @@ static bool reload_image_pipeline(const char *new_path) {
         cancel_transition();
         return false;
     }
-    
+
     // Update is_image_mode
     is_image_mode = is_image_file(new_path);
-    
+
     // Build the new image pipeline inline (don't call init_image_pipeline to avoid exit on error)
     char resolved_path[PATH_MAX];
     if (realpath(new_path, resolved_path) == NULL) {
         cflp_error("Failed to resolve image path '%s': %s", new_path, strerror(errno));
         cancel_transition();
         return false;
+    }
+
+    // Check cache first
+    cache_entry_t *cached = cache_get(resolved_path);
+    if (cached) {
+        // Cache hit - use cached data directly
+        pthread_mutex_lock(&video_mutex);
+        if (video_frame_data.data) {
+            g_free(video_frame_data.data);
+        }
+        video_frame_data.data = g_memdup2(cached->data, cached->size);
+        video_frame_data.size = cached->size;
+        video_frame_data.width = cached->width;
+        video_frame_data.height = cached->height;
+        video_frame_data.has_new_frame = TRUE;
+        image_frame_captured = true;
+        pthread_mutex_unlock(&video_mutex);
+
+        // Update display status
+        if (old_resolved_path[0] != '\0') {
+            cache_set_displayed(old_resolved_path, false);
+        }
+        cache_set_displayed(resolved_path, true);
+
+        if (VERBOSE)
+            cflp_success("New image loaded from cache: %dx%d", cached->width, cached->height);
+        return true;
     }
 
     if (VERBOSE)
@@ -2492,22 +2525,59 @@ static bool reload_image_pipeline(const char *new_path) {
     // Stop pipeline (we have the frame in texture)
     gst_element_set_state(pipeline, GST_STATE_NULL);
 
+    // Add to cache for instant loading next time
+    if (cache_enabled() && video_frame_data.data) {
+        unsigned char *cache_copy = g_memdup2(video_frame_data.data, video_frame_data.size);
+        if (cache_copy) {
+            // Update display status
+            if (old_resolved_path[0] != '\0') {
+                cache_set_displayed(old_resolved_path, false);
+            }
+            cache_add(resolved_path, cache_copy, video_frame_data.width, video_frame_data.height);
+            cache_set_displayed(resolved_path, true);
+        }
+    }
+
     if (VERBOSE)
         cflp_success("New image loaded: %dx%d", video_frame_data.width, video_frame_data.height);
-    
+
     return true;
 }
 
 static void init_image_pipeline(void) {
-    // Initialize GStreamer if not already done
-    gst_init(NULL, NULL);
-
-    // Build simple image pipeline: filesrc ! decodebin ! videoconvert ! appsink
+    // Check cache first
     char resolved_path[PATH_MAX];
     if (realpath(video_path, resolved_path) == NULL) {
         cflp_error("Failed to resolve image path '%s': %s", video_path, strerror(errno));
         exit_slapper(EXIT_FAILURE);
     }
+
+    cache_entry_t *cached = cache_get(resolved_path);
+    if (cached) {
+        // Cache hit - use cached data directly
+        pthread_mutex_lock(&video_mutex);
+        if (video_frame_data.data) {
+            g_free(video_frame_data.data);
+        }
+        video_frame_data.data = g_memdup2(cached->data, cached->size);
+        video_frame_data.size = cached->size;
+        video_frame_data.width = cached->width;
+        video_frame_data.height = cached->height;
+        video_frame_data.has_new_frame = TRUE;
+        image_frame_captured = true;
+        pthread_mutex_unlock(&video_mutex);
+
+        cache_set_displayed(resolved_path, true);
+
+        if (VERBOSE)
+            cflp_success("Image loaded from cache: %dx%d", cached->width, cached->height);
+        return;
+    }
+
+    // Initialize GStreamer if not already done
+    gst_init(NULL, NULL);
+
+    // Build simple image pipeline: filesrc ! decodebin ! videoconvert ! appsink
 
     if (VERBOSE)
         cflp_info("Loading image: %s", resolved_path);
@@ -2610,6 +2680,15 @@ static void init_image_pipeline(void) {
 
     // Stop pipeline (we have the frame in texture)
     gst_element_set_state(pipeline, GST_STATE_NULL);
+
+    // Add to cache for instant loading next time
+    if (cache_enabled() && video_frame_data.data) {
+        unsigned char *cache_copy = g_memdup2(video_frame_data.data, video_frame_data.size);
+        if (cache_copy) {
+            cache_add(resolved_path, cache_copy, video_frame_data.width, video_frame_data.height);
+            cache_set_displayed(resolved_path, true);
+        }
+    }
 
     if (VERBOSE)
         cflp_success("Image loaded: %dx%d", video_frame_data.width, video_frame_data.height);
