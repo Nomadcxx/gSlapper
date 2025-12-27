@@ -21,10 +21,6 @@ gslapper -o "loop" '*' /path/to/video.mp4
 
 Full documentation available at: https://nomadcxx.github.io/gSlapper/
 
-**Persistent Wallpapers:** See [Persistent Wallpapers](docs/user-guide/persistent-wallpapers.md) for setting wallpapers that survive reboot (systemd service, shell scripts, compositor config).
-
-**Systemd Service:** See [Systemd Service Setup](docs/systemd-service-setup.md) for automatic wallpaper restoration at login.
-
 ## Features
 
 - **Video & Image Support** - Play videos (MP4, MKV, WebM) and display static images (JPEG, PNG, WebP, GIF)
