@@ -37,6 +37,7 @@
 #include <cflogprinter.h>
 #include "ipc.h"
 #include "state.h"
+#include "cache.h"
 
 #ifdef HAVE_SYSTEMD
 #include <systemd/sd-daemon.h>
@@ -132,6 +133,9 @@ static pthread_mutex_t state_mutex = PTHREAD_MUTEX_INITIALIZER;
 // Global storage for restore position (FIXED: was static inside function)
 static double restore_position = 0.0;
 static bool restore_paused = false;
+
+// Cache configuration
+static size_t cache_size_mb = DEFAULT_CACHE_SIZE_MB;
 
 // Transition effects
 typedef enum {
@@ -268,7 +272,10 @@ static void exit_cleanup() {
 
     // Clean up texture manager
     cleanup_texture_manager();
-    
+
+    // Clean up image cache
+    cache_shutdown();
+
     // Clean up transition resources
     cancel_transition();
     if (transition_shader_program != 0) {
@@ -3122,6 +3129,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         {"save-state", no_argument, NULL, 1000},
         {"state-file", required_argument, NULL, 1001},
         {"no-save-state", no_argument, NULL, 1002},
+        {"cache-size", required_argument, NULL, 1003},
         {0, 0, 0, 0}
     };
 
@@ -3146,6 +3154,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         "--ipc-socket   -I PATH          Enable IPC control via Unix socket\n"
         "--transition-type TYPE          Transition effect (fade, none, default: none)\n"
         "--transition-duration SECS      Transition duration in seconds (default: 0.5)\n"
+        "--cache-size MB                 Image cache size in MB (default: 256, 0 to disable)\n"
         "\n"
         "Scaling modes (use with -o):\n"
         "  fill        Fill screen maintaining aspect ratio, crop excess (default for images)\n"
@@ -3282,6 +3291,16 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
             case 1002: // --no-save-state
                 save_state_on_exit = false;
                 break;
+            case 1003: // --cache-size
+                {
+                    int size = atoi(optarg);
+                    if (size < 0) {
+                        cflp_warning("Invalid cache size %d, using default %zu MB", size, cache_size_mb);
+                    } else {
+                        cache_size_mb = (size_t)size;
+                    }
+                }
+                break;
         }
     }
 
@@ -3332,7 +3351,10 @@ int main(int argc, char **argv) {
     state.surface_layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
 
     parse_command_line(argc, argv, &state);
-    
+
+    // Initialize image cache
+    cache_init(cache_size_mb);
+
     // Handle --save-state flag (save and exit immediately)
     if (save_state_flag) {
         if (!video_path) {
