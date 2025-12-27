@@ -4,7 +4,7 @@
 
 <br>
 
-**gSlapper** is a wallpaper utility for wayland that combines the best of [swww](https://github.com/Horus645/swww) and [mpvpaper](https://github.com/GhostNaN/mpvpaper) by allowing both static and video wallpapers. It uses GStreamer instead of libmpv making it more efficient and NVIDIA friendly for wayland.
+**gSlapper** is a Wayland wallpaper utility that plays both videos and static images. Uses GStreamer instead of libmpv, which fixes memory leaks on NVIDIA systems.
 
 ## Quick Start
 
@@ -23,13 +23,12 @@ Full documentation available at: https://nomadcxx.github.io/gSlapper/
 
 ## Features
 
-- **Video & Image Support** - Play videos (MP4, MKV, WebM) and display static images (JPEG, PNG, WebP, GIF)
-- **Smooth Transitions** - Fade transitions between static images
-- **Multi-Monitor** - Independent wallpaper control for each display
-- **High Performance** - Efficient GPU resource management with smart texture management and frame rate limiting
-- **IPC Control** - Runtime control via Unix domain socket (pause, resume, change wallpaper)
-- **Flexible Scaling** - Fill, stretch, original, and panscan modes for perfect display
-- **NVIDIA Optimized** - Fixes memory leaks and improves compatibility on NVIDIA Wayland systems
+- Play videos (MP4, MKV, WebM) and images (JPEG, PNG, WebP, GIF)
+- Fade transitions between images
+- Multi-monitor support
+- IPC control via Unix socket (pause, resume, change wallpaper)
+- Scaling modes: fill, stretch, original, panscan
+- Fixes NVIDIA memory leaks that mpvpaper has
 
 ## Installation
 
@@ -51,9 +50,9 @@ sudo ninja -C build install
 
 MIT License - see [LICENSE](LICENSE)
 
-## Acknowledgments
+## Credits
 
-- [mpvpaper](https://github.com/GhostNaN/mpvpaper) - Original inspiration
-- [swww](https://github.com/Horus645/swww) - Static wallpaper inspiration
-- [GStreamer](https://gstreamer.freedesktop.org/) - Multimedia framework
-- [Clapper](https://github.com/Rafostar/clapper) - GStreamer integration patterns
+- [mpvpaper](https://github.com/GhostNaN/mpvpaper)
+- [swww](https://github.com/Horus645/swww)
+- [GStreamer](https://gstreamer.freedesktop.org/)
+- [Clapper](https://github.com/Rafostar/clapper)
