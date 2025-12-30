@@ -67,7 +67,16 @@ static int create_socket(const char *path) {
         return -1;
     }
 
-    // Remove stale socket file
+    // Check if socket is in use by another instance before removing
+    struct sockaddr_un test_addr = {0};
+    test_addr.sun_family = AF_UNIX;
+    strncpy(test_addr.sun_path, path, sizeof(test_addr.sun_path) - 1);
+    if (connect(sock_fd, (struct sockaddr *)&test_addr, sizeof(test_addr)) == 0) {
+        cflp_error("Another gslapper instance is using socket %s", path);
+        close(sock_fd);
+        return -1;
+    }
+    // Connection failed - socket is stale, safe to remove
     unlink(path);
 
     struct sockaddr_un addr = {0};

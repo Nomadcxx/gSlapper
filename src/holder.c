@@ -1,5 +1,7 @@
+#include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <limits.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,17 +48,34 @@ static struct {
 } halt_info = {NULL, NULL, false, 0};
 
 static void revive_slapper() {
-    // Get the "real" cwd
-    char exe_dir[1024];
-    int cut_point = readlink("/proc/self/exe", exe_dir, sizeof(exe_dir));
-    for (uint i=cut_point; i > 1; i--) {
-        if (exe_dir[i] == '/') {
-            exe_dir[i+1] = '\0';
-            break;
-        }
+    // Get executable path safely with proper null termination and bounds checking
+    char exe_path[PATH_MAX];
+    ssize_t path_len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1);
+    if (path_len == -1) {
+        fprintf(stderr, "Failed to read executable path: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    exe_path[path_len] = '\0';  // readlink doesn't null-terminate
+
+    char *last_slash = strrchr(exe_path, '/');
+    if (!last_slash) {
+        fprintf(stderr, "Invalid executable path (no directory separator): %s\n", exe_path);
+        exit(EXIT_FAILURE);
     }
 
-    execv(strcat(exe_dir, "slapper"), halt_info.argv_copy);
+    char gslapper_path[PATH_MAX];
+    size_t dir_len = (size_t)(last_slash - exe_path) + 1;
+    const char *target_name = "gslapper";
+    if (dir_len + strlen(target_name) >= sizeof(gslapper_path)) {
+        fprintf(stderr, "Executable path too long\n");
+        exit(EXIT_FAILURE);
+    }
+    memcpy(gslapper_path, exe_path, dir_len);
+    strcpy(gslapper_path + dir_len, target_name);
+
+    execv(gslapper_path, halt_info.argv_copy);
+    fprintf(stderr, "Failed to exec gslapper at %s: %s\n", gslapper_path, strerror(errno));
+    exit(EXIT_FAILURE);
 }
 
 static void check_stoplist() {
@@ -79,11 +98,12 @@ static struct wl_buffer *create_dummy_buffer(struct display_output *output) {
     int stride = WIDTH * 4; // 4 bytes per pixel
     int size = stride * HEIGHT;
 
-    // Create shm
-    const char SHM_NAME[] = "/wl_shm-dummy";
-    shm_unlink(SHM_NAME);
-    int fd = shm_open(SHM_NAME, O_RDWR | O_CREAT | O_EXCL, 0600);
-    shm_unlink(SHM_NAME);
+    // Create shm with unique name per process to avoid multi-instance conflicts
+    char shm_name[32];
+    snprintf(shm_name, sizeof(shm_name), "/gslapper-shm-%d", getpid());
+    shm_unlink(shm_name);
+    int fd = shm_open(shm_name, O_RDWR | O_CREAT | O_EXCL, 0600);
+    shm_unlink(shm_name);
     if (ftruncate(fd, size) < 0) {
         fprintf(stderr, "Failed to truncate shm");
         exit(EXIT_FAILURE);
@@ -181,7 +201,7 @@ static void create_layer_surface(struct display_output *output) {
 
     output->layer_surface = zwlr_layer_shell_v1_get_layer_surface(
         output->state->layer_shell, output->surface, output->wl_output,
-        ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND, "slapper");
+        ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND, "gslapper");
 
     zwlr_layer_surface_v1_set_size(output->layer_surface, 0, 0);
     zwlr_layer_surface_v1_set_anchor(output->layer_surface,
@@ -354,23 +374,26 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         {"slideshow", required_argument, NULL, 'n'},
         {"layer", required_argument, NULL, 'l'},
         {"gst-options", required_argument, NULL, 'o'},
+        {"ipc-socket", required_argument, NULL, 'I'},
+        {"transition-type", required_argument, NULL, 1001},
+        {"transition-duration", required_argument, NULL, 1002},
+        {"cache-size", required_argument, NULL, 1003},
+        {"fps-cap", required_argument, NULL, 'r'},
         {0, 0, 0, 0}
     };
 
     const char *usage =
-        "Usage: slapper-holder <slapper options>\n"
-        "Description:\n"
-        "slapper-holder acts as a lean gate keeper before slapper can run\n"
+        "Usage: gslapper-holder <gslapper options>\n"
         "\n"
-        "It's sole purpose is to check if there is:\n"
-        "Any program that is running from the stoplist file\n"
-        "- Set in \"~/.config/mpvpaper/stoplist\"\n"
-        "And if the wallpaper needs to be seen when drawn\n"
-        "- Set with \"-s\" or \"--auto-stop\" slapper option\n";
+        "gslapper-holder manages gslapper lifecycle for auto-stop mode.\n"
+        "Required for video changes via IPC.\n"
+        "\n"
+        "Checks stoplist file: ~/.config/mpvpaper/stoplist\n"
+        "Enable with: gslapper -s (--auto-stop)\n";
 
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "hdvfpsn:l:o:Z:", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hdvfpsn:l:o:I:r:Z:", long_options, NULL)) != -1) {
 
         switch (opt) {
             case 'h':

@@ -1522,30 +1522,51 @@ static void stop_slapper() {
     uint i = 0;
     for (i=0; i < halt_info.argc; i++) {
         new_argv[i] = strdup(halt_info.argv_copy[i]);
+        if (!new_argv[i]) {
+            cflp_error("Failed to allocate argv[%d]", i);
+            exit(EXIT_FAILURE);
+        }
     }
     new_argv[i] = strdup("-Z");
     new_argv[i+1] = strdup(save_info);
     new_argv[i+2] = NULL;
-
-    // Get the "real" cwd
-    char exe_dir[1024];
-    int cut_point = readlink("/proc/self/exe", exe_dir, sizeof(exe_dir));
-    for (uint i=cut_point; i > 1; i--) {
-        if (exe_dir[i] == '/') {
-            exe_dir[i+1] = '\0';
-            break;
-        }
+    if (!new_argv[i] || !new_argv[i+1]) {
+        cflp_error("Failed to allocate argv for -Z option");
+        exit(EXIT_FAILURE);
     }
 
-    // Save state before stopping
+    // Get executable path safely with proper null termination and bounds checking
+    char exe_path[PATH_MAX];
+    ssize_t path_len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1);
+    if (path_len == -1) {
+        cflp_error("Failed to read executable path: %s", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    exe_path[path_len] = '\0';  // readlink doesn't null-terminate
+
+    char *last_slash = strrchr(exe_path, '/');
+    if (!last_slash) {
+        cflp_error("Invalid executable path (no directory separator): %s", exe_path);
+        exit(EXIT_FAILURE);
+    }
+
+    char holder_path[PATH_MAX];
+    size_t dir_len = (size_t)(last_slash - exe_path) + 1;
+    const char *holder_name = "gslapper-holder";
+    if (dir_len + strlen(holder_name) >= sizeof(holder_path)) {
+        cflp_error("Executable path too long");
+        exit(EXIT_FAILURE);
+    }
+    memcpy(holder_path, exe_path, dir_len);
+    strcpy(holder_path + dir_len, holder_name);
+
     save_current_state();
 
     exit_cleanup();
 
-    // Start holder script
-    execv(strcat(exe_dir, "gslapper-holder"), new_argv);
+    execv(holder_path, new_argv);
 
-    cflp_error("Failed to stop gslapper");
+    cflp_error("Failed to exec gslapper-holder at %s: %s", holder_path, strerror(errno));
     exit(EXIT_FAILURE);
 }
 
@@ -2724,8 +2745,9 @@ static void init_gst(const struct wl_state *state) {
         }
 
         // Convert to file:// URI
-        uri = malloc(strlen(resolved_path) + 8);
-        sprintf(uri, "file://%s", resolved_path);
+        size_t uri_len = strlen(resolved_path) + 8;
+        uri = malloc(uri_len);
+        snprintf(uri, uri_len, "file://%s", resolved_path);
         allocated_uri = uri;  // Track for cleanup
 
         if (VERBOSE)
@@ -3288,10 +3310,8 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         "--help-output  -d              Displays all available outputs and quits\n"
         "--verbose      -v              Be more verbose (-vv for higher verbosity)\n"
         "--fork         -f              Forks slapper so you can close the terminal\n"
-        "--auto-pause   -p              Automagically* pause GStreamer when the wallpaper is hidden\n"
-        "                               This saves CPU usage, more or less, seamlessly\n"
-        "--auto-stop    -s              Automagically* stop GStreamer when the wallpaper is hidden\n"
-        "                               This saves CPU/RAM usage, although more abruptly\n"
+        "--auto-pause   -p              Pause playback when wallpaper is hidden (saves CPU)\n"
+        "--auto-stop    -s              Stop and restart when hidden (required for video IPC changes)\n"
         "--slideshow    -n SECS         Slideshow mode plays the next video in a playlist every ? seconds\n"
         "--layer        -l LAYER        Specifies shell surface layer to run on (background by default)\n"
         "--gst-options  -o \"OPTIONS\"    Forwards GStreamer options (Must be within quotes\"\")\n"
@@ -3309,10 +3329,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         "\n"
         "Supported formats:\n"
         "  Video: MP4, MKV, WebM, AVI, MOV, and other GStreamer-supported formats\n"
-        "  Image: JPEG, PNG, WebP, GIF\n"
-        "\n"
-        "* The auto options might not work as intended\n"
-        "See the man page for more details\n";
+        "  Image: JPEG, PNG, WebP, GIF\n";
 
     char *layer_name;
 
@@ -3565,7 +3582,6 @@ int main(int argc, char **argv) {
         } else {
             init_gst(&state);
         }
-        init_threads();
 
         // Start IPC server if socket path provided
         if (ipc_socket_path) {
@@ -3595,6 +3611,9 @@ int main(int argc, char **argv) {
         cflp_error(":/ sorry about this but we can't seem to find any output.");
         return EXIT_FAILURE;
     }
+
+    // Start monitoring threads after surfaces are ready
+    init_threads();
 
     // Main Loop
     while (true) {
