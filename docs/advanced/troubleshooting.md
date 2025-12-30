@@ -123,6 +123,26 @@ gslapper --transition-type fade --transition-duration 3.0 -I /tmp/sock DP-1 imag
 echo "query" | socat - UNIX-CONNECT:/tmp/gslapper.sock
 ```
 
+### List Available Commands
+
+Use the `help` command to see all available IPC commands:
+
+```bash
+echo "help" | nc -U /tmp/gslapper.sock
+```
+
+### Understanding Error Messages
+
+Recent versions provide detailed error messages:
+
+| Error Message | Meaning |
+|---------------|---------|
+| `File not accessible: <path> (No such file or directory)` | File doesn't exist |
+| `File not accessible: <path> (Permission denied)` | Insufficient permissions |
+| `Path too long (max 4096 characters)` | File path exceeds maximum length |
+| `Invalid input: contains control characters` | Input contains forbidden characters |
+| `Unknown command` | Use `help` to list valid commands |
+
 ## Multi-Monitor Issues
 
 ### Wrong Monitor Selected

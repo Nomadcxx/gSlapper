@@ -24,6 +24,16 @@ echo "pause" | socat - UNIX-CONNECT:/tmp/gslapper.sock
 
 ## Available Commands
 
+### `help`
+
+List all available IPC commands.
+
+```bash
+echo "help" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** List of all supported commands with brief descriptions.
+
 ### `pause`
 
 Pause video playback.
@@ -115,8 +125,20 @@ Example: `TRANSITION: fade enabled 1.50`
 - `OK` - Command succeeded
 - `OK: <message>` - Command succeeded with additional info
 - `ERROR: <message>` - Command failed with error message
+- `ERROR: File not found: <path>` - File access error with detailed reason
+- `ERROR: Permission denied: <path>` - Permission error with system details
+- `ERROR: Invalid input: <reason>` - Input validation failed
 - `STATUS: <state> <type> <path>` - Query response
 - `TRANSITION: <type> <enabled|disabled> <duration>` - Transition query response
+
+### Error Messages
+
+Recent improvements provide more detailed error messages:
+
+- **File not found**: `ERROR: File not accessible: /path/to/file.mp4 (No such file or directory)`
+- **Permission denied**: `ERROR: File not accessible: /path/to/file.mp4 (Permission denied)`
+- **Path too long**: `ERROR: Path too long (max 4096 characters)`
+- **Invalid characters**: `ERROR: Invalid input: contains control characters`
 
 ## Example Script
 
