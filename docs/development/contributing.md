@@ -83,17 +83,14 @@ See existing commands like `set-transition` or `change` for examples.
 Run the included test scripts:
 
 ```bash
-# Video format testing
-./test-all-formats.sh
+# Basic integration tests
+./tests/test_basic.sh
 
-# Image format testing
-./test-images.sh
+# Memory safety tests (requires ASAN build or valgrind)
+./tests/test_memory.sh
 
-# Wallpaper modes testing
-./test-wallpaper-modes.sh
-
-# Transition effects testing
-./test-transitions-comprehensive.sh
+# Systemd service tests
+./tests/test_systemd.sh
 ```
 
 ### IPC Testing

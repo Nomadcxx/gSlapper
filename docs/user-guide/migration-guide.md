@@ -111,9 +111,9 @@ swww img --no-cache /path/to/image.jpg
 
 **gSlapper:**
 ```bash
-# gSlapper doesn't use a persistent cache
-# Transitions are handled in-memory
-# TODO: Preload cache coming soon (see TO_IMPLEMENT.md)
+# gSlapper has an in-memory image cache (default 256MB)
+# Images are auto-cached on 'change' IPC command
+# Adjust cache size with --cache-size MB option
 ```
 
 ### swww Config → gSlapper
