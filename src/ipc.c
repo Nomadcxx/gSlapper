@@ -34,6 +34,24 @@ static pthread_mutex_t ipc_queue_mutex = PTHREAD_MUTEX_INITIALIZER;
 static void *ipc_server_thread_fn(void *arg);
 static void *ipc_client_thread_fn(void *arg);
 
+#define IPC_MAX_CMD_NAME_LEN 32
+#define IPC_MAX_PATH_LEN 4096
+
+static bool ipc_validate_input(const char *input, int client_fd) {
+    if (!input || input[0] == '\0') {
+        return false;
+    }
+    size_t len = strlen(input);
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (c < 0x20 && c != ' ' && c != '\t') {
+            ipc_send_response(client_fd, "ERROR: invalid control character in input\n");
+            return false;
+        }
+    }
+    return true;
+}
+
 static void ipc_queue_command_internal(const char *cmd_line, int client_fd) {
     ipc_command_t *cmd = calloc(1, sizeof(ipc_command_t));
     if (!cmd) {
@@ -294,7 +312,7 @@ static void *ipc_client_thread_fn(void *arg) {
         char *newline;
         while ((newline = strchr(buffer, '\n')) != NULL) {
             *newline = '\0';
-            if (buffer[0] != '\0') {
+            if (buffer[0] != '\0' && ipc_validate_input(buffer, client_fd)) {
                 ipc_queue_command_internal(buffer, client_fd);
                 if (ipc_wakeup_pipe[1] >= 0) {
                     if (write(ipc_wakeup_pipe[1], "c", 1) == -1 && errno != EAGAIN) {

@@ -78,6 +78,69 @@ else
     fail "Auto-pause/stop options missing"
 fi
 
+if echo "$HELP_OUTPUT" | grep -q "transition"; then
+    pass "Transition options documented"
+else
+    skip "Transition options not in help"
+fi
+
+if echo "$HELP_OUTPUT" | grep -q "cache"; then
+    pass "Cache options documented"
+else
+    skip "Cache options not in help"
+fi
+
+echo ""
+echo "=== IPC Protocol Tests ==="
+echo ""
+
+SOCKET_PATH="/tmp/gslapper-test-$$"
+
+cleanup_socket() {
+    rm -f "$SOCKET_PATH" 2>/dev/null || true
+}
+trap cleanup_socket EXIT
+
+if command -v nc &> /dev/null || command -v socat &> /dev/null; then
+    pass "Network tools available for IPC tests"
+else
+    skip "nc/socat not available, skipping IPC protocol tests"
+fi
+
+echo ""
+echo "=== Build Artifact Tests ==="
+echo ""
+
+if file "$GSLAPPER" | grep -q "ELF.*executable\|ELF.*shared object"; then
+    pass "gslapper is valid ELF binary"
+else
+    fail "gslapper is not a valid ELF binary"
+fi
+
+if file "$GSLAPPER_HOLDER" | grep -q "ELF.*executable\|ELF.*shared object"; then
+    pass "gslapper-holder is valid ELF binary"
+else
+    fail "gslapper-holder is not a valid ELF binary"
+fi
+
+if ldd "$GSLAPPER" 2>&1 | grep -q "libgstreamer"; then
+    pass "gslapper links to GStreamer"
+else
+    fail "gslapper missing GStreamer linkage"
+fi
+
+if ldd "$GSLAPPER" 2>&1 | grep -q "libwayland"; then
+    pass "gslapper links to Wayland"
+else
+    fail "gslapper missing Wayland linkage"
+fi
+
+if ldd "$GSLAPPER" 2>&1 | grep -q "libEGL\|libGL"; then
+    pass "gslapper links to EGL/GL"
+else
+    fail "gslapper missing EGL/GL linkage"
+fi
+
 echo ""
 echo "=== Results ==="
 echo "Passed: $TESTS_PASSED"

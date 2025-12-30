@@ -1946,10 +1946,14 @@ static void execute_ipc_commands(void) {
         else if (strcmp(cmd_name, "change") == 0) {
             if (!arg || strlen(arg) == 0) {
                 ipc_send_response(cmd->client_fd, "ERROR: missing path argument\n");
+            } else if (strlen(arg) >= PATH_MAX) {
+                ipc_send_response(cmd->client_fd, "ERROR: path too long\n");
             } else {
                 // Validate path exists and is accessible
                 if (access(arg, R_OK) != 0) {
-                    ipc_send_response(cmd->client_fd, "ERROR: file not accessible\n");
+                    char errmsg[256];
+                    snprintf(errmsg, sizeof(errmsg), "ERROR: file not accessible: %s\n", strerror(errno));
+                    ipc_send_response(cmd->client_fd, errmsg);
                 } else {
                     // Check if we should use a transition for this change
                     bool use_transition = should_use_transition(arg);
@@ -2145,8 +2149,27 @@ static void execute_ipc_commands(void) {
                 ipc_send_response(cmd->client_fd, response);
             }
         }
+        else if (strcmp(cmd_name, "help") == 0) {
+            const char *help_text =
+                "IPC Commands:\n"
+                "  pause                    Pause playback\n"
+                "  resume                   Resume playback\n"
+                "  query                    Get current status\n"
+                "  change <path>            Change wallpaper\n"
+                "  stop                     Stop gslapper\n"
+                "  preload <path>           Preload image into cache\n"
+                "  unload <path|all|unused> Remove from cache\n"
+                "  cache-list               List cached images\n"
+                "  cache-stats              Show cache statistics\n"
+                "  set-transition <type>    Set transition (fade|none)\n"
+                "  get-transition           Get transition settings\n"
+                "  set-transition-duration <sec>  Set duration (0.0-5.0)\n"
+                "  listactive               List active outputs\n"
+                "  help                     Show this help\n";
+            ipc_send_response(cmd->client_fd, help_text);
+        }
         else {
-            ipc_send_response(cmd->client_fd, "ERROR: unknown command\n");
+            ipc_send_response(cmd->client_fd, "ERROR: unknown command (try 'help')\n");
         }
 
         // Cleanup command
