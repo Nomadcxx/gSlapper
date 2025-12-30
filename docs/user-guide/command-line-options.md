@@ -53,6 +53,18 @@ Automatically stop when wallpaper is hidden.
 gslapper -s -o "loop" DP-1 video.mp4
 ```
 
+### `-r, --fps-cap FPS`
+
+Set frame rate cap. Available values: 30, 60, or 100 FPS.
+
+```bash
+gslapper -r 60 -o "loop" DP-1 video.mp4
+```
+
+**Default:** 30 FPS
+
+**Use Case**: Higher FPS for smoother video playback, lower FPS to reduce CPU/GPU usage.
+
 ## Display Options
 
 ### `-l, --layer LAYER`
@@ -92,7 +104,7 @@ gslapper --cache-size 256 -I /tmp/gslapper.sock DP-1 /path/to/image.jpg
 echo "change /path/to/other.jpg" | nc -U /tmp/gslapper.sock
 ```
 
-**Default:** `0` (disabled)
+**Default:** `256` (enabled by default)
 
 **Recommended Values:**
 - `128` MB - For smaller image collections (~5-15 images at 4K)
