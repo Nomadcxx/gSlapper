@@ -861,6 +861,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        help
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pause" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -961,6 +972,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Response Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Messages
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1701,6 +1729,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        help
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pause" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1801,6 +1840,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Response Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Messages
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1911,35 +1967,40 @@
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>UNIX-CONNECT:/tmp/gslapper.sock
 </code></pre></div>
 <h2 id="available-commands">Available Commands<a class="headerlink" href="#available-commands" title="Permanent link">&para;</a></h2>
+<h3 id="help"><code>help</code><a class="headerlink" href="#help" title="Permanent link">&para;</a></h3>
+<p>List all available IPC commands.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;help&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+</code></pre></div>
+<p><strong>Response:</strong> List of all supported commands with brief descriptions.</p>
 <h3 id="pause"><code>pause</code><a class="headerlink" href="#pause" title="Permanent link">&para;</a></h3>
 <p>Pause video playback.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> <code>OK</code></p>
 <h3 id="resume"><code>resume</code><a class="headerlink" href="#resume" title="Permanent link">&para;</a></h3>
 <p>Resume paused playback.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;resume&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;resume&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> <code>OK</code></p>
 <h3 id="query"><code>query</code><a class="headerlink" href="#query" title="Permanent link">&para;</a></h3>
 <p>Get current state and wallpaper path.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;query&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;query&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> <code>STATUS: playing image /path/to/wallpaper.jpg</code> or <code>STATUS: paused video /path/to/video.mp4</code></p>
 <h3 id="change-path"><code>change &lt;path&gt;</code><a class="headerlink" href="#change-path" title="Permanent link">&para;</a></h3>
 <p>Switch to a different wallpaper.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;change /path/to/new/video.mp4&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;change /path/to/new/video.mp4&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> <code>OK: transition started</code> (if transitions enabled) or <code>OK</code></p>
 <h3 id="stop"><code>stop</code><a class="headerlink" href="#stop" title="Permanent link">&para;</a></h3>
 <p>Stop gSlapper.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;stop&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;stop&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> <code>OK</code> (gSlapper exits)</p>
 <h3 id="set-transition-type"><code>set-transition &lt;type&gt;</code><a class="headerlink" href="#set-transition-type" title="Permanent link">&para;</a></h3>
 <p>Set transition effect type. Options: <code>none</code>, <code>fade</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition fade&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition none&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition fade&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition none&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> <code>OK</code> or <code>ERROR: &lt;message&gt;</code></p>
 <div class="admonition note">
@@ -1948,12 +2009,12 @@
 </div>
 <h3 id="set-transition-duration-seconds"><code>set-transition-duration &lt;seconds&gt;</code><a class="headerlink" href="#set-transition-duration-seconds" title="Permanent link">&para;</a></h3>
 <p>Set transition duration in seconds (0.0-5.0).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition-duration 2.0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition-duration 2.0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> <code>OK</code> or <code>ERROR: &lt;message&gt;</code></p>
 <h3 id="get-transition"><code>get-transition</code><a class="headerlink" href="#get-transition" title="Permanent link">&para;</a></h3>
 <p>Query current transition settings.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;get-transition&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;get-transition&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> <code>TRANSITION: &lt;type&gt; &lt;enabled|disabled&gt; &lt;duration&gt;</code></p>
 <p>Example: <code>TRANSITION: fade enabled 1.50</code></p>
@@ -1962,50 +2023,61 @@
 <li><code>OK</code> - Command succeeded</li>
 <li><code>OK: &lt;message&gt;</code> - Command succeeded with additional info</li>
 <li><code>ERROR: &lt;message&gt;</code> - Command failed with error message</li>
+<li><code>ERROR: File not found: &lt;path&gt;</code> - File access error with detailed reason</li>
+<li><code>ERROR: Permission denied: &lt;path&gt;</code> - Permission error with system details</li>
+<li><code>ERROR: Invalid input: &lt;reason&gt;</code> - Input validation failed</li>
 <li><code>STATUS: &lt;state&gt; &lt;type&gt; &lt;path&gt;</code> - Query response</li>
 <li><code>TRANSITION: &lt;type&gt; &lt;enabled|disabled&gt; &lt;duration&gt;</code> - Transition query response</li>
 </ul>
+<h3 id="error-messages">Error Messages<a class="headerlink" href="#error-messages" title="Permanent link">&para;</a></h3>
+<p>Recent improvements provide more detailed error messages:</p>
+<ul>
+<li><strong>File not found</strong>: <code>ERROR: File not accessible: /path/to/file.mp4 (No such file or directory)</code></li>
+<li><strong>Permission denied</strong>: <code>ERROR: File not accessible: /path/to/file.mp4 (Permission denied)</code></li>
+<li><strong>Path too long</strong>: <code>ERROR: Path too long (max 4096 characters)</code></li>
+<li><strong>Invalid characters</strong>: <code>ERROR: Invalid input: contains control characters</code></li>
+</ul>
 <h2 id="example-script">Example Script<a class="headerlink" href="#example-script" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="ch">#!/bin/bash</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nv">SOCKET</span><span class="o">=</span><span class="s2">&quot;/tmp/gslapper.sock&quot;</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">case</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="w"> </span><span class="k">in</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span>pause<span class="o">)</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span>resume<span class="o">)</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;resume&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span>next<span class="o">)</span>
-<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;change /path/to/next/video.mp4&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">    </span>status<span class="o">)</span>
-<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;query&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">    </span>transition<span class="o">)</span>
-<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition fade&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition-duration 2.0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
-<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">    </span>*<span class="o">)</span>
-<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Usage: </span><span class="nv">$0</span><span class="s2"> {pause|resume|next|status|transition}&quot;</span>
-<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">        </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
-<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">        </span><span class="p">;;</span>
-<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="k">esac</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="nv">SOCKET</span><span class="o">=</span><span class="s2">&quot;/tmp/gslapper.sock&quot;</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="k">case</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="w"> </span><span class="k">in</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span>pause<span class="o">)</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pause&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">        </span><span class="p">;;</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span>resume<span class="o">)</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;resume&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">        </span><span class="p">;;</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">    </span>next<span class="o">)</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;change /path/to/next/video.mp4&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">        </span><span class="p">;;</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">    </span>status<span class="o">)</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;query&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="w">        </span><span class="p">;;</span>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="w">    </span>transition<span class="o">)</span>
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition fade&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set-transition-duration 2.0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SOCKET</span><span class="s2">&quot;</span>
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="w">        </span><span class="p">;;</span>
+<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a><span class="w">    </span>*<span class="o">)</span>
+<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Usage: </span><span class="nv">$0</span><span class="s2"> {pause|resume|next|status|transition}&quot;</span>
+<a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a><span class="w">        </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a><span class="w">        </span><span class="p">;;</span>
+<a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a><span class="k">esac</span>
 </code></pre></div>
 <h2 id="cache-management-commands">Cache Management Commands<a class="headerlink" href="#cache-management-commands" title="Permanent link">&para;</a></h2>
 <p>These commands require <code>--cache-size</code> to be enabled.</p>
 <h3 id="cache-list"><code>cache-list</code><a class="headerlink" href="#cache-list" title="Permanent link">&para;</a></h3>
 <p>List all cached images with dimensions and sizes.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;cache-list&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;cache-list&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> List of cached images, one per line:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>/path/to/image1.jpg 3840x2160 31.64 MB [*]
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>/path/to/image2.png 2560x1440 14.06 MB
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>/path/to/image1.jpg 3840x2160 31.64 MB [*]
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>/path/to/image2.png 2560x1440 14.06 MB
 </code></pre></div></p>
 <p>The <code>[*]</code> marker indicates currently displayed image.</p>
 <h3 id="cache-stats"><code>cache-stats</code><a class="headerlink" href="#cache-stats" title="Permanent link">&para;</a></h3>
 <p>Show cache usage statistics.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;cache-stats&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;cache-stats&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> <code>45.70/256.00 MB (2 images)</code> or <code>Cache disabled</code></p>
 <h3 id="unload-target"><code>unload &lt;target&gt;</code><a class="headerlink" href="#unload-target" title="Permanent link">&para;</a></h3>
@@ -2013,14 +2085,14 @@
 - <code>unused</code> - Remove all images not currently displayed
 - <code>all</code> - Clear entire cache (including displayed image)
 - <code>&lt;path&gt;</code> - Remove specific image by path</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;unload unused&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;unload all&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;unload /path/to/image.jpg&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;unload unused&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;unload all&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;unload /path/to/image.jpg&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> <code>OK: Unloaded N image(s)</code> or <code>ERROR: &lt;message&gt;</code></p>
 <h3 id="listactive"><code>listactive</code><a class="headerlink" href="#listactive" title="Permanent link">&para;</a></h3>
 <p>Show currently displayed wallpaper(s) and output(s).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;listactive&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;listactive&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
 </code></pre></div>
 <p><strong>Response:</strong> <code>ACTIVE: &lt;output&gt; &lt;type&gt; &lt;path&gt;</code></p>
 <p>Example: <code>ACTIVE: DP-1 image /home/user/wallpaper.jpg</code></p>
@@ -2046,7 +2118,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 27, 2025 05:54:51 UTC">December 27, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 30, 2025 04:45:43 UTC">December 30, 2025</span>
   </span>
 
     
@@ -2056,7 +2128,7 @@
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 27, 2025 05:54:51 UTC">December 27, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 30, 2025 04:45:43 UTC">December 30, 2025</span>
   </span>
 
     

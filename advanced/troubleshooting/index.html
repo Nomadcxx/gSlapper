@@ -1262,6 +1262,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#list-available-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Available Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#understanding-error-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Error Messages
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2007,6 +2029,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#list-available-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Available Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#understanding-error-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Error Messages
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2289,6 +2333,42 @@
 3. Try with socat instead of nc:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;query&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>UNIX-CONNECT:/tmp/gslapper.sock
 </code></pre></div></p>
+<h3 id="list-available-commands">List Available Commands<a class="headerlink" href="#list-available-commands" title="Permanent link">&para;</a></h3>
+<p>Use the <code>help</code> command to see all available IPC commands:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;help&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-U<span class="w"> </span>/tmp/gslapper.sock
+</code></pre></div>
+<h3 id="understanding-error-messages">Understanding Error Messages<a class="headerlink" href="#understanding-error-messages" title="Permanent link">&para;</a></h3>
+<p>Recent versions provide detailed error messages:</p>
+<table>
+<thead>
+<tr>
+<th>Error Message</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>File not accessible: &lt;path&gt; (No such file or directory)</code></td>
+<td>File doesn't exist</td>
+</tr>
+<tr>
+<td><code>File not accessible: &lt;path&gt; (Permission denied)</code></td>
+<td>Insufficient permissions</td>
+</tr>
+<tr>
+<td><code>Path too long (max 4096 characters)</code></td>
+<td>File path exceeds maximum length</td>
+</tr>
+<tr>
+<td><code>Invalid input: contains control characters</code></td>
+<td>Input contains forbidden characters</td>
+</tr>
+<tr>
+<td><code>Unknown command</code></td>
+<td>Use <code>help</code> to list valid commands</td>
+</tr>
+</tbody>
+</table>
 <h2 id="multi-monitor-issues">Multi-Monitor Issues<a class="headerlink" href="#multi-monitor-issues" title="Permanent link">&para;</a></h2>
 <h3 id="wrong-monitor-selected">Wrong Monitor Selected<a class="headerlink" href="#wrong-monitor-selected" title="Permanent link">&para;</a></h3>
 <p><strong>Cause</strong>: Monitor name mismatch</p>
@@ -2301,7 +2381,7 @@
 <p><strong>Solution</strong>:
 1. Kill all instances: <code>pkill gslapper</code>
 2. Start fresh with <code>'*'</code>:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span>video.mp4
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span>video.mp4
 </code></pre></div></p>
 <h2 id="performance-issues">Performance Issues<a class="headerlink" href="#performance-issues" title="Permanent link">&para;</a></h2>
 <h3 id="high-cpu-usage">High CPU Usage<a class="headerlink" href="#high-cpu-usage" title="Permanent link">&para;</a></h3>
@@ -2319,19 +2399,19 @@
 <h2 id="build-issues">Build Issues<a class="headerlink" href="#build-issues" title="Permanent link">&para;</a></h2>
 <h3 id="meson-command-not-found">"meson: command not found"<a class="headerlink" href="#meson-command-not-found" title="Permanent link">&para;</a></h3>
 <p><strong>Solution</strong>: Install build dependencies:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Arch Linux</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>meson<span class="w"> </span>ninja
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Ubuntu/Debian</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>meson<span class="w"> </span>ninja-build
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Arch Linux</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>meson<span class="w"> </span>ninja
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Ubuntu/Debian</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>meson<span class="w"> </span>ninja-build
 </code></pre></div></p>
 <h3 id="wayland-protocols-not-found">"wayland-protocols not found"<a class="headerlink" href="#wayland-protocols-not-found" title="Permanent link">&para;</a></h3>
 <p><strong>Solution</strong>: Install Wayland development packages:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Arch Linux</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>wayland-protocols
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Ubuntu/Debian</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>wayland-protocols
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Arch Linux</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>wayland-protocols
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># Ubuntu/Debian</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>wayland-protocols
 </code></pre></div></p>
 <h3 id="compilation-errors">Compilation Errors<a class="headerlink" href="#compilation-errors" title="Permanent link">&para;</a></h3>
 <p><strong>Solution</strong>:
@@ -2341,7 +2421,7 @@
 <h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
 <h3 id="verbose-output">Verbose Output<a class="headerlink" href="#verbose-output" title="Permanent link">&para;</a></h3>
 <p>Always include verbose output when reporting issues:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>gslapper<span class="w"> </span>-vv<span class="w"> </span>DP-1<span class="w"> </span>video.mp4<span class="w"> </span>&gt;<span class="w"> </span>/tmp/gslapper.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>gslapper<span class="w"> </span>-vv<span class="w"> </span>DP-1<span class="w"> </span>video.mp4<span class="w"> </span>&gt;<span class="w"> </span>/tmp/gslapper.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
 </code></pre></div>
 <h3 id="system-information">System Information<a class="headerlink" href="#system-information" title="Permanent link">&para;</a></h3>
 <p>Include when reporting issues:
@@ -2378,7 +2458,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 27, 2025 05:54:51 UTC">December 27, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 30, 2025 04:45:43 UTC">December 30, 2025</span>
   </span>
 
     
@@ -2388,7 +2468,7 @@
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 27, 2025 05:54:51 UTC">December 27, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="December 30, 2025 04:45:43 UTC">December 30, 2025</span>
   </span>
 
     
