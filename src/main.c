@@ -2017,6 +2017,41 @@ static void execute_ipc_commands(void) {
                 }
             }
         }
+        else if (strcmp(cmd_name, "layer") == 0) {
+            if (!arg || arg[0] == '\0') {
+                ipc_send_response(cmd->client_fd, "ERROR: missing layer argument\n");
+            } else {
+                uint32_t layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
+                bool valid = false;
+                if (strcmp(arg, "background") == 0) {
+                    layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
+                    valid = true;
+                } else if (strcmp(arg, "bottom") == 0) {
+                    layer = ZWLR_LAYER_SHELL_V1_LAYER_BOTTOM;
+                    valid = true;
+                } else if (strcmp(arg, "top") == 0) {
+                    layer = ZWLR_LAYER_SHELL_V1_LAYER_TOP;
+                    valid = true;
+                } else if (strcmp(arg, "overlay") == 0) {
+                    layer = ZWLR_LAYER_SHELL_V1_LAYER_OVERLAY;
+                    valid = true;
+                } else {
+                    ipc_send_response(cmd->client_fd, "ERROR: invalid layer (use background, bottom, top, overlay)\n");
+                }
+
+                if (valid) {
+                    global_state->surface_layer = layer;
+                    struct display_output *output;
+                    wl_list_for_each(output, &global_state->outputs, link) {
+                        if (output->layer_surface) {
+                            zwlr_layer_surface_v1_set_layer(output->layer_surface, layer);
+                            wl_surface_commit(output->surface);
+                        }
+                    }
+                    ipc_send_response(cmd->client_fd, "OK\n");
+                }
+            }
+        }
         else if (strcmp(cmd_name, "stop") == 0) {
             ipc_send_response(cmd->client_fd, "OK\n");
             // Close write side to ensure response is flushed
@@ -3200,7 +3235,7 @@ static void handle_global(void *data, struct wl_registry *registry, uint32_t nam
         wl_list_insert(&state->outputs, &output->link);
 
     } else if (strcmp(interface, zwlr_layer_shell_v1_interface.name) == 0) {
-        state->layer_shell = wl_registry_bind(registry, name, &zwlr_layer_shell_v1_interface, 1);
+        state->layer_shell = wl_registry_bind(registry, name, &zwlr_layer_shell_v1_interface, 2);
     }
 }
 
@@ -3740,3 +3775,4 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
+
