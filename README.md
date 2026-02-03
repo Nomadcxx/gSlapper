@@ -46,9 +46,26 @@ ninja -C build
 sudo ninja -C build install
 ```
 
+### Nix / NixOS
+
+```bash
+git clone https://github.com/Nomadcxx/gSlapper.git
+cd gSlapper
+nix build
+./result/bin/gslapper --help
+```
+
+For development:
+
+```bash
+nix develop
+```
+
+See [Nix Installation Guide](docs/nix-installation.md) for system integration options.
+
 ## License
 
-MIT License - see [LICENSE](LICENSE)
+GPL-3.0 License - see [LICENSE](LICENSE)
 
 ## Credits
 
