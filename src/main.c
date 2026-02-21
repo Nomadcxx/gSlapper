@@ -2021,34 +2021,42 @@ static void execute_ipc_commands(void) {
             if (!arg || arg[0] == '\0') {
                 ipc_send_response(cmd->client_fd, "ERROR: missing layer argument\n");
             } else {
-                uint32_t layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
-                bool valid = false;
-                if (strcmp(arg, "background") == 0) {
-                    layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
-                    valid = true;
-                } else if (strcmp(arg, "bottom") == 0) {
-                    layer = ZWLR_LAYER_SHELL_V1_LAYER_BOTTOM;
-                    valid = true;
-                } else if (strcmp(arg, "top") == 0) {
-                    layer = ZWLR_LAYER_SHELL_V1_LAYER_TOP;
-                    valid = true;
-                } else if (strcmp(arg, "overlay") == 0) {
-                    layer = ZWLR_LAYER_SHELL_V1_LAYER_OVERLAY;
-                    valid = true;
+                // CHANGED 2026-02-21 04:00 - Guard dynamic layer switching on protocol support - Problem: avoid protocol errors on compositors exposing only layer-shell v1
+                uint32_t layer_shell_version = global_state->layer_shell
+                    ? wl_proxy_get_version((struct wl_proxy *)global_state->layer_shell)
+                    : 0;
+                if (layer_shell_version < 2) {
+                    ipc_send_response(cmd->client_fd, "ERROR: compositor does not support dynamic layer switching\n");
                 } else {
-                    ipc_send_response(cmd->client_fd, "ERROR: invalid layer (use background, bottom, top, overlay)\n");
-                }
-
-                if (valid) {
-                    global_state->surface_layer = layer;
-                    struct display_output *output;
-                    wl_list_for_each(output, &global_state->outputs, link) {
-                        if (output->layer_surface) {
-                            zwlr_layer_surface_v1_set_layer(output->layer_surface, layer);
-                            wl_surface_commit(output->surface);
-                        }
+                    uint32_t layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
+                    bool valid = false;
+                    if (strcasecmp(arg, "background") == 0) {
+                        layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
+                        valid = true;
+                    } else if (strcasecmp(arg, "bottom") == 0) {
+                        layer = ZWLR_LAYER_SHELL_V1_LAYER_BOTTOM;
+                        valid = true;
+                    } else if (strcasecmp(arg, "top") == 0) {
+                        layer = ZWLR_LAYER_SHELL_V1_LAYER_TOP;
+                        valid = true;
+                    } else if (strcasecmp(arg, "overlay") == 0) {
+                        layer = ZWLR_LAYER_SHELL_V1_LAYER_OVERLAY;
+                        valid = true;
+                    } else {
+                        ipc_send_response(cmd->client_fd, "ERROR: invalid layer (use background, bottom, top, overlay)\n");
                     }
-                    ipc_send_response(cmd->client_fd, "OK\n");
+
+                    if (valid) {
+                        global_state->surface_layer = layer;
+                        struct display_output *output;
+                        wl_list_for_each(output, &global_state->outputs, link) {
+                            if (output->layer_surface) {
+                                zwlr_layer_surface_v1_set_layer(output->layer_surface, layer);
+                                wl_surface_commit(output->surface);
+                            }
+                        }
+                        ipc_send_response(cmd->client_fd, "OK\n");
+                    }
                 }
             }
         }
@@ -2191,6 +2199,7 @@ static void execute_ipc_commands(void) {
                 "  resume                   Resume playback\n"
                 "  query                    Get current status\n"
                 "  change <path>            Change wallpaper\n"
+                "  layer <name>             Set layer (background|bottom|top|overlay)\n"
                 "  stop                     Stop gslapper\n"
                 "  preload <path>           Preload image into cache\n"
                 "  unload <path|all|unused> Remove from cache\n"
@@ -3220,8 +3229,6 @@ static const struct wl_output_listener output_listener = {
 
 static void handle_global(void *data, struct wl_registry *registry, uint32_t name, const char *interface,
         uint32_t version) {
-    (void)version;
-
     struct wl_state *state = data;
     if (strcmp(interface, wl_compositor_interface.name) == 0) {
         state->compositor = wl_registry_bind(registry, name, &wl_compositor_interface, 4);
@@ -3235,7 +3242,9 @@ static void handle_global(void *data, struct wl_registry *registry, uint32_t nam
         wl_list_insert(&state->outputs, &output->link);
 
     } else if (strcmp(interface, zwlr_layer_shell_v1_interface.name) == 0) {
-        state->layer_shell = wl_registry_bind(registry, name, &zwlr_layer_shell_v1_interface, 2);
+        // CHANGED 2026-02-21 04:00 - Negotiate layer-shell bind version up to v2 - Problem: keep compatibility with compositors that only expose v1
+        uint32_t bind_version = version < 2 ? version : 2;
+        state->layer_shell = wl_registry_bind(registry, name, &zwlr_layer_shell_v1_interface, bind_version);
     }
 }
 

@@ -74,6 +74,22 @@ echo "change /path/to/new/video.mp4" | nc -U /tmp/gslapper.sock
 
 **Response:** `OK: transition started` (if transitions enabled) or `OK`
 
+### `layer <name>`
+
+Switch gSlapper to a different Wayland layer at runtime.
+
+Supported layer names: `background`, `bottom`, `top`, `overlay`.
+
+```bash
+echo "layer top" | nc -U /tmp/gslapper.sock
+echo "layer background" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** `OK` or `ERROR: <message>`
+
+!!! note "Compositor support"
+    Dynamic layer switching requires layer-shell protocol support for `set_layer` (v2+). On older compositors, this command returns an error.
+
 ### `stop`
 
 Stop gSlapper.
@@ -163,8 +179,11 @@ case "$1" in
         echo "set-transition fade" | nc -U "$SOCKET"
         echo "set-transition-duration 2.0" | nc -U "$SOCKET"
         ;;
+    layer)
+        echo "layer ${2:-top}" | nc -U "$SOCKET"
+        ;;
     *)
-        echo "Usage: $0 {pause|resume|next|status|transition}"
+        echo "Usage: $0 {pause|resume|next|status|transition|layer [background|bottom|top|overlay]}"
         exit 1
         ;;
 esac

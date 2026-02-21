@@ -209,6 +209,7 @@ ipc_send_response(client_fd, "STATUS: playing video /path/to/video.mp4\n");
 | `stop` | None | `OK` | Stop gSlapper (exits) |
 | `query` | None | `STATUS: <state> <type> <path>` | Get current wallpaper state |
 | `change <path>` | File path | `OK` or `OK: transition started` | Change wallpaper |
+| `layer <name>` | `background`, `bottom`, `top`, `overlay` | `OK` or `ERROR` | Change Wayland layer at runtime |
 | `set-transition <type>` | `none` or `fade` | `OK` or `ERROR` | Set transition effect |
 | `set-transition-duration <secs>` | 0.0-5.0 seconds | `OK` or `ERROR` | Set transition duration |
 | `get-transition` | None | `TRANSITION: <type> <enabled> <duration>` | Query transition settings |
