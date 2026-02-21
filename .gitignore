@@ -65,6 +65,8 @@ adorable-black-kitten*
 # Development/internal files
 .cache/
 .ssh/
+.claude/
+.cursor/
 AGENTS.md
 PROJECT_SUMMARY.md
 CLAUDE.md
@@ -101,6 +103,7 @@ benchmark-test-video.mp4
 
 # Task tracking files
 *.tasks*
+*-this-session-is-being-continued-from-a-previous-co.txt
 
 # MkDocs build output
 site/
