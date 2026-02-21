@@ -83,9 +83,6 @@ nav:
     - API Reference: development/api-reference.md
     - Architecture: development/architecture.md
     - Systemd Service: development/systemd-service.md
-  - Project:
-    - TO IMPLEMENT: TO_IMPLEMENT.md
-
 plugins:
   - search
   - git-revision-date-localized:

@@ -292,7 +292,7 @@ typedef struct preload_entry {
 } preload_entry_t;
 ```
 
-**Note**: Currently reserved for future implementation (see TO_IMPLEMENT.md).
+**Note**: Currently reserved for future implementation.
 
 ---
 
@@ -956,4 +956,4 @@ void switch_wallpaper(const char *new_path) {
 - [Command Line Options](./command-line-options.md) - User-facing CLI reference
 - [IPC Control Guide](./ipc-control.md) - Using IPC from scripts
 - [Persistent Wallpapers](./persistent-wallpapers.md) - State management usage
-- [TO_IMPLEMENT.md](../../TO_IMPLEMENT.md) - Planned features and API additions
+- [GitHub Issues](https://github.com/Nomadcxx/gSlapper/issues) - Planned features and API additions
