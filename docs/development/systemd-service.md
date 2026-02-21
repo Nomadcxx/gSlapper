@@ -447,7 +447,7 @@ Restart=on-failure
 
 ## Future Enhancements
 
-**Planned** (see TO_IMPLEMENT.md):
+**Planned** (tracked in GitHub issues):
 1. **Playlist Support** - Rotate through multiple wallpapers
 2. **Scheduled Wallpapers** - Change based on time of day
 3. **State Encryption** - Optional encryption for sensitive paths
@@ -461,4 +461,4 @@ Restart=on-failure
 - **[State Management (Implementation)](#state-management-in-systemd-service)** - State file API
 - **[API Reference](./api-reference.md)** - Full API documentation
 - **[Architecture](./architecture.md)** - Overall system architecture
-- **[TO_IMPLEMENT.md](../../TO_IMPLEMENT.md)** - Future enhancements
+- **[GitHub Issues](https://github.com/Nomadcxx/gSlapper/issues)** - Future enhancements
