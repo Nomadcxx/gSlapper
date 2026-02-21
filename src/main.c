@@ -1616,6 +1616,9 @@ static void *monitor_pauselist(void *_) {
             list_paused = 0;
             if (halt_info.is_paused)
                 halt_info.is_paused -= 1;
+            // CHANGED 2026-02-21 04:30 - Resume pipeline when pauselist condition clears - Problem: playback could stay paused indefinitely after watched process exits
+            if (!halt_info.is_paused && pipeline)
+                gst_element_set_state(pipeline, GST_STATE_PLAYING);
         }
 
         pthread_sleep(1);
@@ -1661,6 +1664,9 @@ static void *handle_auto_pause(void *_) {
             }
             if (halt_info.is_paused)
                 halt_info.is_paused -= 1;
+            // CHANGED 2026-02-21 04:30 - Resume pipeline after auto-pause hidden state clears - Problem: wallpaper could remain frozen after becoming visible again
+            if (!halt_info.is_paused && pipeline)
+                gst_element_set_state(pipeline, GST_STATE_PLAYING);
         }
     }
     pthread_exit(NULL);
