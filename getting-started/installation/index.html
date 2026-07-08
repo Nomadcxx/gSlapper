@@ -560,6 +560,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#debian-ubuntu-fedora-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debian / Ubuntu / Fedora Packages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#manual-build" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1425,6 +1436,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#debian-ubuntu-fedora-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debian / Ubuntu / Fedora Packages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#manual-build" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1510,29 +1532,70 @@
 <p>Install from AUR:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>yay<span class="w"> </span>-S<span class="w"> </span>gslapper
 </code></pre></div>
+<h2 id="debian-ubuntu-fedora-packages">Debian / Ubuntu / Fedora Packages<a class="headerlink" href="#debian-ubuntu-fedora-packages" title="Permanent link">&para;</a></h2>
+<p>Prebuilt packages are attached to every <a href="https://github.com/Nomadcxx/gSlapper/releases/latest">GitHub release</a>. Pick the one matching your distro:</p>
+<table>
+<thead>
+<tr>
+<th>Distro</th>
+<th>Package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Debian 13 (and Ubuntu 25.x)</td>
+<td><code>gslapper_&lt;version&gt;_debian13_amd64.deb</code></td>
+</tr>
+<tr>
+<td>Ubuntu 24.04</td>
+<td><code>gslapper_&lt;version&gt;_ubuntu24.04_amd64.deb</code></td>
+</tr>
+<tr>
+<td>Fedora 42+</td>
+<td><code>gslapper-&lt;version&gt;-1.fedora42.x86_64.rpm</code></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Debian / Ubuntu</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>./gslapper_&lt;version&gt;_&lt;distro&gt;_amd64.deb
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Fedora</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>./gslapper-&lt;version&gt;-1.fedora42.x86_64.rpm
+</code></pre></div>
+<p>The packages install the <code>gslapper</code> and <code>gslapper-holder</code> binaries plus the systemd user services, and pull in all runtime dependencies. For extra codec support (H.264/H.265 via FFmpeg), also install <code>gstreamer1.0-libav</code>/<code>gstreamer1.0-plugins-ugly</code> (deb) or <code>gstreamer1-libav</code> from RPM Fusion (Fedora).</p>
 <h2 id="manual-build">Manual Build<a class="headerlink" href="#manual-build" title="Permanent link">&para;</a></h2>
 <h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
 <p><strong>Arch Linux:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Runtime dependencies</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>gstreamer<span class="w"> </span>gst-plugins-base<span class="w"> </span>gst-plugins-good<span class="w"> </span>gst-plugins-bad<span class="w"> </span>gst-plugins-ugly<span class="w"> </span>gst-libav
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Build dependencies</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>meson<span class="w"> </span>ninja<span class="w"> </span>wayland-protocols
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Runtime dependencies</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>gstreamer<span class="w"> </span>gst-plugins-base<span class="w"> </span>gst-plugins-good<span class="w"> </span>gst-plugins-bad<span class="w"> </span>gst-plugins-ugly<span class="w"> </span>gst-libav
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Build dependencies</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>meson<span class="w"> </span>ninja<span class="w"> </span>wayland-protocols
 </code></pre></div></p>
 <p><strong>Ubuntu/Debian:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Runtime dependencies</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>gstreamer1.0-tools<span class="w"> </span>gstreamer1.0-plugins-base<span class="w"> </span>gstreamer1.0-plugins-good<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">                 </span>gstreamer1.0-plugins-bad<span class="w"> </span>gstreamer1.0-plugins-ugly<span class="w"> </span>gstreamer1.0-libav
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Build dependencies</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>meson<span class="w"> </span>ninja-build<span class="w"> </span>wayland-protocols<span class="w"> </span>libunwind-dev
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Build dependencies</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>meson<span class="w"> </span>ninja-build<span class="w"> </span>pkg-config<span class="w"> </span>wayland-protocols<span class="w"> </span>libwayland-dev<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">                 </span>libegl-dev<span class="w"> </span>libgstreamer1.0-dev<span class="w"> </span>libgstreamer-plugins-base1.0-dev<span class="w"> </span>libsystemd-dev
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># Runtime GStreamer plugins</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>gstreamer1.0-plugins-good<span class="w"> </span>gstreamer1.0-plugins-bad<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">                 </span>gstreamer1.0-plugins-ugly<span class="w"> </span>gstreamer1.0-libav
+</code></pre></div></p>
+<p><strong>Fedora:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Build dependencies</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>meson<span class="w"> </span>ninja-build<span class="w"> </span>gcc<span class="w"> </span>pkgconf-pkg-config<span class="w"> </span>wayland-devel<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">                 </span>wayland-protocols-devel<span class="w"> </span>libglvnd-devel<span class="w"> </span>gstreamer1-devel<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">                 </span>gstreamer1-plugins-base-devel<span class="w"> </span>systemd-devel
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># Runtime GStreamer plugins</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>gstreamer1-plugins-good<span class="w"> </span>gstreamer1-plugins-bad-free
 </code></pre></div></p>
 <h3 id="build-steps">Build Steps<a class="headerlink" href="#build-steps" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Nomadcxx/gSlapper.git
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">cd</span><span class="w"> </span>gSlapper
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>meson<span class="w"> </span>setup<span class="w"> </span>build<span class="w"> </span>--prefix<span class="o">=</span>/usr/local
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>ninja<span class="w"> </span>-C<span class="w"> </span>build
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sudo<span class="w"> </span>ninja<span class="w"> </span>-C<span class="w"> </span>build<span class="w"> </span>install
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Nomadcxx/gSlapper.git
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">cd</span><span class="w"> </span>gSlapper
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>meson<span class="w"> </span>setup<span class="w"> </span>build<span class="w"> </span>--prefix<span class="o">=</span>/usr/local
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>ninja<span class="w"> </span>-C<span class="w"> </span>build
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>sudo<span class="w"> </span>ninja<span class="w"> </span>-C<span class="w"> </span>build<span class="w"> </span>install
 </code></pre></div>
 <h2 id="codec-support">Codec Support<a class="headerlink" href="#codec-support" title="Permanent link">&para;</a></h2>
 <div class="admonition important">
@@ -1541,7 +1604,7 @@
 </div>
 <h2 id="verification">Verification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <p>After installation, verify gSlapper is working:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>gslapper<span class="w"> </span>--help
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>gslapper<span class="w"> </span>--help
 </code></pre></div>
 <p>You should see the help message with available options.</p>
 
@@ -1566,7 +1629,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="July 8, 2026 17:39:59 UTC">July 8, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="July 8, 2026 17:43:06 UTC">July 8, 2026</span>
   </span>
 
     
@@ -1576,7 +1639,7 @@
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="July 8, 2026 17:39:59 UTC">July 8, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="July 8, 2026 17:43:06 UTC">July 8, 2026</span>
   </span>
 
     
