@@ -8,6 +8,7 @@ builddir/
 .wrap-db/
 meson-logs/
 meson-private/
+compile_commands.json
 
 # Compiled binaries
 gslapper
@@ -29,8 +30,19 @@ gslapper-holder
 *~
 *.swp
 *.swo
+*.tmp
+*.temp
+*.orig
+*.rej
+*.save
 .DS_Store
 Thumbs.db
+
+# Python/cache files used by docs and local tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
 
 # IDE files
 .vscode/
@@ -57,6 +69,8 @@ adorable-black-kitten*
 # Backup files
 *.bak
 *.backup
+*.backup.*
+*.fixed
 
 # Generated protocol files
 *-protocol.c

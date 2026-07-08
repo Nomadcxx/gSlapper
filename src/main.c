@@ -275,6 +275,7 @@ static int restore_from_state(const char *path);
 static void restore_video_position(void);
 static void notify_systemd_ready(void);
 static void notify_systemd_stopping(void);
+static bool is_all_outputs_selector(const char *monitor);
 
 // Cleanup function
 static void exit_cleanup() {
@@ -1388,7 +1389,9 @@ static void save_current_state(void) {
     
     // Get output name from first configured output
     char *current_output = NULL;
-    if (global_state && !wl_list_empty(&global_state->outputs)) {
+    if (global_state && is_all_outputs_selector(global_state->monitor)) {
+        state.output = global_state->monitor;
+    } else if (global_state && !wl_list_empty(&global_state->outputs)) {
         struct display_output *output;
         wl_list_for_each(output, &global_state->outputs, link) {
             if (output->name) {
@@ -1468,9 +1471,10 @@ static void save_current_state(void) {
 // Restore state (sets existing globals)
 static int restore_from_state(const char *path) {
     char *state_path = NULL;
+    const char *loaded_path = path;
     if (!path) {
-        // Try to get output-specific state file first
-        if (global_state && global_state->monitor) {
+        // Try to get output-specific state file first; wildcard restore uses default state.txt.
+        if (global_state && global_state->monitor && !is_all_outputs_selector(global_state->monitor)) {
             state_path = get_state_file_path(global_state->monitor);
         }
         // Fall back to default if output-specific not found
@@ -1482,6 +1486,7 @@ static int restore_from_state(const char *path) {
             return -1;
         }
         path = state_path;
+        loaded_path = path;
     }
     
     struct wallpaper_state state = {0};
@@ -1522,6 +1527,8 @@ static int restore_from_state(const char *path) {
             if (global_state->monitor) free(global_state->monitor);
             global_state->monitor = strdup(state.output);
             pthread_mutex_unlock(&state_mutex);
+        } else if (global_state && !global_state->monitor) {
+            global_state->monitor = strdup("*");
         }
         
         // FIXED: Store restore position in global (not static inside function)
@@ -1535,14 +1542,22 @@ static int restore_from_state(const char *path) {
     
     free_wallpaper_state(&state);
     
+    if (VERBOSE)
+        cflp_info("State restored successfully from %s", loaded_path);
+
     // Free state_path if we allocated it
     if (state_path) {
         free(state_path);
     }
-    
-    if (VERBOSE)
-        cflp_info("State restored successfully from %s", path);
     return 0;
+}
+
+static bool is_all_outputs_selector(const char *monitor) {
+    return monitor &&
+           (strcmp(monitor, "*") == 0 ||
+            strcmp(monitor, "ALL") == 0 ||
+            strcmp(monitor, "All") == 0 ||
+            strcmp(monitor, "all") == 0);
 }
 
 // Systemd readiness notification
@@ -2176,12 +2191,22 @@ static void execute_ipc_commands(void) {
                 }
             }
         }
-        else if (strcmp(cmd_name, "stop") == 0) {
+        else if (strcmp(cmd_name, "stop") == 0 || strcmp(cmd_name, "quit") == 0) {
             ipc_send_response(cmd->client_fd, "OK\n");
             // Close write side to ensure response is flushed
             shutdown(cmd->client_fd, SHUT_WR);
             usleep(50000);  // Delay to ensure response is sent before exit
             exit_slapper(EXIT_SUCCESS);
+        }
+        else if (strcmp(cmd_name, "save-state") == 0) {
+            // CHANGED 2026-07-08 - Expose documented state save over IPC - Problem: docs advertised save-state but the IPC dispatcher did not handle it
+            // CHANGED 2026-07-09 - Report when saving is disabled - Problem: with --no-save-state, save_current_state() silently no-ops and the OK response was a lie
+            if (!save_state_on_exit) {
+                ipc_send_response(cmd->client_fd, "ERROR: state saving disabled (--no-save-state)\n");
+            } else {
+                save_current_state();
+                ipc_send_response(cmd->client_fd, "OK: state saved\n");
+            }
         }
         else if (strcmp(cmd_name, "preload") == 0) {
             if (!arg || strlen(arg) == 0) {
@@ -2316,7 +2341,8 @@ static void execute_ipc_commands(void) {
                 "  query                    Get current status\n"
                 "  change <path>            Change wallpaper\n"
                 "  layer <name>             Set layer (background|bottom|top|overlay)\n"
-                "  stop                     Stop gslapper\n"
+                "  stop, quit               Stop gslapper\n"
+                "  save-state               Save current wallpaper state\n"
                 "  preload <path>           Preload image into cache\n"
                 "  unload <path|all|unused> Remove from cache\n"
                 "  cache-list               List cached images\n"
@@ -2333,6 +2359,8 @@ static void execute_ipc_commands(void) {
         }
 
         // Cleanup command
+        if (cmd->client_fd >= 0)
+            close(cmd->client_fd);
         free(cmd->cmd_line);
         free(cmd);
     }
@@ -3483,6 +3511,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
 
     const char *usage =
         "Usage: slapper [options] <output> <url|path filename>\n"
+        "       slapper --restore [output]\n"
         "\n"
         "Example: slapper -vs -o \"no-audio loop\" DP-2 /path/to/video\n"
         "\n"
@@ -3500,6 +3529,11 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         "--ipc-socket   -I PATH          Enable IPC control via Unix socket\n"
         "--transition-type TYPE          Transition effect (fade, none, default: none)\n"
         "--transition-duration SECS      Transition duration in seconds (default: 0.5)\n"
+        "--systemd      -S              Enable systemd readiness notifications\n"
+        "--restore      -R              Restore wallpaper from saved state\n"
+        "--save-state                   Save current state and exit\n"
+        "--state-file PATH              Use a custom state file path\n"
+        "--no-save-state                Disable automatic state saving on exit\n"
         "--cache-size MB                 Image cache size in MB (default: 256, 0 to disable)\n"
         "\n"
         "Scaling modes (use with -o):\n"
@@ -3650,8 +3684,23 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
     if (VERBOSE)
         cflp_info("Verbose Level %i enabled", VERBOSE);
 
-    // Need at least a output and file or playlist file
-    if (optind+1 >= argc) {
+    int remaining_args = argc - optind;
+
+    if (restore_flag) {
+        if (remaining_args > 2) {
+            cflp_error("Too many args passed. Restore accepts optional output and optional fallback wallpaper");
+            fprintf(stderr, "%s", usage);
+            exit(EXIT_FAILURE);
+        }
+        if (remaining_args >= 1)
+            state->monitor = strdup(argv[optind]);
+        if (remaining_args == 2)
+            video_path = strdup(argv[optind+1]);
+        return;
+    }
+
+    // Need at least an output and file or playlist file for normal startup.
+    if (remaining_args < 2) {
         cflp_error("Not enough args passed. Please set output and url|path filename");
         fprintf(stderr, "%s", usage);
         exit(EXIT_FAILURE);
@@ -3712,12 +3761,16 @@ int main(int argc, char **argv) {
     
     // Handle --restore flag (restore state before initialization)
     if (restore_flag) {
-        if (restore_from_state(NULL) == 0) {
+        if (restore_from_state(state_file_path) == 0) {
             if (VERBOSE)
                 cflp_info("State restored, continuing with restored wallpaper");
         } else {
+            if (!video_path) {
+                cflp_error("No state file found or restore failed, and no fallback wallpaper was provided");
+                exit(EXIT_FAILURE);
+            }
             if (VERBOSE)
-                cflp_info("No state file found or restore failed, continuing normally");
+                cflp_info("No state file found or restore failed, continuing with fallback wallpaper");
         }
     }
     
@@ -3898,4 +3951,3 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
-
