@@ -96,6 +96,10 @@ static struct {
     int current_width;
     int current_height;
     gboolean initialized;
+    // CHANGED 2026-07-08 - Double-buffered pixel unpack buffers for async uploads - Problem: glTexSubImage2D from client memory blocks the render thread every frame
+    GLuint pbo[2];
+    int pbo_index;
+    gboolean pbo_disabled; // fall back to direct uploads permanently on failure
 } texture_manager = {0};
 
 // Video frame data for thread-safe texture updates
@@ -444,6 +448,12 @@ static void cleanup_texture_manager() {
         if (VERBOSE)
             cflp_info("Cleaned up texture manager");
     }
+    // CHANGED 2026-07-08 - Delete upload PBOs - Problem: new GL objects need cleanup
+    if (texture_manager.pbo[0] != 0) {
+        glDeleteBuffers(2, texture_manager.pbo);
+        texture_manager.pbo[0] = 0;
+        texture_manager.pbo[1] = 0;
+    }
 }
 
 // Get texture for current dimensions with smart allocation
@@ -484,6 +494,49 @@ static GLuint get_texture_for_dimensions(int width, int height) {
     }
     
     return texture_manager.texture;
+}
+
+// CHANGED 2026-07-08 - Upload via ping-ponged PBOs so the driver DMAs frame N-1 while we write frame N - Problem: synchronous client-memory uploads stalled rendering
+// Must be called with a current EGL context; binds and restores its own GL state.
+static void upload_frame_to_texture(GLuint texture, const void *data, gsize size, int width, int height) {
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    if (!texture_manager.pbo_disabled) {
+        if (texture_manager.pbo[0] == 0) {
+            while (glGetError() != GL_NO_ERROR); // clear stale errors
+            glGenBuffers(2, texture_manager.pbo);
+            if (texture_manager.pbo[0] == 0 || glGetError() != GL_NO_ERROR) {
+                texture_manager.pbo_disabled = TRUE;
+                cflp_warning("PBO creation failed, using direct texture uploads");
+            } else if (VERBOSE) {
+                cflp_info("Using double-buffered PBO texture uploads");
+            }
+        }
+        if (!texture_manager.pbo_disabled) {
+            texture_manager.pbo_index ^= 1;
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, texture_manager.pbo[texture_manager.pbo_index]);
+            // Orphan the buffer so mapping never syncs against in-flight DMA
+            glBufferData(GL_PIXEL_UNPACK_BUFFER, size, NULL, GL_STREAM_DRAW);
+            void *dst = glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, size,
+                                         GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+            if (dst) {
+                memcpy(dst, data, size);
+                glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
+                                GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+                glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                return;
+            }
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+            texture_manager.pbo_disabled = TRUE;
+            cflp_warning("PBO map failed, falling back to direct texture uploads");
+        }
+    }
+
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
+                    GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 static void exit_slapper(int reason) {
@@ -1072,12 +1125,10 @@ static void render(struct display_output *output) {
         if (err_before != GL_NO_ERROR && VERBOSE)
             cflp_info("OpenGL error before texture update: 0x%x", err_before);
         
-        // Update texture data with efficient sub-image update
+        // CHANGED 2026-07-08 - Route upload through PBO helper - Problem: direct upload stalled the render thread
         GLuint current_texture = get_texture_for_dimensions(video_frame_data.width, video_frame_data.height);
-        glBindTexture(GL_TEXTURE_2D, current_texture);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, video_frame_data.width, video_frame_data.height, 
-                        GL_RGBA, GL_UNSIGNED_BYTE, video_frame_data.data);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        upload_frame_to_texture(current_texture, video_frame_data.data, video_frame_data.size,
+                                video_frame_data.width, video_frame_data.height);
         
         // Check OpenGL error after texture update
         GLenum err_after = glGetError();
