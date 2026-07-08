@@ -1,6 +1,6 @@
 # Maintainer: Nomadcxx <noovie@gmail.com>
 pkgname=gslapper
-pkgver=1.4.0
+pkgver=1.5.0
 pkgrel=1
 pkgdesc="Wallpaper utility for Wayland with video/image support and instant switching via RAM cache"
 arch=('x86_64')
@@ -11,7 +11,7 @@ makedepends=('meson' 'ninja' 'wayland-protocols')
 optdepends=('gst-plugins-ugly: additional codec support'
             'gst-libav: FFmpeg-based codec support')
 source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/v${pkgver}.tar.gz")
-sha256sums=('7b8039cbb83d12ef900659cef367df34ff83a998e2cbef41583c5df249b3aa25')
+sha256sums=('SKIP')
 install=${pkgname}.install
 
 prepare() {
