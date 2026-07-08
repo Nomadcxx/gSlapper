@@ -2200,8 +2200,13 @@ static void execute_ipc_commands(void) {
         }
         else if (strcmp(cmd_name, "save-state") == 0) {
             // CHANGED 2026-07-08 - Expose documented state save over IPC - Problem: docs advertised save-state but the IPC dispatcher did not handle it
-            save_current_state();
-            ipc_send_response(cmd->client_fd, "OK: state saved\n");
+            // CHANGED 2026-07-09 - Report when saving is disabled - Problem: with --no-save-state, save_current_state() silently no-ops and the OK response was a lie
+            if (!save_state_on_exit) {
+                ipc_send_response(cmd->client_fd, "ERROR: state saving disabled (--no-save-state)\n");
+            } else {
+                save_current_state();
+                ipc_send_response(cmd->client_fd, "OK: state saved\n");
+            }
         }
         else if (strcmp(cmd_name, "preload") == 0) {
             if (!arg || strlen(arg) == 0) {
