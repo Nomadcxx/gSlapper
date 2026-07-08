@@ -37,6 +37,21 @@ Full documentation available at: https://nomadcxx.github.io/gSlapper/
 yay -S gslapper
 ```
 
+### Debian / Ubuntu / Fedora
+
+Prebuilt packages are attached to every [release](https://github.com/Nomadcxx/gSlapper/releases/latest):
+
+```bash
+# Debian 13 (also Ubuntu 25.x)
+sudo apt install ./gslapper_<version>_debian13_amd64.deb
+
+# Ubuntu 24.04
+sudo apt install ./gslapper_<version>_ubuntu24.04_amd64.deb
+
+# Fedora 42+
+sudo dnf install ./gslapper-<version>-1.fedora42.x86_64.rpm
+```
+
 ### Manual Build
 ```bash
 git clone https://github.com/Nomadcxx/gSlapper.git

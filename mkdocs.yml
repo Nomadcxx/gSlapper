@@ -83,6 +83,13 @@ nav:
     - API Reference: development/api-reference.md
     - Architecture: development/architecture.md
     - Systemd Service: development/systemd-service.md
+# Internal working documents - never publish to the docs site
+exclude_docs: |
+  plans/
+  superpowers/
+  VERIFICATION_IPC_SOCKET_PRESERVATION.md
+  README.md
+
 plugins:
   - search
   - git-revision-date-localized:

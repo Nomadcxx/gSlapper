@@ -42,7 +42,7 @@ gslapper -o "loop" '*' /path/to/video.mp4
 
 ## License
 
-MIT License - see [LICENSE](../LICENSE)
+GPL-3.0 License - see [LICENSE](../LICENSE)
 
 ## Acknowledgments
 

@@ -10,7 +10,7 @@ description: |
   switching via RAM cache. GStreamer-based replacement for mpvpaper.
 vendor: Nomadcxx
 homepage: https://github.com/Nomadcxx/gSlapper
-license: MIT
+license: GPL-3.0-only
 
 contents:
   - src: ./build/gslapper
