@@ -4,8 +4,12 @@ on:
   push:
     tags:
       - 'v*'
-  # Dry run: builds everything, skips release creation
+  # Dry runs: build + package + install-verify, skip release creation
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/release.yml'
+      - 'nfpm.yaml'
 
 permissions:
   contents: write
