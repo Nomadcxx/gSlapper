@@ -503,13 +503,22 @@ static void upload_frame_to_texture(GLuint texture, const void *data, gsize size
 
     if (!texture_manager.pbo_disabled) {
         if (texture_manager.pbo[0] == 0) {
-            while (glGetError() != GL_NO_ERROR); // clear stale errors
-            glGenBuffers(2, texture_manager.pbo);
-            if (texture_manager.pbo[0] == 0 || glGetError() != GL_NO_ERROR) {
+            // CHANGED 2026-07-09 - Gate PBO path to NVIDIA - Problem: on Mesa/Intel UMA the direct upload path is already efficient and the PBO round-trip measurably regressed throughput (4K60 on UHD 620: 1872 rendered of 3792 captured)
+            const char *gl_vendor = (const char *)glGetString(GL_VENDOR);
+            if (!gl_vendor || !strstr(gl_vendor, "NVIDIA")) {
                 texture_manager.pbo_disabled = TRUE;
-                cflp_warning("PBO creation failed, using direct texture uploads");
-            } else if (VERBOSE) {
-                cflp_info("Using double-buffered PBO texture uploads");
+                if (VERBOSE)
+                    cflp_info("GL vendor '%s': using direct texture uploads (PBO path is NVIDIA-only)",
+                              gl_vendor ? gl_vendor : "unknown");
+            } else {
+                while (glGetError() != GL_NO_ERROR); // clear stale errors
+                glGenBuffers(2, texture_manager.pbo);
+                if (texture_manager.pbo[0] == 0 || glGetError() != GL_NO_ERROR) {
+                    texture_manager.pbo_disabled = TRUE;
+                    cflp_warning("PBO creation failed, using direct texture uploads");
+                } else if (VERBOSE) {
+                    cflp_info("Using double-buffered PBO texture uploads");
+                }
             }
         }
         if (!texture_manager.pbo_disabled) {
@@ -521,16 +530,23 @@ static void upload_frame_to_texture(GLuint texture, const void *data, gsize size
                                          GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
             if (dst) {
                 memcpy(dst, data, size);
-                glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
-                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
-                                GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-                glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-                glBindTexture(GL_TEXTURE_2D, 0);
-                return;
+                // CHANGED 2026-07-09 - Check glUnmapBuffer result - Problem: GL_FALSE means the buffer store was lost and its contents are undefined; uploading from it would display corruption
+                if (glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER) == GL_TRUE) {
+                    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
+                                    GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+                    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+                    glBindTexture(GL_TEXTURE_2D, 0);
+                    return;
+                }
+                // Buffer store lost (rare, e.g. after a mode switch); upload
+                // this frame directly from client memory instead
+                if (VERBOSE)
+                    cflp_warning("glUnmapBuffer reported lost buffer store, uploading frame directly");
+            } else {
+                texture_manager.pbo_disabled = TRUE;
+                cflp_warning("PBO map failed, falling back to direct texture uploads");
             }
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-            texture_manager.pbo_disabled = TRUE;
-            cflp_warning("PBO map failed, falling back to direct texture uploads");
         }
     }
 
