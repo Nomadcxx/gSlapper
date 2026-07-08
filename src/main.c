@@ -105,7 +105,24 @@ static struct {
     gpointer data;
     gsize size;
     gint last_width, last_height; // Track dimension changes for efficient updates
+    // CHANGED 2026-07-08 - Hold a mapped GstBuffer ref instead of a heap copy - Problem: g_memdup2 copied every frame (~14-33MB) on the hot path
+    GstBuffer *buffer;   // non-NULL when data borrows from a mapped GStreamer buffer
+    GstMapInfo map;      // valid while buffer is non-NULL
 } video_frame_data = {0};
+
+// CHANGED 2026-07-08 - Single ownership-aware release point for the current frame - Problem: five call sites freed frame data with g_free; buffer-backed frames need unmap+unref instead
+// Caller must hold video_mutex.
+static void release_video_frame_locked(void) {
+    if (video_frame_data.buffer) {
+        gst_buffer_unmap(video_frame_data.buffer, &video_frame_data.map);
+        gst_buffer_unref(video_frame_data.buffer);
+        video_frame_data.buffer = NULL;
+    } else if (video_frame_data.data) {
+        g_free(video_frame_data.data);
+    }
+    video_frame_data.data = NULL;
+    video_frame_data.has_new_frame = FALSE;
+}
 
 static struct wl_state *global_state = NULL;
 
@@ -359,10 +376,8 @@ static void exit_cleanup() {
     
     // Clean up video frame data
     pthread_mutex_lock(&video_mutex);
-    if (video_frame_data.data) {
-        g_free(video_frame_data.data);
-        video_frame_data.data = NULL;
-    }
+    // CHANGED 2026-07-08 - Ownership-aware release (unmap/unref or g_free) - Problem: frame may be a mapped GstBuffer now
+    release_video_frame_locked();
     pthread_mutex_unlock(&video_mutex);
     
     // Clean up OpenGL resources
@@ -1046,10 +1061,8 @@ static void render(struct display_output *output) {
         if (err_after != GL_NO_ERROR)
             cflp_info("OpenGL error after texture update: 0x%x", err_after);
         
-        // Free frame data and reset flag
-        g_free(video_frame_data.data);
-        video_frame_data.data = NULL;
-        video_frame_data.has_new_frame = FALSE;
+        // CHANGED 2026-07-08 - Release mapped buffer ref instead of freeing heap copy - Problem: hot-path frames are now borrowed from GStreamer, not owned allocations
+        release_video_frame_locked();
         
         // Update last render time
         last_render_time = current_time;
@@ -1692,72 +1705,80 @@ static void *handle_auto_stop(void *_) {
 // GStreamer event handling
 static GstPadProbeReturn buffer_probe(GstPad *pad, GstPadProbeInfo *info, gpointer user_data) {
     GstBuffer *buffer = GST_PAD_PROBE_INFO_BUFFER(info);
-    
-    if (buffer) {
-        if (VERBOSE == 2)
-            cflp_info("appsink callback triggered with buffer");
-        pthread_mutex_lock(&video_mutex);
-        
-        // Get the caps to understand the format
-        GstCaps *caps = gst_pad_get_current_caps(pad);
-        if (caps) {
-            GstStructure *structure = gst_caps_get_structure(caps, 0);
-            const gchar *format = gst_structure_get_string(structure, "format");
-            
+    // CHANGED 2026-07-08 - Cache negotiated caps, re-parse only on renegotiation; retain mapped buffer ref instead of g_memdup2 copy; shrink mutex hold to the pointer swap - Problem: per-frame caps query/strcmp, full-frame malloc+memcpy+free, and long mutex hold contended with render()
+    static GstCaps *cached_caps = NULL;
+    static gboolean cached_is_rgba = FALSE;
+    static gint cached_width = 0, cached_height = 0;
+
+    if (!buffer)
+        return GST_PAD_PROBE_OK;
+
+    if (VERBOSE == 2)
+        cflp_info("appsink callback triggered with buffer");
+
+    GstCaps *caps = gst_pad_get_current_caps(pad);
+    if (!caps)
+        return GST_PAD_PROBE_OK;
+
+    if (caps != cached_caps) {
+        GstStructure *structure = gst_caps_get_structure(caps, 0);
+        const gchar *format = gst_structure_get_string(structure, "format");
+        cached_is_rgba = (format && strcmp(format, "RGBA") == 0);
+        cached_width = 0;
+        cached_height = 0;
+        if (cached_is_rgba) {
+            gst_structure_get_int(structure, "width", &cached_width);
+            gst_structure_get_int(structure, "height", &cached_height);
             if (VERBOSE == 2)
-                cflp_info("Frame received with format: %s", format ? format : "NULL");
-            
-            if (format && strcmp(format, "RGBA") == 0) {
-                // Extract video data and queue for texture update
-                GstMapInfo map;
-                if (gst_buffer_map(buffer, &map, GST_MAP_READ)) {
-                    gint width, height;
-                    gst_structure_get_int(structure, "width", &width);
-                    gst_structure_get_int(structure, "height", &height);
-                    
-                    // Free old frame data if any
-                    if (video_frame_data.data) {
-                        g_free(video_frame_data.data);
-                    }
-                    
-                    // Copy frame data for texture update in render thread
-                    video_frame_data.data = g_memdup2(map.data, map.size);
-                    video_frame_data.size = map.size;
-                    video_frame_data.width = width;
-                    video_frame_data.height = height;
-                    video_frame_data.has_new_frame = TRUE;
-
-                    // For image mode, mark frame as captured (single frame only)
-                    if (is_image_mode) {
-                        image_frame_captured = true;
-                    }
-
-                    if (VERBOSE == 2) {
-                        static int frame_count = 0;
-                        frame_count++;
-                        if (frame_count % 100 == 0)  // Log every 100th frame
-                            cflp_info("Captured %dx%d RGBA frame for texture update (frame %d)", width, height, frame_count);
-                    }
-
-                    // Trigger render via wakeup pipe to ensure thread safety
-                    if (write(wakeup_pipe[1], "f", 1) == -1) {
-                        // If pipe write fails, try to trigger directly
-                        if (VERBOSE)
-                            cflp_warning("Failed to write to wakeup pipe");
-                    }
-                    
-                    gst_buffer_unmap(buffer, &map);
-                }
-            } else {
-                if (VERBOSE == 2)
-                    cflp_info("Frame format is %s, not RGBA", format ? format : "unknown");
-            }
-            gst_caps_unref(caps);
+                cflp_info("Caps negotiated: RGBA %dx%d", cached_width, cached_height);
+        } else if (VERBOSE == 2) {
+            cflp_info("Frame format is %s, not RGBA", format ? format : "unknown");
         }
-        
-        pthread_mutex_unlock(&video_mutex);
+        if (cached_caps)
+            gst_caps_unref(cached_caps);
+        cached_caps = caps; // keep this query's ref as the cache
+    } else {
+        gst_caps_unref(caps);
     }
-    
+
+    if (cached_is_rgba && cached_width > 0 && cached_height > 0) {
+        // Retain and map the buffer for the render thread; no copy
+        GstMapInfo map;
+        if (gst_buffer_map(buffer, &map, GST_MAP_READ)) {
+            gst_buffer_ref(buffer);
+
+            pthread_mutex_lock(&video_mutex);
+            release_video_frame_locked();
+            video_frame_data.buffer = buffer;
+            video_frame_data.map = map;
+            video_frame_data.data = map.data;
+            video_frame_data.size = map.size;
+            video_frame_data.width = cached_width;
+            video_frame_data.height = cached_height;
+            video_frame_data.has_new_frame = TRUE;
+
+            // For image mode, mark frame as captured (single frame only)
+            if (is_image_mode) {
+                image_frame_captured = true;
+            }
+            pthread_mutex_unlock(&video_mutex);
+
+            if (VERBOSE == 2) {
+                static int frame_count = 0;
+                frame_count++;
+                if (frame_count % 100 == 0)  // Log every 100th frame
+                    cflp_info("Captured %dx%d RGBA frame for texture update (frame %d)", cached_width, cached_height, frame_count);
+            }
+
+            // Trigger render via wakeup pipe to ensure thread safety
+            if (write(wakeup_pipe[1], "f", 1) == -1) {
+                // If pipe write fails, try to trigger directly
+                if (VERBOSE)
+                    cflp_warning("Failed to write to wakeup pipe");
+            }
+        }
+    }
+
     return GST_PAD_PROBE_OK;
 }
 
@@ -2468,9 +2489,8 @@ static bool reload_image_pipeline(const char *new_path) {
     if (cached) {
         // Cache hit - use cached data directly
         pthread_mutex_lock(&video_mutex);
-        if (video_frame_data.data) {
-            g_free(video_frame_data.data);
-        }
+        // CHANGED 2026-07-08 - Ownership-aware release before installing heap-owned cache copy - Problem: previous frame may be a mapped GstBuffer
+        release_video_frame_locked();
         video_frame_data.data = g_memdup2(cached->data, cached->size);
         video_frame_data.size = cached->size;
         video_frame_data.width = cached->width;
@@ -2657,9 +2677,8 @@ static void init_image_pipeline(void) {
     if (cached) {
         // Cache hit - use cached data directly
         pthread_mutex_lock(&video_mutex);
-        if (video_frame_data.data) {
-            g_free(video_frame_data.data);
-        }
+        // CHANGED 2026-07-08 - Ownership-aware release before installing heap-owned cache copy - Problem: previous frame may be a mapped GstBuffer
+        release_video_frame_locked();
         video_frame_data.data = g_memdup2(cached->data, cached->size);
         video_frame_data.size = cached->size;
         video_frame_data.width = cached->width;
