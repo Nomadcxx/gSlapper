@@ -12,31 +12,27 @@
         <meta name="author" content="Nomadcxx">
       
       
-        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/user-guide/scaling-modes/">
+        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/superpowers/handoffs/2026-07-08-restore-ipc-state-compat/">
       
       
-        <link rel="prev" href="../static-images/">
-      
-      
-        <link rel="next" href="../ipc-control/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Scaling Modes - gSlapper Documentation</title>
+        <title>Handover: Restore, IPC, and Consumer Compatibility - gSlapper Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -55,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="../../css/extra.css">
+      <link rel="stylesheet" href="../../../css/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -82,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#scaling-modes" class="md-skip">
+        <a href="#handover-restore-ipc-and-consumer-compatibility" class="md-skip">
           Skip to content
         </a>
       
@@ -96,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="gSlapper Documentation" class="md-header__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+    <a href="../../.." title="gSlapper Documentation" class="md-header__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -116,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Scaling Modes
+              Handover: Restore, IPC, and Consumer Compatibility
             
           </span>
         </div>
@@ -229,7 +225,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -250,7 +246,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../getting-started/" class="md-tabs__link">
+        <a href="../../../getting-started/" class="md-tabs__link">
           
   
   
@@ -268,13 +264,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../user-guide/" class="md-tabs__link">
           
   
   
@@ -296,7 +290,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../advanced/" class="md-tabs__link">
+        <a href="../../../advanced/" class="md-tabs__link">
           
   
   
@@ -318,7 +312,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../development/index.md" class="md-tabs__link">
+        <a href="../../../development/index.md" class="md-tabs__link">
           
   
   
@@ -354,7 +348,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="gSlapper Documentation" class="md-nav__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+    <a href="../../.." title="gSlapper Documentation" class="md-nav__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -384,7 +378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -442,7 +436,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../getting-started/" class="md-nav__link ">
+            <a href="../../../getting-started/" class="md-nav__link ">
               
   
   
@@ -486,7 +480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/installation/" class="md-nav__link">
+      <a href="../../../getting-started/installation/" class="md-nav__link">
         
   
   
@@ -514,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/quick-start/" class="md-nav__link">
+      <a href="../../../getting-started/quick-start/" class="md-nav__link">
         
   
   
@@ -542,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/configuration/" class="md-nav__link">
+      <a href="../../../getting-started/configuration/" class="md-nav__link">
         
   
   
@@ -574,8 +568,6 @@
       
   
   
-    
-  
   
   
     
@@ -601,23 +593,22 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../../user-guide/" class="md-nav__link ">
               
   
   
@@ -635,13 +626,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -661,7 +652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../video-wallpapers/" class="md-nav__link">
+      <a href="../../../user-guide/video-wallpapers/" class="md-nav__link">
         
   
   
@@ -689,7 +680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-images/" class="md-nav__link">
+      <a href="../../../user-guide/static-images/" class="md-nav__link">
         
   
   
@@ -714,37 +705,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Scaling Modes
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../user-guide/scaling-modes/" class="md-nav__link">
         
   
   
@@ -760,92 +724,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#fill-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fill Mode
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#stretch-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Stretch Mode
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#original-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Original Mode
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#panscan-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Panscan Mode
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#comparison" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Comparison
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#recommendations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Recommendations
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -858,7 +736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ipc-control/" class="md-nav__link">
+      <a href="../../../user-guide/ipc-control/" class="md-nav__link">
         
   
   
@@ -886,7 +764,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../command-line-options/" class="md-nav__link">
+      <a href="../../../user-guide/command-line-options/" class="md-nav__link">
         
   
   
@@ -914,7 +792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistent-wallpapers/" class="md-nav__link">
+      <a href="../../../user-guide/persistent-wallpapers/" class="md-nav__link">
         
   
   
@@ -982,7 +860,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../advanced/" class="md-nav__link ">
+            <a href="../../../advanced/" class="md-nav__link ">
               
   
   
@@ -1026,7 +904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/transitions/" class="md-nav__link">
+      <a href="../../../advanced/transitions/" class="md-nav__link">
         
   
   
@@ -1054,7 +932,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/multi-monitor/" class="md-nav__link">
+      <a href="../../../advanced/multi-monitor/" class="md-nav__link">
         
   
   
@@ -1082,7 +960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/performance/" class="md-nav__link">
+      <a href="../../../advanced/performance/" class="md-nav__link">
         
   
   
@@ -1110,7 +988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/troubleshooting/" class="md-nav__link">
+      <a href="../../../advanced/troubleshooting/" class="md-nav__link">
         
   
   
@@ -1213,7 +1091,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/index.md" class="md-nav__link">
+      <a href="../../../development/index.md" class="md-nav__link">
         
   
   
@@ -1241,7 +1119,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/building/" class="md-nav__link">
+      <a href="../../../development/building/" class="md-nav__link">
         
   
   
@@ -1269,7 +1147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/contributing/" class="md-nav__link">
+      <a href="../../../development/contributing/" class="md-nav__link">
         
   
   
@@ -1297,7 +1175,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/api-reference/" class="md-nav__link">
+      <a href="../../../development/api-reference/" class="md-nav__link">
         
   
   
@@ -1325,7 +1203,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/architecture/" class="md-nav__link">
+      <a href="../../../development/architecture/" class="md-nav__link">
         
   
   
@@ -1353,7 +1231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/systemd-service/" class="md-nav__link">
+      <a href="../../../development/systemd-service/" class="md-nav__link">
         
   
   
@@ -1408,10 +1286,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#fill-mode" class="md-nav__link">
+  <a href="#scope" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fill Mode
+        Scope
       
     </span>
   </a>
@@ -1419,10 +1297,110 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stretch-mode" class="md-nav__link">
+  <a href="#changes-made" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stretch Mode
+        Changes Made
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Changes Made">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restore-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restore CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-saving" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Saving
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consumer-compatibility-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consumer Compatibility Assessment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consumer Compatibility Assessment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#waytrogen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Waytrogen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#waypaper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Waypaper
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local Verification
       
     </span>
   </a>
@@ -1430,10 +1408,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#original-mode" class="md-nav__link">
+  <a href="#process-hygiene" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Original Mode
+        Process Hygiene
       
     </span>
   </a>
@@ -1441,32 +1419,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#panscan-mode" class="md-nav__link">
+  <a href="#follow-ups" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Panscan Mode
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#comparison" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Comparison
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#recommendations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Recommendations
+        Follow-Ups
       
     </span>
   </a>
@@ -1493,76 +1449,125 @@
   
 
 
-<h1 id="scaling-modes">Scaling Modes<a class="headerlink" href="#scaling-modes" title="Permanent link">&para;</a></h1>
-<p>gSlapper provides several scaling modes to control how wallpapers are displayed.</p>
-<h2 id="fill-mode">Fill Mode<a class="headerlink" href="#fill-mode" title="Permanent link">&para;</a></h2>
-<p><strong>Default for images</strong></p>
-<p>Fills the entire screen while maintaining aspect ratio. Excess content is cropped.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;fill&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
-</code></pre></div>
-<p><strong>Use case:</strong> Best for wallpapers where you want full screen coverage and don't mind cropping.</p>
-<h2 id="stretch-mode">Stretch Mode<a class="headerlink" href="#stretch-mode" title="Permanent link">&para;</a></h2>
-<p>Fills the entire screen ignoring aspect ratio. Content may appear distorted.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;stretch&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
-</code></pre></div>
-<p><strong>Use case:</strong> When you want full coverage and don't care about aspect ratio.</p>
-<h2 id="original-mode">Original Mode<a class="headerlink" href="#original-mode" title="Permanent link">&para;</a></h2>
-<p>Displays at native resolution with 1:1 pixel mapping. May show letterboxing/pillarboxing.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;original&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/image.jpg
-</code></pre></div>
-<p><strong>Use case:</strong> When you want to see the image exactly as it was created, pixel-perfect.</p>
-<h2 id="panscan-mode">Panscan Mode<a class="headerlink" href="#panscan-mode" title="Permanent link">&para;</a></h2>
-<p><strong>Default for videos</strong></p>
-<p>Fits content inside the screen with a scaling factor (0.0 to 1.0).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Scale to 100% (fit to screen)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;panscan=1.0&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Scale to 80%</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;panscan=0.8&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
-</code></pre></div>
-<p><strong>Use case:</strong> For videos where you want to control the zoom level while maintaining aspect ratio.</p>
-<h2 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Mode</th>
-<th>Aspect Ratio</th>
-<th>Coverage</th>
-<th>Distortion</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Fill</td>
-<td>Maintained</td>
-<td>Full</td>
-<td>None</td>
-</tr>
-<tr>
-<td>Stretch</td>
-<td>Ignored</td>
-<td>Full</td>
-<td>Possible</td>
-</tr>
-<tr>
-<td>Original</td>
-<td>Maintained</td>
-<td>Partial</td>
-<td>None</td>
-</tr>
-<tr>
-<td>Panscan</td>
-<td>Maintained</td>
-<td>Variable</td>
-<td>None</td>
-</tr>
-</tbody>
-</table>
-<h2 id="recommendations">Recommendations<a class="headerlink" href="#recommendations" title="Permanent link">&para;</a></h2>
+<h1 id="handover-restore-ipc-and-consumer-compatibility">Handover: Restore, IPC, and Consumer Compatibility<a class="headerlink" href="#handover-restore-ipc-and-consumer-compatibility" title="Permanent link">&para;</a></h1>
+<p>Date: 2026-07-08
+Branch: <code>fix/restore-ipc-state-compat</code>
+PR: https://github.com/Nomadcxx/gSlapper/pull/17
+Implementation commit: <code>85d232d</code></p>
+<h2 id="scope">Scope<a class="headerlink" href="#scope" title="Permanent link">&para;</a></h2>
+<p>This session focused on pre-release correctness around restore/state behavior and compatibility with projects that invoke gSlapper as a backend. The work intentionally stayed narrow: command-line restore handling, IPC command behavior, state file durability, documentation alignment, and consumer smoke checks.</p>
+<h2 id="changes-made">Changes Made<a class="headerlink" href="#changes-made" title="Permanent link">&para;</a></h2>
+<h3 id="restore-cli">Restore CLI<a class="headerlink" href="#restore-cli" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Images:</strong> Use <code>fill</code> for most cases</li>
-<li><strong>Videos:</strong> Use <code>panscan=1.0</code> (default) for best results</li>
-<li><strong>Artwork:</strong> Use <code>original</code> to preserve pixel-perfect rendering</li>
+<li><code>gslapper --restore</code> now accepts the documented restore shape without requiring a normal wallpaper positional argument.</li>
+<li><code>gslapper --restore [output]</code> is now shown in <code>--help</code>.</li>
+<li>Wildcard/all-output restore selectors (<code>*</code>, <code>all</code>, <code>All</code>, <code>ALL</code>) restore from the default <code>state.txt</code> instead of an output-specific <code>state-_.txt</code>.</li>
+<li><code>--state-file PATH</code> is now honored during restore.</li>
+<li>If restore fails and no fallback wallpaper was supplied, gSlapper exits with a clear error instead of falling through ambiguously.</li>
+<li>Restore with a fallback wallpaper remains supported: <code>gslapper --restore &lt;output&gt; &lt;fallback&gt;</code>.</li>
+</ul>
+<h3 id="state-saving">State Saving<a class="headerlink" href="#state-saving" title="Permanent link">&para;</a></h3>
+<ul>
+<li>State saving for wildcard/all-output runs now records the logical selector while still using the default state file path.</li>
+<li>The atomic writer in <code>src/state.c</code> now uses a unique temporary file (<code>mkstemp</code>) instead of a fixed <code>&lt;state&gt;.tmp</code> path.</li>
+<li>This fixes a real local failure where an abandoned <code>state.txt.tmp</code> permanently blocked all future saves with <code>Failed to create temp state file</code>.</li>
+<li>Temp files are still created in the same directory and renamed into place, preserving atomic replacement semantics.</li>
+<li>Temp state file permissions are explicitly set to <code>0600</code>.</li>
+</ul>
+<h3 id="ipc">IPC<a class="headerlink" href="#ipc" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added IPC <code>quit</code> as an alias for <code>stop</code>.</li>
+<li>Added the documented IPC <code>save-state</code> command.</li>
+<li>Updated IPC help text to list <code>stop, quit</code> and <code>save-state</code>.</li>
+<li>Fixed IPC response fd ownership:</li>
+<li>The client thread now duplicates the accepted client fd for each queued command.</li>
+<li>The main loop owns that duplicate until it sends the response.</li>
+<li>The queued command cleanup closes the response fd.</li>
+<li>This fixes the observed behavior where <code>socat</code> received an empty response and gSlapper logged <code>Failed to send IPC response: Bad file descriptor</code>.</li>
+<li>Multiple newline-delimited commands on one socket connection were tested and still work.</li>
+</ul>
+<h3 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Updated <code>docs/user-guide/ipc-control.md</code>:</li>
+<li>Documents <code>stop</code> / <code>quit</code>.</li>
+<li>Documents IPC <code>save-state</code>.</li>
+<li>Updated <code>docs/development/api-reference.md</code>:</li>
+<li>Adds <code>quit</code> beside <code>stop</code>.</li>
+<li>Adds <code>save-state</code>.</li>
+</ul>
+<h2 id="consumer-compatibility-assessment">Consumer Compatibility Assessment<a class="headerlink" href="#consumer-compatibility-assessment" title="Permanent link">&para;</a></h2>
+<h3 id="waytrogen">Waytrogen<a class="headerlink" href="#waytrogen" title="Permanent link">&para;</a></h3>
+<p>Repository checked: https://github.com/nikolaizombie1/waytrogen</p>
+<p>Current Waytrogen gSlapper integration invokes gSlapper approximately as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gslapper<span class="w"> </span>-I<span class="w"> </span>/tmp/gslapper.sock<span class="w"> </span><span class="o">[</span>-p<span class="p">|</span>-s<span class="o">]</span><span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;&lt;scale loop no-audio additional&gt;&quot;</span><span class="w"> </span>-f<span class="w"> </span>&lt;monitor<span class="p">|</span>*&gt;<span class="w"> </span>&lt;image&gt;
+</code></pre></div>
+<p>It also tries to stop an existing gSlapper instance with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">echo</span><span class="w"> </span>quit<span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>UNIX-CONNECT:/tmp/gslapper.sock
+</code></pre></div>
+<p>and falls back to <code>pkill -9 gslapper</code>.</p>
+<p>Assessment:</p>
+<ul>
+<li>The launch shape remains compatible.</li>
+<li>The new IPC <code>quit</code> alias directly supports Waytrogen's graceful shutdown path.</li>
+<li>Before this fix, Waytrogen would rely on its forced-kill fallback because gSlapper did not handle <code>quit</code>.</li>
+<li>After this fix, <code>quit</code> returns <code>OK</code> and exits cleanly in local live IPC testing.</li>
+</ul>
+<h3 id="waypaper">Waypaper<a class="headerlink" href="#waypaper" title="Permanent link">&para;</a></h3>
+<p>Repository checked: https://github.com/anufrievroman/waypaper</p>
+<p>Current Waypaper gSlapper integration invokes gSlapper approximately as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>gslapper<span class="w"> </span>--fork<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop &lt;fill-mode&gt; [no-audio] [user-options]&quot;</span><span class="w"> </span>&lt;monitor<span class="p">|</span>*&gt;<span class="w"> </span>&lt;path&gt;
+</code></pre></div>
+<p>It does not use gSlapper IPC for normal operation. It stops gSlapper with process killing (<code>killall gslapper</code> for all outputs or monitor-pattern matching for a specific output).</p>
+<p>Assessment:</p>
+<ul>
+<li>The launch shape remains compatible.</li>
+<li>Local smoke tests started Waypaper-shaped commands with these option variants: <code>panscan=1.0</code>, <code>original</code>, <code>stretch</code>, and <code>fill</code>.</li>
+<li>No parser, startup, or immediate runtime errors were observed for those command shapes.</li>
+<li>There is one semantic mismatch worth noting: Waypaper maps its UI <code>fill</code> option to gSlapper <code>panscan=1.0</code>. In current gSlapper semantics, <code>panscan=1.0</code> behaves like contain/fit, while gSlapper <code>fill</code> is cover/crop. This is not a gSlapper release blocker, but it is a good future upstream fix for Waypaper's backend mapping.</li>
+</ul>
+<h2 id="local-verification">Local Verification<a class="headerlink" href="#local-verification" title="Permanent link">&para;</a></h2>
+<p>Ran on this laptop against the rebuilt local binary:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ninja<span class="w"> </span>-C<span class="w"> </span>build
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>tests/test_basic.sh
+</code></pre></div>
+<p>Result:</p>
+<ul>
+<li>Build passed.</li>
+<li>Basic integration tests passed: 16 passed, 0 failed.</li>
+<li>Existing warning remains in <code>output_description</code>: discards <code>const</code> qualifier. This was left out of scope.</li>
+</ul>
+<p>Live checks performed:</p>
+<ul>
+<li><code>gslapper --restore --state-file /tmp/gslapper-definitely-missing</code></li>
+<li>Exits <code>1</code> with explicit missing-state/fallback error.</li>
+<li><code>gslapper --restore '*'</code></li>
+<li>No longer fails with the old positional-argument error.</li>
+<li>IPC over Unix socket:</li>
+<li><code>query</code> returns status.</li>
+<li><code>save-state</code> returns <code>OK: state saved</code>.</li>
+<li><code>help</code> lists the expected commands.</li>
+<li><code>quit</code> returns <code>OK</code> and exits.</li>
+<li>Multi-command socket input returned responses correctly.</li>
+<li>Waypaper-shaped launch commands:</li>
+<li><code>loop panscan=1.0 no-audio</code></li>
+<li><code>loop original no-audio</code></li>
+<li><code>loop stretch no-audio</code></li>
+<li><code>loop fill no-audio</code></li>
+</ul>
+<p>The rebuilt binary was installed to the active user path:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>/home/nomadx/.local/bin/gslapper
+</code></pre></div>
+<p>The installed user-local binary hash matched <code>build/gslapper</code> after installation.</p>
+<h2 id="process-hygiene">Process Hygiene<a class="headerlink" href="#process-hygiene" title="Permanent link">&para;</a></h2>
+<p>Extra smoke-test gSlapper processes were cleaned up. The only gSlapper process intentionally left running was the existing sysc-greet wallpaper instance:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>gslapper<span class="w"> </span>-f<span class="w"> </span>-I<span class="w"> </span>/tmp/sysc-greet-wallpaper.sock<span class="w"> </span>*<span class="w"> </span>/usr/share/sysc-greet/wallpapers/sysc-greet-dark.png
+</code></pre></div>
+<h2 id="follow-ups">Follow-Ups<a class="headerlink" href="#follow-ups" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Review PR #17 on a second environment before merging.</li>
+<li>Consider an upstream Waypaper issue or PR to map Waypaper UI <code>fill</code> to gSlapper <code>fill</code> instead of <code>panscan=1.0</code>.</li>
+<li>Consider a small follow-up cleanup for old backup files under <code>src/</code>, because they pollute search results with stale <code>clappie</code> and old IPC/state behavior.</li>
+<li>Consider separately fixing the existing <code>output_description</code> <code>const</code> warning.</li>
 </ul>
 
 
@@ -1651,10 +1656,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
