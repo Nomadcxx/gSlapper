@@ -1,0 +1,148 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  # Dry runs: build + package + install-verify, skip release creation
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/release.yml'
+      - 'nfpm.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: "ubuntu:24.04"
+            distro: ubuntu24.04
+            pkgmgr: apt
+            packager: deb
+            depends: "libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libgstreamer-gl1.0-0 gstreamer1.0-plugins-good gstreamer1.0-plugins-bad libwayland-client0 libwayland-egl1 libegl1 libsystemd0"
+          - image: "debian:13"        # also serves Ubuntu 25.x
+            distro: debian13
+            pkgmgr: apt
+            packager: deb
+            depends: "libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libgstreamer-gl1.0-0 gstreamer1.0-plugins-good gstreamer1.0-plugins-bad libwayland-client0 libwayland-egl1 libegl1 libsystemd0"
+          - image: "fedora:42"
+            distro: fedora42
+            pkgmgr: dnf
+            packager: rpm
+            depends: "gstreamer1 gstreamer1-plugins-base gstreamer1-plugins-good gstreamer1-plugins-bad-free libwayland-client libwayland-egl libglvnd-egl systemd-libs"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: get_version
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            VERSION=0.0.0-dev
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Install build dependencies (apt)
+        if: matrix.pkgmgr == 'apt'
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            curl ca-certificates build-essential meson ninja-build pkg-config \
+            wayland-protocols libwayland-dev libegl-dev \
+            libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libsystemd-dev
+
+      - name: Install build dependencies (dnf)
+        if: matrix.pkgmgr == 'dnf'
+        run: |
+          dnf install -y -q curl gcc meson ninja-build pkgconf-pkg-config \
+            wayland-devel wayland-protocols-devel libglvnd-devel \
+            gstreamer1-devel gstreamer1-plugins-base-devel systemd-devel
+
+      - name: Build
+        run: |
+          meson setup build --prefix=/usr --buildtype=release
+          ninja -C build
+
+      - name: Smoke test
+        run: |
+          env -u WAYLAND_DISPLAY ./build/gslapper --help > /dev/null
+          # Print runtime library links for dependency auditing
+          ldd ./build/gslapper
+
+      - name: Install nfpm
+        run: |
+          curl -fsSL "https://github.com/goreleaser/nfpm/releases/download/v2.47.0/nfpm_2.47.0_Linux_x86_64.tar.gz" \
+            | tar -xz -C /usr/local/bin nfpm
+
+      - name: Package
+        env:
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
+          DEPENDS: ${{ matrix.depends }}
+        shell: bash
+        run: |
+          # nfpm.yaml ends with a bare `depends:` key; append per-distro runtime libs
+          for dep in $DEPENDS; do
+            printf '  - "%s"\n' "$dep" >> nfpm.yaml
+          done
+          if [ "${{ matrix.packager }}" = "deb" ]; then
+            PKGFILE="gslapper_${VERSION}_${{ matrix.distro }}_amd64.deb"
+          else
+            PKGFILE="gslapper-${VERSION}-1.${{ matrix.distro }}.x86_64.rpm"
+          fi
+          nfpm package --config nfpm.yaml --packager ${{ matrix.packager }} --target "$PKGFILE"
+          echo "PKGFILE=$PKGFILE" >> "$GITHUB_ENV"
+
+      - name: Verify package installs
+        run: |
+          if [ "${{ matrix.pkgmgr }}" = "apt" ]; then
+            apt-get install -y "./$PKGFILE"
+          else
+            dnf install -y "./$PKGFILE"
+          fi
+          env -u WAYLAND_DISPLAY /usr/bin/gslapper --help > /dev/null
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gslapper-${{ matrix.distro }}
+          path: |
+            *.deb
+            *.rpm
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [package]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Generate checksums
+        run: |
+          sha256sum *.deb *.rpm > SHA256SUMS
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            *.deb
+            *.rpm
+            SHA256SUMS
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

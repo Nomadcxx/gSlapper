@@ -1,0 +1,42 @@
+name: gslapper
+arch: amd64
+platform: linux
+version: ${VERSION}
+section: misc
+priority: optional
+maintainer: Nomadcxx <noovie@gmail.com>
+description: |
+  Wallpaper utility for Wayland with video/image support and instant
+  switching via RAM cache. GStreamer-based replacement for mpvpaper.
+vendor: Nomadcxx
+homepage: https://github.com/Nomadcxx/gSlapper
+license: MIT
+
+contents:
+  - src: ./build/gslapper
+    dst: /usr/bin/gslapper
+    file_info:
+      mode: 0755
+  - src: ./build/gslapper-holder
+    dst: /usr/bin/gslapper-holder
+    file_info:
+      mode: 0755
+  - src: ./gslapper.service
+    dst: /usr/lib/systemd/user/gslapper.service
+    file_info:
+      mode: 0644
+  - src: ./gslapper@.service
+    dst: /usr/lib/systemd/user/gslapper@.service
+    file_info:
+      mode: 0644
+  - src: ./LICENSE
+    dst: /usr/share/licenses/gslapper/LICENSE
+    file_info:
+      mode: 0644
+  - src: ./README.md
+    dst: /usr/share/doc/gslapper/README.md
+    file_info:
+      mode: 0644
+
+# CI appends per-distro runtime dependencies below (see .github/workflows/release.yml)
+depends:
