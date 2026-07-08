@@ -4,7 +4,7 @@
 
 <br>
 
-**gSlapper** is a Wayland wallpaper utility that plays both videos and static images. Uses GStreamer instead of libmpv, which fixes memory leaks on NVIDIA systems.
+**gSlapper** is a drop-in replacement for mpvpaper that plays both videos and static images. It uses GStreamer instead of libmpv: one pipeline decodes for all monitors, frames reach the GPU without copies, and memory stays flat over long sessions on any compositor, including NVIDIA where mpvpaper leaks.
 
 ## Quick Start
 
@@ -28,7 +28,7 @@ Full documentation available at: https://nomadcxx.github.io/gSlapper/
 - Multi-monitor support
 - IPC control via Unix socket (pause, resume, change wallpaper)
 - Scaling modes: fill, stretch, original, panscan
-- Fixes NVIDIA memory leaks that mpvpaper has
+- Lower CPU, RAM, and GPU use than mpvpaper on any Wayland compositor
 
 ## Installation
 
