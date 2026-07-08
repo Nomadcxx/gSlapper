@@ -110,6 +110,22 @@ static struct {
     GstMapInfo map;      // valid while buffer is non-NULL
 } video_frame_data = {0};
 
+// CHANGED 2026-07-09 - Caps cache moved to file scope so shutdown can release the held ref - Problem: function-static cached_caps leaked one GstCaps ref at exit
+// Only touched by the GStreamer streaming thread (buffer_probe), plus exit_cleanup after pipeline teardown.
+static GstCaps *cached_caps = NULL;
+static gboolean cached_is_rgba = FALSE;
+static gint cached_width = 0, cached_height = 0;
+
+static void release_cached_caps(void) {
+    if (cached_caps) {
+        gst_caps_unref(cached_caps);
+        cached_caps = NULL;
+    }
+    cached_is_rgba = FALSE;
+    cached_width = 0;
+    cached_height = 0;
+}
+
 // CHANGED 2026-07-08 - Single ownership-aware release point for the current frame - Problem: five call sites freed frame data with g_free; buffer-backed frames need unmap+unref instead
 // Caller must hold video_mutex.
 static void release_video_frame_locked(void) {
@@ -379,6 +395,9 @@ static void exit_cleanup() {
     // CHANGED 2026-07-08 - Ownership-aware release (unmap/unref or g_free) - Problem: frame may be a mapped GstBuffer now
     release_video_frame_locked();
     pthread_mutex_unlock(&video_mutex);
+
+    // CHANGED 2026-07-09 - Release cached caps ref (safe here: pipeline is torn down, probe can no longer fire) - Problem: cached_caps leaked one GstCaps ref at exit
+    release_cached_caps();
     
     // Clean up OpenGL resources
     if (video_texture != 0) {
@@ -881,10 +900,14 @@ static void update_vertex_data(struct display_output *output) {
         return; // VAO/VBO not initialized yet
     }
     
+    // CHANGED 2026-07-09 - Read dimensions from texture_manager (last uploaded frame), not video_frame_data - Problem: called from the render path outside video_mutex; video_frame_data belongs to the probe thread
+    int vid_width = texture_manager.current_width;
+    int vid_height = texture_manager.current_height;
+
     // Only update if we have valid video dimensions
-    if (video_frame_data.width <= 0 || video_frame_data.height <= 0) {
+    if (vid_width <= 0 || vid_height <= 0) {
         if (VERBOSE)
-            cflp_info("Invalid video dimensions (%dx%d)", video_frame_data.width, video_frame_data.height);
+            cflp_info("Invalid video dimensions (%dx%d)", vid_width, vid_height);
         return;
     }
     
@@ -896,19 +919,19 @@ static void update_vertex_data(struct display_output *output) {
     if (panscan_value == -1.0f) {
         // Original resolution mode - display video at its actual pixel dimensions
         // Calculate the scale needed to show actual pixels (accounting for display scaling)
-        scale_x = (float)video_frame_data.width / (float)output->width;
-        scale_y = (float)video_frame_data.height / (float)output->height;
+        scale_x = (float)vid_width / (float)output->width;
+        scale_y = (float)vid_height / (float)output->height;
         
         // If video is smaller than display, show at actual size (don't scale up)
         // If video is larger than display, it will be clipped (which is expected)
         
         if (VERBOSE == 2) {
             cflp_info("Original resolution mode: video=%dx%d, display=%dx%d, scale_x=%.3f, scale_y=%.3f",
-                     video_frame_data.width, video_frame_data.height, output->width, output->height, scale_x, scale_y);
+                     vid_width, vid_height, output->width, output->height, scale_x, scale_y);
         }
     } else if (fill_mode) {
         // Fill mode - fill entire screen maintaining aspect ratio (crop excess)
-        float video_aspect = (float)video_frame_data.width / (float)video_frame_data.height;
+        float video_aspect = (float)vid_width / (float)vid_height;
         float display_aspect = (float)output->width / (float)output->height;
 
         // Start with full coverage
@@ -942,7 +965,7 @@ static void update_vertex_data(struct display_output *output) {
         scale_y = panscan_value;
         
         // Adjust for aspect ratio to maintain proper proportions
-        float video_aspect = (float)video_frame_data.width / (float)video_frame_data.height;
+        float video_aspect = (float)vid_width / (float)vid_height;
         float display_aspect = (float)output->width / (float)output->height;
         
         if (video_aspect > display_aspect) {
@@ -1071,7 +1094,7 @@ static void render(struct display_output *output) {
             static int texture_count = 0;
             texture_count++;
             if (texture_count % 100 == 0)  // Log every 100th frame
-                cflp_info("Updated video texture %u with %dx%d frame (update %d)", texture_manager.texture, video_frame_data.width, video_frame_data.height, texture_count);
+                cflp_info("Updated video texture %u with %dx%d frame (update %d)", texture_manager.texture, texture_manager.current_width, texture_manager.current_height, texture_count);
         }
     } else if ((texture_manager.initialized && texture_manager.texture != 0 && time_since_last_render >= target_frame_time_ns) ||
                transition_state.active) {
@@ -1089,7 +1112,9 @@ static void render(struct display_output *output) {
         if (VERBOSE == 2)
             cflp_info("No new video frame available (frame rate limited)");
     }
-    
+    // CHANGED 2026-07-09 - Unlock before transition/draw work; drawing reads texture_manager (render-thread-owned), not video_frame_data - Problem: holding video_mutex across the GL pass blocked the GStreamer streaming thread for the whole render
+    pthread_mutex_unlock(&video_mutex);
+
     // Check if we're in a transition - render transition if active
     if (transition_state.active) {
         if (VERBOSE == 2)
@@ -1176,7 +1201,8 @@ static void render(struct display_output *output) {
         
         // Bind texture from smart manager
         glActiveTexture(GL_TEXTURE0);
-        GLuint render_texture = get_texture_for_dimensions(video_frame_data.width, video_frame_data.height);
+        // CHANGED 2026-07-09 - Read dimensions from texture_manager, not video_frame_data - Problem: this now runs outside video_mutex; texture_manager is render-thread-owned
+        GLuint render_texture = get_texture_for_dimensions(texture_manager.current_width, texture_manager.current_height);
         glBindTexture(GL_TEXTURE_2D, render_texture);
         glUniform1i(glGetUniformLocation(shader_program, "ourTexture"), 0);
         
@@ -1199,7 +1225,6 @@ static void render(struct display_output *output) {
         if (VERBOSE)
             cflp_info("No video texture available for rendering");
     }
-    pthread_mutex_unlock(&video_mutex);
 
     // Display frame first (must be done before creating frame callback)
     if (!eglSwapBuffers(egl_display, output->egl_surface))
@@ -1706,9 +1731,6 @@ static void *handle_auto_stop(void *_) {
 static GstPadProbeReturn buffer_probe(GstPad *pad, GstPadProbeInfo *info, gpointer user_data) {
     GstBuffer *buffer = GST_PAD_PROBE_INFO_BUFFER(info);
     // CHANGED 2026-07-08 - Cache negotiated caps, re-parse only on renegotiation; retain mapped buffer ref instead of g_memdup2 copy; shrink mutex hold to the pointer swap - Problem: per-frame caps query/strcmp, full-frame malloc+memcpy+free, and long mutex hold contended with render()
-    static GstCaps *cached_caps = NULL;
-    static gboolean cached_is_rgba = FALSE;
-    static gint cached_width = 0, cached_height = 0;
 
     if (!buffer)
         return GST_PAD_PROBE_OK;
