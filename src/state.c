@@ -98,14 +98,24 @@ char *get_state_file_path(const char *output_name) {
 int save_state_file(const char *path, const struct wallpaper_state *state) {
     if (!path || !state || !state->path) return -1;
     
-    // Use atomic write: write to temp file, then rename (atomic on POSIX)
+    // Use atomic write: write to a unique temp file, then rename (atomic on POSIX).
+    // A fixed temp name can be left behind after a crash and permanently block saves.
     char temp_path[MAX_PATH_LEN];
-    snprintf(temp_path, sizeof(temp_path), "%s.tmp", path);
-    
-    // Open temp file with exclusive lock (use O_CREAT|O_EXCL for atomic lock file)
-    int fd = open(temp_path, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0600);
+    int written = snprintf(temp_path, sizeof(temp_path), "%s.tmp.XXXXXX", path);
+    if (written < 0 || (size_t)written >= sizeof(temp_path)) {
+        cflp_error("State file path too long");
+        return -1;
+    }
+
+    int fd = mkstemp(temp_path);
     if (fd < 0) {
         cflp_error("Failed to create temp state file: %s", strerror(errno));
+        return -1;
+    }
+    if (fchmod(fd, 0600) != 0) {
+        cflp_error("Failed to set temp state file permissions: %s", strerror(errno));
+        close(fd);
+        unlink(temp_path);
         return -1;
     }
     

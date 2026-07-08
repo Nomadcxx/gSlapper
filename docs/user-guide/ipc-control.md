@@ -90,15 +90,26 @@ echo "layer background" | nc -U /tmp/gslapper.sock
 !!! note "Compositor support"
     Dynamic layer switching requires layer-shell protocol support for `set_layer` (v2+). On older compositors, this command returns an error.
 
-### `stop`
+### `stop` / `quit`
 
 Stop gSlapper.
 
 ```bash
 echo "stop" | nc -U /tmp/gslapper.sock
+echo "quit" | nc -U /tmp/gslapper.sock
 ```
 
 **Response:** `OK` (gSlapper exits)
+
+### `save-state`
+
+Save the current wallpaper state without stopping gSlapper.
+
+```bash
+echo "save-state" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** `OK: state saved`
 
 ### `set-transition <type>`
 

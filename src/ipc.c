@@ -53,19 +53,27 @@ static bool ipc_validate_input(const char *input, int client_fd) {
 }
 
 static void ipc_queue_command_internal(const char *cmd_line, int client_fd) {
+    int response_fd = dup(client_fd);
+    if (response_fd < 0) {
+        cflp_error("Failed to duplicate IPC client FD: %s", strerror(errno));
+        return;
+    }
+
     ipc_command_t *cmd = calloc(1, sizeof(ipc_command_t));
     if (!cmd) {
         cflp_error("Failed to allocate IPC command");
+        close(response_fd);
         return;
     }
 
     cmd->cmd_line = strdup(cmd_line);
     if (!cmd->cmd_line) {
         cflp_error("Failed to allocate IPC command string");
+        close(response_fd);
         free(cmd);
         return;
     }
-    cmd->client_fd = client_fd;
+    cmd->client_fd = response_fd;
     cmd->next = NULL;
 
     pthread_mutex_lock(&ipc_queue_mutex);

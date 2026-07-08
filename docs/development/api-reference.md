@@ -206,7 +206,8 @@ ipc_send_response(client_fd, "STATUS: playing video /path/to/video.mp4\n");
 |---------|------------|----------|-------------|
 | `pause` | None | `OK` | Pause video playback |
 | `resume` | None | `OK` | Resume paused playback |
-| `stop` | None | `OK` | Stop gSlapper (exits) |
+| `stop`, `quit` | None | `OK` | Stop gSlapper (exits) |
+| `save-state` | None | `OK: state saved` | Save current wallpaper state |
 | `query` | None | `STATUS: <state> <type> <path>` | Get current wallpaper state |
 | `change <path>` | File path | `OK` or `OK: transition started` | Change wallpaper |
 | `layer <name>` | `background`, `bottom`, `top`, `overlay` | `OK` or `ERROR` | Change Wayland layer at runtime |
