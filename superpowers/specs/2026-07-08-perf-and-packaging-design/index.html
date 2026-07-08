@@ -12,7 +12,7 @@
         <meta name="author" content="Nomadcxx">
       
       
-        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/development/systemd-analysis/">
+        <link rel="canonical" href="https://nomadcxx.github.io/gSlapper/superpowers/specs/2026-07-08-perf-and-packaging-design/">
       
       
       
@@ -20,19 +20,19 @@
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Systemd Service Analysis: Why Do We Need It? - gSlapper Documentation</title>
+        <title>gSlapper: Frame Path Performance + Distro Packaging — Design - gSlapper Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -51,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="../../css/extra.css">
+      <link rel="stylesheet" href="../../../css/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#systemd-service-analysis-why-do-we-need-it" class="md-skip">
+        <a href="#gslapper-frame-path-performance-distro-packaging-design" class="md-skip">
           Skip to content
         </a>
       
@@ -92,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="gSlapper Documentation" class="md-header__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+    <a href="../../.." title="gSlapper Documentation" class="md-header__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Systemd Service Analysis: Why Do We Need It?
+              gSlapper: Frame Path Performance + Distro Packaging — Design
             
           </span>
         </div>
@@ -225,7 +225,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -246,7 +246,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../getting-started/" class="md-tabs__link">
+        <a href="../../../getting-started/" class="md-tabs__link">
           
   
   
@@ -268,7 +268,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../user-guide/" class="md-tabs__link">
+        <a href="../../../user-guide/" class="md-tabs__link">
           
   
   
@@ -290,7 +290,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../advanced/" class="md-tabs__link">
+        <a href="../../../advanced/" class="md-tabs__link">
           
   
   
@@ -312,7 +312,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../index.md" class="md-tabs__link">
+        <a href="../../../development/index.md" class="md-tabs__link">
           
   
   
@@ -348,7 +348,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="gSlapper Documentation" class="md-nav__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
+    <a href="../../.." title="gSlapper Documentation" class="md-nav__button md-logo" aria-label="gSlapper Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -378,7 +378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -436,7 +436,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../getting-started/" class="md-nav__link ">
+            <a href="../../../getting-started/" class="md-nav__link ">
               
   
   
@@ -480,7 +480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/installation/" class="md-nav__link">
+      <a href="../../../getting-started/installation/" class="md-nav__link">
         
   
   
@@ -508,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/quick-start/" class="md-nav__link">
+      <a href="../../../getting-started/quick-start/" class="md-nav__link">
         
   
   
@@ -536,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/configuration/" class="md-nav__link">
+      <a href="../../../getting-started/configuration/" class="md-nav__link">
         
   
   
@@ -608,7 +608,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../user-guide/" class="md-nav__link ">
+            <a href="../../../user-guide/" class="md-nav__link ">
               
   
   
@@ -652,7 +652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/video-wallpapers/" class="md-nav__link">
+      <a href="../../../user-guide/video-wallpapers/" class="md-nav__link">
         
   
   
@@ -680,7 +680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/static-images/" class="md-nav__link">
+      <a href="../../../user-guide/static-images/" class="md-nav__link">
         
   
   
@@ -708,7 +708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/scaling-modes/" class="md-nav__link">
+      <a href="../../../user-guide/scaling-modes/" class="md-nav__link">
         
   
   
@@ -736,7 +736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/ipc-control/" class="md-nav__link">
+      <a href="../../../user-guide/ipc-control/" class="md-nav__link">
         
   
   
@@ -764,7 +764,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/command-line-options/" class="md-nav__link">
+      <a href="../../../user-guide/command-line-options/" class="md-nav__link">
         
   
   
@@ -792,7 +792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/persistent-wallpapers/" class="md-nav__link">
+      <a href="../../../user-guide/persistent-wallpapers/" class="md-nav__link">
         
   
   
@@ -860,7 +860,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../advanced/" class="md-nav__link ">
+            <a href="../../../advanced/" class="md-nav__link ">
               
   
   
@@ -904,7 +904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/transitions/" class="md-nav__link">
+      <a href="../../../advanced/transitions/" class="md-nav__link">
         
   
   
@@ -932,7 +932,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/multi-monitor/" class="md-nav__link">
+      <a href="../../../advanced/multi-monitor/" class="md-nav__link">
         
   
   
@@ -960,7 +960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/performance/" class="md-nav__link">
+      <a href="../../../advanced/performance/" class="md-nav__link">
         
   
   
@@ -988,7 +988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../advanced/troubleshooting/" class="md-nav__link">
+      <a href="../../../advanced/troubleshooting/" class="md-nav__link">
         
   
   
@@ -1091,7 +1091,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../index.md" class="md-nav__link">
+      <a href="../../../development/index.md" class="md-nav__link">
         
   
   
@@ -1119,7 +1119,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../building/" class="md-nav__link">
+      <a href="../../../development/building/" class="md-nav__link">
         
   
   
@@ -1147,7 +1147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../contributing/" class="md-nav__link">
+      <a href="../../../development/contributing/" class="md-nav__link">
         
   
   
@@ -1175,7 +1175,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-reference/" class="md-nav__link">
+      <a href="../../../development/api-reference/" class="md-nav__link">
         
   
   
@@ -1203,7 +1203,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../architecture/" class="md-nav__link">
+      <a href="../../../development/architecture/" class="md-nav__link">
         
   
   
@@ -1231,7 +1231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../systemd-service/" class="md-nav__link">
+      <a href="../../../development/systemd-service/" class="md-nav__link">
         
   
   
@@ -1286,93 +1286,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-does-the-systemd-service-actually-do" class="md-nav__link">
+  <a href="#goal" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What Does the Systemd Service Actually Do?
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="What Does the Systemd Service Actually Do?">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-automatic-startup-on-login" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Automatic Startup on Login
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-environment-variable-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Environment Variable Management
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-automatic-restart-on-failure" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Automatic Restart on Failure
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-state-restoration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. State Restoration
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-process-lifecycle-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. Process Lifecycle Management
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#6-systemd-notifications-systemd-flag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. Systemd Notifications (--systemd flag)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-swww-doesnt-need-systemd-service" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why swww Doesn't Need Systemd Service
+        Goal
       
     </span>
   </a>
@@ -1380,10 +1297,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-gslapper-benefits-from-systemd-service" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why gSlapper Benefits from Systemd Service
+        Background
       
     </span>
   </a>
@@ -1391,10 +1308,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#can-we-just-run-gslapper-restore-without-systemd" class="md-nav__link">
+  <a href="#pr-1-frame-path-eliminate-per-frame-allocation-and-caps-churn" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Can We Just Run gslapper --restore Without Systemd?
+        PR 1 — Frame path: eliminate per-frame allocation and caps churn
       
     </span>
   </a>
@@ -1402,49 +1319,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#comparison-with-vs-without-systemd" class="md-nav__link">
+  <a href="#pr-2-async-texture-upload-via-double-buffered-pbos" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Comparison: With vs Without Systemd
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Comparison: With vs Without Systemd">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#without-systemd-manualshell-script" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Without Systemd (Manual/Shell Script)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#with-systemd-service" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        With Systemd Service
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#what-systemd-flag-actually-does" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What --systemd Flag Actually Does
+        PR 2 — Async texture upload via double-buffered PBOs
       
     </span>
   </a>
@@ -1452,10 +1330,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#recommendation" class="md-nav__link">
+  <a href="#pr-3-release-packaging-workflow-debrpm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Recommendation
+        PR 3 — Release packaging workflow (deb/rpm)
       
     </span>
   </a>
@@ -1463,10 +1341,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#implementation-strategy" class="md-nav__link">
+  <a href="#constraints-repo-conventions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Implementation Strategy
+        Constraints (repo conventions)
       
     </span>
   </a>
@@ -1493,158 +1371,134 @@
   
 
 
-<h1 id="systemd-service-analysis-why-do-we-need-it">Systemd Service Analysis: Why Do We Need It?<a class="headerlink" href="#systemd-service-analysis-why-do-we-need-it" title="Permanent link">&para;</a></h1>
-<h2 id="what-does-the-systemd-service-actually-do">What Does the Systemd Service Actually Do?<a class="headerlink" href="#what-does-the-systemd-service-actually-do" title="Permanent link">&para;</a></h2>
-<h3 id="1-automatic-startup-on-login">1. Automatic Startup on Login<a class="headerlink" href="#1-automatic-startup-on-login" title="Permanent link">&para;</a></h3>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="na">After</span><span class="o">=</span><span class="s">graphical-session.target</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="na">Wants</span><span class="o">=</span><span class="s">graphical-session.target</span>
-</code></pre></div>
-- Starts gSlapper automatically when graphical session is ready
-- No need to manually run <code>gslapper</code> after each login/reboot</p>
-<h3 id="2-environment-variable-management">2. Environment Variable Management<a class="headerlink" href="#2-environment-variable-management" title="Permanent link">&para;</a></h3>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="na">EnvironmentFile</span><span class="o">=</span><span class="s">%h/.config/gslapper/environment</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="na">Environment</span><span class="o">=</span><span class="s">XDG_RUNTIME_DIR=%t</span>
-</code></pre></div>
-- Provides <code>WAYLAND_DISPLAY</code> and <code>XDG_RUNTIME_DIR</code> automatically
-- Ensures Wayland connection works in systemd context
-- Without this, gSlapper can't connect to Wayland compositor</p>
-<h3 id="3-automatic-restart-on-failure">3. Automatic Restart on Failure<a class="headerlink" href="#3-automatic-restart-on-failure" title="Permanent link">&para;</a></h3>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="na">Restart</span><span class="o">=</span><span class="s">on-failure</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="na">RestartSec</span><span class="o">=</span><span class="s">5</span>
-</code></pre></div>
-- If gSlapper crashes or exits unexpectedly, systemd restarts it
-- Provides resilience - wallpaper keeps running</p>
-<h3 id="4-state-restoration">4. State Restoration<a class="headerlink" href="#4-state-restoration" title="Permanent link">&para;</a></h3>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/gslapper --systemd --restore &#39;*&#39;</span>
-</code></pre></div>
-- <code>--restore</code> flag loads saved state from <code>~/.local/state/gslapper/</code>
-- Resumes wallpaper at last position (videos) or shows last image
-- Without this, you'd need to manually set wallpaper after each boot</p>
-<h3 id="5-process-lifecycle-management">5. Process Lifecycle Management<a class="headerlink" href="#5-process-lifecycle-management" title="Permanent link">&para;</a></h3>
+<h1 id="gslapper-frame-path-performance-distro-packaging-design">gSlapper: Frame Path Performance + Distro Packaging — Design<a class="headerlink" href="#gslapper-frame-path-performance-distro-packaging-design" title="Permanent link">&para;</a></h1>
+<p>Date: 2026-07-08
+Status: Approved</p>
+<h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
+<p>Three independent deliverables, each its own PR against <code>master</code>:</p>
+<ol>
+<li><strong>PR 1 — Frame path optimization</strong>: eliminate per-frame heap allocation, frame
+   copies, and caps re-parsing in the GStreamer → OpenGL hand-off.</li>
+<li><strong>PR 2 — Async texture upload</strong>: double-buffered PBO uploads so texture DMA
+   overlaps rendering instead of blocking the render thread.</li>
+<li><strong>PR 3 — Release packaging CI</strong>: GitHub Actions workflow that auto-builds
+   Debian/Ubuntu <code>.deb</code> and Fedora <code>.rpm</code> packages on tagged releases, so distros
+   beyond Arch/Nix get native packages (and sysc-greet's installer can stop
+   building gslapper from source).</li>
+</ol>
+<h2 id="background">Background<a class="headerlink" href="#background" title="Permanent link">&para;</a></h2>
+<p>The per-frame hot path today (<code>src/main.c</code>):</p>
 <ul>
-<li><code>systemctl start/stop/restart</code> - Control wallpaper service</li>
-<li><code>systemctl reload</code> - Saves state and restarts (SIGHUP)</li>
-<li><code>journalctl</code> - View logs</li>
-<li>Integration with system shutdown/reboot</li>
+<li><code>buffer_probe()</code> (line ~1693) runs on every decoded frame and, while holding
+  <code>video_mutex</code>:</li>
+<li>calls <code>gst_pad_get_current_caps()</code> and string-parses the format — per frame;</li>
+<li><code>g_free()</code>s the previous frame and <code>g_memdup2()</code>s the entire RGBA frame
+    (~14 MB @ 1440p, ~33 MB @ 4K, up to 60×/sec).</li>
+<li><code>render()</code> (line ~973) uploads via <code>glTexSubImage2D</code> from client memory, which
+  blocks while the driver copies, then <code>g_free()</code>s the frame.</li>
+<li>The pipeline uses CPU <code>videoconvert</code> to RGBA. A full GL/dmabuf zero-copy path
+  was considered and deliberately deferred: it reworks the entire render path
+  and needs extended NVIDIA+Wayland soak testing. The two PRs below are the
+  safe, benchmarkable pair.</li>
 </ul>
-<h3 id="6-systemd-notifications-systemd-flag">6. Systemd Notifications (--systemd flag)<a class="headerlink" href="#6-systemd-notifications-systemd-flag" title="Permanent link">&para;</a></h3>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="cp">#ifdef HAVE_SYSTEMD</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">systemd_mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="n">sd_notify</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;READY=1&quot;</span><span class="p">);</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="cp">#endif</span>
-</code></pre></div>
-- Tells systemd when gSlapper is ready
-- Allows <code>Type=notify</code> for better startup coordination
-- Systemd knows when wallpaper is actually displayed (not just process started)</p>
-<h2 id="why-swww-doesnt-need-systemd-service">Why swww Doesn't Need Systemd Service<a class="headerlink" href="#why-swww-doesnt-need-systemd-service" title="Permanent link">&para;</a></h2>
-<p><strong>swww-daemon architecture:</strong>
-- <strong>Long-running daemon</strong> - Process stays alive indefinitely
-- <strong>Manual startup</strong> - Users run <code>swww-daemon &amp;</code> in shell config or manually
-- <strong>Persistent</strong> - Once started, it runs until killed
-- <strong>No state restoration needed</strong> - Daemon maintains state in memory</p>
-<p><strong>Why swww users might still use systemd:</strong>
-- Convenience - automatic startup
-- Process management - restart on failure
-- But it's <strong>optional</strong> - daemon works fine without it</p>
-<h2 id="why-gslapper-benefits-from-systemd-service">Why gSlapper Benefits from Systemd Service<a class="headerlink" href="#why-gslapper-benefits-from-systemd-service" title="Permanent link">&para;</a></h2>
-<p><strong>gSlapper architecture:</strong>
-- <strong>One process per wallpaper</strong> - Process exits when wallpaper stops
-- <strong>Not a daemon</strong> - Designed to exit when done (like mpvpaper)
-- <strong>State-based</strong> - Relies on saved state files for restoration
-- <strong>Needs restart</strong> - Must be restarted after reboot to restore wallpaper</p>
-<p><strong>Without systemd service:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># User must manually do this after every login:</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>gslapper<span class="w"> </span>--restore<span class="w"> </span>DP-1
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># or</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>gslapper<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;loop&quot;</span><span class="w"> </span>DP-1<span class="w"> </span>/path/to/video.mp4
-</code></pre></div></p>
-<p><strong>With systemd service:</strong>
-- Automatic - wallpaper restores on login
-- No manual intervention needed
-- Works seamlessly with state restoration</p>
-<h2 id="can-we-just-run-gslapper-restore-without-systemd">Can We Just Run <code>gslapper --restore</code> Without Systemd?<a class="headerlink" href="#can-we-just-run-gslapper-restore-without-systemd" title="Permanent link">&para;</a></h2>
-<p><strong>Yes, technically:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># In ~/.bashrc or ~/.zshrc:</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>gslapper<span class="w"> </span>--restore<span class="w"> </span>DP-1<span class="w"> </span><span class="p">&amp;</span>
-</code></pre></div></p>
-<p><strong>But you lose:</strong>
-1. ❌ Automatic restart on failure
-2. ❌ Proper environment variable management
-3. ❌ Process lifecycle management
-4. ❌ Integration with system shutdown
-5. ❌ Logging via journalctl
-6. ❌ Coordination with graphical session startup
-7. ❌ Resource limits and security settings</p>
-<p><strong>Advantages of shell script approach:</strong>
-1. ✅ Simpler - no systemd knowledge needed
-2. ✅ Works on systems without systemd
-3. ✅ More control over startup timing</p>
-<p><strong>Advantages of systemd service:</strong>
-1. ✅ Automatic startup on login
-2. ✅ Automatic restart on failure
-3. ✅ Proper environment management
-4. ✅ Process lifecycle management
-5. ✅ Better integration with system
-6. ✅ Logging and monitoring
-7. ✅ Resource limits and security</p>
-<h2 id="comparison-with-vs-without-systemd">Comparison: With vs Without Systemd<a class="headerlink" href="#comparison-with-vs-without-systemd" title="Permanent link">&para;</a></h2>
-<h3 id="without-systemd-manualshell-script">Without Systemd (Manual/Shell Script)<a class="headerlink" href="#without-systemd-manualshell-script" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># User must:</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="m">1</span>.<span class="w"> </span>Create<span class="w"> </span>environment<span class="w"> </span>file<span class="w"> </span>manually
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="m">2</span>.<span class="w"> </span>Run<span class="w"> </span>gslapper<span class="w"> </span><span class="k">in</span><span class="w"> </span>shell<span class="w"> </span>config<span class="w"> </span>or<span class="w"> </span>manually
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="m">3</span>.<span class="w"> </span>Handle<span class="w"> </span>failures<span class="w"> </span>manually
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="m">4</span>.<span class="w"> </span>No<span class="w"> </span>automatic<span class="w"> </span>restart
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="m">5</span>.<span class="w"> </span>No<span class="w"> </span>process<span class="w"> </span>management
-</code></pre></div>
-<h3 id="with-systemd-service">With Systemd Service<a class="headerlink" href="#with-systemd-service" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># User:</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="m">1</span>.<span class="w"> </span>Enable<span class="w"> </span>service<span class="w"> </span>once:<span class="w"> </span>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>gslapper.service
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="m">2</span>.<span class="w"> </span>Done<span class="w"> </span>-<span class="w"> </span>automatic<span class="w"> </span>on<span class="w"> </span>every<span class="w"> </span>login
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="m">3</span>.<span class="w"> </span>Automatic<span class="w"> </span>restart<span class="w"> </span>on<span class="w"> </span>failure
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="m">4</span>.<span class="w"> </span>Full<span class="w"> </span>process<span class="w"> </span>management
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="m">5</span>.<span class="w"> </span>Integrated<span class="w"> </span>with<span class="w"> </span>system
-</code></pre></div>
-<h2 id="what-systemd-flag-actually-does">What --systemd Flag Actually Does<a class="headerlink" href="#what-systemd-flag-actually-does" title="Permanent link">&para;</a></h2>
-<p>The <code>--systemd</code> flag enables systemd-specific features:</p>
+<p>There is no CI in the repo. sysc-greet's <code>release.yml</code> (cagebreak matrix job:
+per-distro containers + nfpm) is the proven template for packaging a C project
+with distro-versioned native deps.</p>
+<h2 id="pr-1-frame-path-eliminate-per-frame-allocation-and-caps-churn">PR 1 — Frame path: eliminate per-frame allocation and caps churn<a class="headerlink" href="#pr-1-frame-path-eliminate-per-frame-allocation-and-caps-churn" title="Permanent link">&para;</a></h2>
+<p><strong>Branch:</strong> <code>perf/frame-path</code></p>
+<p>Changes in <code>src/main.c</code>, applied to all three pipeline variants (playbin,
+filesrc/decodebin video, image pipeline):</p>
 <ol>
-<li><strong>Systemd notifications</strong> - <code>sd_notify(READY=1)</code> when wallpaper is ready</li>
-<li><strong>Proper exit handling</strong> - Notifies systemd when stopping</li>
-<li><strong>Signal handling</strong> - SIGHUP for reload (saves state, restarts)</li>
-<li><strong>Logging context</strong> - Better integration with journalctl</li>
+<li><strong>Caps caching.</strong> Store the last-seen <code>GstCaps *</code> per probe. Re-parse
+   format/width/height only when the caps pointer differs from the cached one
+   (pointer compare per frame; parse only on renegotiation).</li>
+<li><strong>Retained buffer refs instead of copies.</strong> In the probe: <code>gst_buffer_ref()</code>
+   the incoming buffer, swap it into the shared frame slot (unreffing any
+   not-yet-consumed previous buffer). In the render path: map the buffer
+   (<code>GST_MAP_READ</code>), upload, unmap, unref. Zero CPU-side frame copies.</li>
+<li>Safety: appsink runs <code>drop=TRUE, max-buffers=1</code>; holding one ref is safe
+     against pool starvation. If a pool stall surfaces in testing, fallback is
+     a persistent reused allocation (realloc only on size change) — still
+     removes the malloc/free churn.</li>
+<li><strong>Minimal mutex hold.</strong> The mutex-held region shrinks to the
+   pointer/metadata swap; no allocation, no caps query, no copy under lock.</li>
+<li><strong>Frame cache interaction.</strong> <code>src/cache.c</code> consumers that duplicate frame
+   data (<code>g_memdup2(cached-&gt;...)</code>) keep their copies — caching is cold path.
+   Only the per-frame hot path changes.</li>
 </ol>
-<p><strong>Without --systemd flag:</strong>
-- gSlapper still works
-- But systemd doesn't know when it's "ready"
-- <code>Type=notify</code> won't work properly
-- Less integration with systemd lifecycle</p>
-<p><strong>With --systemd flag:</strong>
-- Full systemd integration
-- Proper readiness notification
-- Better process management</p>
-<h2 id="recommendation">Recommendation<a class="headerlink" href="#recommendation" title="Permanent link">&para;</a></h2>
-<p><strong>We SHOULD provide a default systemd service because:</strong></p>
+<p><strong>Verification:</strong> <code>benchmark.sh</code> before/after (expect lower avg CPU, flat RAM);
+visual check on both monitors; all scaling modes (default/stretch/original);
+seamless looping; pause/resume; IPC layer switching.</p>
+<h2 id="pr-2-async-texture-upload-via-double-buffered-pbos">PR 2 — Async texture upload via double-buffered PBOs<a class="headerlink" href="#pr-2-async-texture-upload-via-double-buffered-pbos" title="Permanent link">&para;</a></h2>
+<p><strong>Branch:</strong> <code>perf/pbo-upload</code></p>
+<p>Changes in <code>src/main.c</code>, integrated with the existing smart texture manager:</p>
 <ol>
-<li><strong>gSlapper is not a daemon</strong> - Unlike swww-daemon, it exits when done</li>
-<li><strong>State restoration requires restart</strong> - Need to restart after reboot</li>
-<li><strong>Better user experience</strong> - Automatic wallpaper on login</li>
-<li><strong>Process management</strong> - Restart on failure, proper lifecycle</li>
-<li><strong>Environment management</strong> - Wayland variables handled correctly</li>
-<li><strong>Standard practice</strong> - Most Wayland wallpaper tools use systemd</li>
+<li>Two <code>GL_PIXEL_UNPACK_BUFFER</code> objects sized to the frame, reallocated only on
+   dimension change (same policy as the texture).</li>
+<li>Ping-pong per frame: orphan (<code>glBufferData(..., NULL, GL_STREAM_DRAW)</code>), map
+   (<code>glMapBufferRange</code> with <code>GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT</code>),
+   write frame N, unmap, <code>glTexSubImage2D(..., offset 0)</code> from the bound PBO —
+   the driver DMAs asynchronously while frame N−1 renders.</li>
+<li><strong>Fallback:</strong> if PBO allocation/map fails, log once and use the direct
+   <code>glTexSubImage2D</code> path permanently (protects the core-profile fallback
+   context and older drivers).</li>
+<li>Cleanup of PBOs in <code>cleanup_texture_manager()</code> / <code>exit_cleanup()</code>.</li>
 </ol>
-<p><strong>But we should:</strong>
-- Make it easy to customize (template service, clear docs)
-- Provide instructions for manual setup (shell script alternative)
-- Explain advantages/disadvantages clearly
-- Allow users to disable if they prefer manual control</p>
-<h2 id="implementation-strategy">Implementation Strategy<a class="headerlink" href="#implementation-strategy" title="Permanent link">&para;</a></h2>
+<p><strong>Ordering:</strong> builds on PR 1 (uploads read from mapped GstBuffer instead of the
+old copied allocation). PR 2 branches from PR 1.</p>
+<p><strong>Verification:</strong> benchmark (GPU utilization, frame pacing at 60 fps cap);
+transition renderer regression test (shares the texture path); <code>-vv</code> frame
+metrics comparison.</p>
+<h2 id="pr-3-release-packaging-workflow-debrpm">PR 3 — Release packaging workflow (deb/rpm)<a class="headerlink" href="#pr-3-release-packaging-workflow-debrpm" title="Permanent link">&para;</a></h2>
+<p><strong>Branch:</strong> <code>ci/release-packages</code></p>
+<p>New files:</p>
 <ol>
-<li><strong>Default service</strong> - Install and enable by default (post-install hook)</li>
-<li><strong>Template service</strong> - Provide <code>gslapper@.service</code> for per-monitor</li>
-<li><strong>Clear documentation</strong> - Explain what it does and how to customize</li>
-<li><strong>Comments in service file</strong> - Inline instructions for customization</li>
-<li><strong>Alternative docs</strong> - Show shell script approach for non-systemd users</li>
+<li><strong><code>.github/workflows/release.yml</code></strong> — triggered on <code>v*</code> tags plus
+   <code>workflow_dispatch</code> (dry run: builds everything, skips release creation).</li>
+<li><strong>Matrix job</strong> (containerized builds):
+     | Image | Packager | Artifact |
+     |---|---|---|
+     | <code>ubuntu:24.04</code> | deb | <code>gslapper_${VER}_ubuntu24.04_amd64.deb</code> |
+     | <code>debian:13</code> | deb (serves Ubuntu 25.x too) | <code>gslapper_${VER}_debian13_amd64.deb</code> |
+     | <code>fedora:42</code> | rpm | <code>gslapper-${VER}-1.fedora42.x86_64.rpm</code> |</li>
+<li>Steps per leg: install build deps (meson, ninja, wayland-protocols,
+     GStreamer dev, EGL dev), <code>meson setup build --prefix=/usr</code>,
+     <code>ninja -C build</code>, smoke test (<code>./build/gslapper --help</code> exit code under no
+     Wayland display), install nfpm pinned release, append per-distro runtime
+     <code>depends:</code> list items to <code>nfpm.yaml</code> (same append trick as
+     <code>nfpm-cagebreak.yaml</code>), package, upload artifact.</li>
+<li><strong>Release job</strong> (tags only): download artifacts, <code>sha256sum</code> →
+     <code>SHA256SUMS</code>, publish with <code>softprops/action-gh-release</code> and generated
+     release notes.</li>
+<li><strong><code>nfpm.yaml</code></strong> — version from <code>${VERSION}</code> env; contents:</li>
+<li><code>build/gslapper</code> → <code>/usr/bin/gslapper</code> (0755)</li>
+<li><code>build/gslapper-holder</code> → <code>/usr/bin/gslapper-holder</code> (0755)</li>
+<li><code>gslapper.service</code>, <code>gslapper@.service</code> → <code>/usr/lib/systemd/user/</code></li>
+<li><code>LICENSE</code> → <code>/usr/share/licenses/gslapper/LICENSE</code></li>
+<li>ends with a bare <code>depends:</code> key for CI to append per-distro entries.</li>
+<li>Per-distro runtime depends (verified in-container during implementation via
+   <code>ldd</code> on the built binary, not assumed):</li>
+<li>deb (approx): <code>libgstreamer1.0-0</code>, <code>libgstreamer-plugins-base1.0-0</code>,
+     <code>gstreamer1.0-plugins-good</code>, <code>gstreamer1.0-plugins-bad</code>,
+     <code>libwayland-client0</code>, <code>libwayland-egl1</code>, <code>libegl1</code></li>
+<li>rpm (approx): <code>gstreamer1</code>, <code>gstreamer1-plugins-base</code>,
+     <code>gstreamer1-plugins-good</code>, <code>gstreamer1-plugins-bad-free</code>,
+     <code>libwayland-client</code>, <code>libwayland-egl</code>, <code>libglvnd-egl</code></li>
+<li>Recommended/optdepends for extra codecs (ugly/libav) as Suggests.</li>
 </ol>
+<p><strong>Non-goals:</strong> no AUR changes (separate manual protocol per CLAUDE.md), no
+mpvpaper conflicts/provides, no new build dependencies.</p>
+<p><strong>Verification:</strong> <code>workflow_dispatch</code> dry run must go green on all three matrix
+legs before tagging a release; <code>dpkg -I</code>/<code>rpm -qpi</code> inspection of artifacts;
+install test in clean containers (<code>apt install ./…deb</code>, <code>dnf install ./…rpm</code>)
+resolving deps successfully.</p>
+<h2 id="constraints-repo-conventions">Constraints (repo conventions)<a class="headerlink" href="#constraints-repo-conventions" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Modified code blocks carry <code>// CHANGED YYYY-MM-DD - what - Problem: why</code>.</li>
+<li>No AI/agent attribution in code, comments, or commit messages.</li>
+<li>Runtime dependency set stays minimal — no new deps without explicit approval.</li>
+<li>Each PR independently revertible; PR 2 depends on PR 1.</li>
+</ul>
 
 
 
@@ -1732,10 +1586,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
