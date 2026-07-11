@@ -66,12 +66,12 @@ assert.ok(
 // Install anchors must point at real heading ids (double-hyphen collapses spaces)
 assert.match(
   docsHtml,
-  /href="\/docs\/getting-started\/installation\/#debian--ubuntu--fedora-packages"/,
+  new RegExp(`href="${basePath}/docs/getting-started/installation/#debian--ubuntu--fedora-packages"`),
   'docs home Debian/RPM anchor is wrong (expected double-hyphen id)',
 );
 assert.match(
   docsHtml,
-  /href="\/docs\/getting-started\/nix-installation\/"/,
+  new RegExp(`href="${basePath}/docs/getting-started/nix-installation/"`),
   'docs home Nix option should point at its own page, not an installation anchor',
 );
 
