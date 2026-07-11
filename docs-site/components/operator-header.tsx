@@ -19,7 +19,7 @@ export function OperatorHeader(props: ComponentProps<'header'>) {
           <FullSearchTrigger hideIfDisabled />
         </div>
         <SearchTrigger hideIfDisabled aria-label="Open search" className="operator-search-icon" />
-        <span className="operator-version">v1.3.1</span>
+        <span className="operator-version">v1.5.0</span>
         <a
           className="operator-icon-link"
           href={`https://github.com/${gitConfig.user}/${gitConfig.repo}`}

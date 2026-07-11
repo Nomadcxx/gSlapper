@@ -86,9 +86,12 @@ gslapper -f -o "loop" DP-1 /path/to/video.mp4
 - MOV
 - Any format supported by GStreamer
 
-> [!NOTE] **Codec Support**
-> Ensure you have `gst-plugins-ugly` and `gst-libav` installed for H.264/H.265 support.
->
+import { Callout } from 'fumadocs-ui/components/callout';
+
+<Callout type="info" title="Codec Support">
+Ensure you have `gst-plugins-ugly` and `gst-libav` installed for H.264/H.265 support.
+</Callout>
+
 ## Making Video Wallpapers Persistent
 
 To make your video wallpaper automatically restore after reboot or login, see the [Persistent Wallpapers](./persistent-wallpapers) guide. The guide covers multiple methods including systemd service setup, shell scripts, and compositor-specific configuration.

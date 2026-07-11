@@ -3,6 +3,8 @@ title: IPC Control
 description: "gSlapper supports runtime control via Unix domain sockets, allowing you to control playback from scripts or other applications."
 ---
 
+import { Callout } from 'fumadocs-ui/components/callout';
+
 gSlapper supports runtime control via Unix domain sockets, allowing you to control playback from scripts or other applications.
 
 ## Enabling IPC
@@ -90,9 +92,10 @@ echo "layer background" | nc -U /tmp/gslapper.sock
 
 **Response:** `OK` or `ERROR: <message>`
 
-> [!NOTE] **Compositor support**
-> Dynamic layer switching requires layer-shell protocol support for `set_layer` (v2+). On older compositors, this command returns an error.
->
+<Callout type="info" title="Compositor support">
+Dynamic layer switching requires layer-shell protocol support for `set_layer` (v2+). On older compositors, this command returns an error.
+</Callout>
+
 ### `stop` / `quit`
 
 Stop gSlapper.
@@ -125,9 +128,10 @@ echo "set-transition none" | nc -U /tmp/gslapper.sock
 
 **Response:** `OK` or `ERROR: <message>`
 
-> [!NOTE] **Transitions**
-> Transitions only work between static images. Videos always use instant switch regardless of transition settings.
->
+<Callout type="info" title="Transitions">
+Transitions only work between static images. Videos always use instant switch regardless of transition settings.
+</Callout>
+
 ### `set-transition-duration <seconds>`
 
 Set transition duration in seconds (0.0-5.0).

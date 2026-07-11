@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/images/gslapper-logo.png" alt="gSlapper Logo" style="background: transparent;"/>
+  <img src="docs-site/public/brand/gslapper-wordmark.png" alt="gSlapper Logo" style="background: transparent;"/>
 </div>
 
 <br>
@@ -76,7 +76,7 @@ For development:
 nix develop
 ```
 
-See [Nix Installation Guide](docs/nix-installation.md) for system integration options.
+See [Nix Installation Guide](docs-site/content/docs/getting-started/nix-installation.md) for system integration options.
 
 ## License
 

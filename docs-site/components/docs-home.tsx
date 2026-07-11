@@ -27,12 +27,12 @@ const installOptions = [
   [
     'Deb / RPM',
     'Prebuilt packages for Debian, Ubuntu, and Fedora from GitHub releases.',
-    '/docs/getting-started/installation#debian-ubuntu-fedora-packages',
+    '/docs/getting-started/installation#debian--ubuntu--fedora-packages',
   ],
   [
     'Nix',
     'Build from the flake and configure on NixOS.',
-    '/docs/getting-started/installation#nix',
+    '/docs/getting-started/nix-installation',
   ],
   [
     'Source build',
@@ -50,8 +50,8 @@ export function DocsHome() {
           className="docs-wordmark"
           src={`${basePath}/brand/gslapper-wordmark.png`}
           alt="gSlapper"
-          width="1591"
-          height="229"
+          width="1128"
+          height="259"
         />
         <p id="docs-home-purpose">
           A wallpaper utility for Wayland that plays video and static image wallpapers with

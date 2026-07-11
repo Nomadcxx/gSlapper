@@ -78,9 +78,12 @@ sudo ninja -C build install
 
 ## Codec Support
 
-> [!IMPORTANT] **Codec Support**
-> `gst-plugins-ugly` and `gst-libav` provide codec support (H.264, H.265, etc.). Without these, videos may fail to play with "Pipeline failed to reach playing state" error.
->
+import { Callout } from 'fumadocs-ui/components/callout';
+
+<Callout type="warn" title="Codec Support">
+`gst-plugins-ugly` and `gst-libav` provide codec support (H.264, H.265, etc.). Without these, videos may fail to play with "Pipeline failed to reach playing state" error.
+</Callout>
+
 ## Verification
 
 After installation, verify gSlapper is working:

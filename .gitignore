@@ -119,9 +119,6 @@ benchmark-test-video.mp4
 *.tasks*
 *-this-session-is-being-continued-from-a-previous-co.txt
 
-# MkDocs (deprecated)
-site/
-
 # Fumadocs docs-site build artifacts
 docs-site/node_modules/
 docs-site/.next/
