@@ -122,3 +122,6 @@ benchmark-test-video.mp4
 # MkDocs build output
 site/
 test-video-modes.sh
+
+# Git worktrees
+.worktrees/
