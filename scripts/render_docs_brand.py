@@ -10,7 +10,6 @@ except ImportError as error:
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = (
-    (ROOT / "docs-site/brand/gslapper.txt", ROOT / "docs-site/public/brand/gslapper-wordmark.png"),
     (ROOT / "docs-site/brand/gsp.txt", ROOT / "docs-site/public/brand/gsp-mark.png"),
 )
 FONT_CANDIDATES = (
@@ -59,7 +58,7 @@ def check_assets() -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Render transparent documentation wordmarks")
+    parser = argparse.ArgumentParser(description="Render transparent documentation mark")
     parser.add_argument("--check", action="store_true", help="verify committed PNGs are current")
     args = parser.parse_args()
 

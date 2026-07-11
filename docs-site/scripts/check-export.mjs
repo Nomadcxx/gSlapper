@@ -82,8 +82,8 @@ assert.doesNotMatch(installationHtml, /\[!NOTE\]|\[!IMPORTANT\]|\[!WARNING\]/, '
 assert.match(installationHtml, /callout/, 'installation is missing rendered Callout markup');
 
 // Brand images must carry intrinsic dimensions matching the PNG aspect ratio
-assert.match(docsHtml, /brand\/gslapper-wordmark\.png[^>]*width="1128"/, 'wordmark img width does not match PNG (1128)');
-assert.match(docsHtml, /brand\/gslapper-wordmark\.png[^>]*height="259"/, 'wordmark img height does not match PNG (259)');
+assert.match(docsHtml, /brand\/gslapper-wordmark\.png[^>]*width="726"/, 'wordmark img width does not match PNG (726)');
+assert.match(docsHtml, /brand\/gslapper-wordmark\.png[^>]*height="124"/, 'wordmark img height does not match PNG (124)');
 assert.match(docsHtml, /brand\/gsp-mark\.png[^>]*width="551"/, 'gsp mark img width does not match PNG (551)');
 assert.match(docsHtml, /brand\/gsp-mark\.png[^>]*height="259"/, 'gsp mark img height does not match PNG (259)');
 

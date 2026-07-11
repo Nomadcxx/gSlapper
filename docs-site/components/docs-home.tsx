@@ -50,8 +50,8 @@ export function DocsHome() {
           className="docs-wordmark"
           src={`${basePath}/brand/gslapper-wordmark.png`}
           alt="gSlapper"
-          width="1128"
-          height="259"
+          width="726"
+          height="124"
         />
         <p id="docs-home-purpose">
           A wallpaper utility for Wayland that plays video and static image wallpapers with
