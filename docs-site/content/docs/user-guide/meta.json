@@ -1,0 +1,14 @@
+{
+  "title": "User Guide",
+  "pages": [
+    "index",
+    "video-wallpapers",
+    "static-images",
+    "scaling-modes",
+    "ipc-control",
+    "command-line-options",
+    "persistent-wallpapers",
+    "systemd-service-setup",
+    "migration-guide"
+  ]
+}

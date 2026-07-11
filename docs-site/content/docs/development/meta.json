@@ -1,0 +1,10 @@
+{
+  "title": "Development",
+  "pages": [
+    "building",
+    "contributing",
+    "api-reference",
+    "architecture",
+    "systemd-service"
+  ]
+}
