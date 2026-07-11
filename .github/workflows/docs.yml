@@ -3,42 +3,54 @@ name: Deploy Documentation
 on:
   push:
     branches:
-      - development
       - master
-      - main
     paths:
-      - 'docs/**'
-      - 'mkdocs.yml'
+      - 'docs-site/**'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          python-version: '3.x'
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
 
-      - name: Install dependencies
-        run: |
-          pip install mkdocs-material
-          pip install mkdocs-git-revision-date-localized-plugin
-          pip install pymdown-extensions
+      - name: Install documentation dependencies
+        run: npm ci
+        working-directory: docs-site
 
-      - name: Build documentation
-        run: mkdocs build
+      - name: Check and build documentation
+        run: npm run check
+        working-directory: docs-site
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs-site/out
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
+        id: deployment
+        uses: actions/deploy-pages@v3

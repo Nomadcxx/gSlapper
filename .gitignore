@@ -119,8 +119,13 @@ benchmark-test-video.mp4
 *.tasks*
 *-this-session-is-being-continued-from-a-previous-co.txt
 
-# MkDocs build output
-site/
+# Fumadocs docs-site build artifacts
+docs-site/node_modules/
+docs-site/.next/
+docs-site/out/
+docs-site/.source/
+docs-site/tsconfig.tsbuildinfo
+docs-site/next-env.d.ts
 test-video-modes.sh
 
 # Git worktrees
