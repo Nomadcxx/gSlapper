@@ -28,6 +28,7 @@
               gst_all_1.gst-plugins-good
               systemd
               wayland-scanner
+              makeWrapper
             ];
             buildInputs = with pkgs; [
               meson
@@ -46,6 +47,21 @@
             ];
             pname = "gslapper";
             version = "1.5.0";
+
+            postFixup = ''
+              wrapProgram $out/bin/gslapper \
+                --prefix GST_PLUGIN_SYSTEM_PATH_1_0 : "${
+                  pkgs.lib.makeSearchPath "lib/gstreamer-1.0" (
+                    with pkgs.gst_all_1;
+                    [
+                      gstreamer.out
+                      gst-plugins-base
+                      gst-plugins-good
+                      gst-plugins-bad
+                    ]
+                  )
+                }"
+            '';
           };
           default = gslapper;
         };
