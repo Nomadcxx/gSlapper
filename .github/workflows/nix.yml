@@ -1,0 +1,42 @@
+name: Nix
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/nix.yml'
+      - 'flake.nix'
+      - 'flake.lock'
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/nix.yml'
+      - 'flake.nix'
+      - 'flake.lock'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NIX_CONFIG: experimental-features = nix-command flakes
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Check flake
+        run: nix flake check --print-build-logs
+
+      - name: Build
+        run: nix build .#gslapper --print-build-logs
+
+      - name: Verify wrapper and smoke test
+        run: |
+          grep -q 'GST_PLUGIN_SYSTEM_PATH_1_0' result/bin/gslapper
+          env -u WAYLAND_DISPLAY ./result/bin/gslapper --help > /dev/null
