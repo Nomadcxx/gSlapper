@@ -155,6 +155,26 @@ When reporting issues, please include:
 - **Actual behavior** - What actually happens
 - **Logs** - Output with `-vv` flag if applicable
 
+## Release Process
+
+The in-repo `PKGBUILD` and `gslapper.install` are the canonical templates for the AUR package; the AUR copies must stay identical to them.
+
+For every release `vX.Y.Z`, in order:
+
+1. Bump the version in all three files: `meson.build`, `PKGBUILD` (`pkgver`), and `flake.nix`.
+2. Update `gslapper.install`:
+   - Rewrite the "New in X.Y.Z" notes in `post_upgrade` for this release.
+   - Keep the brand ASCII banner in **both** `post_install` and `post_upgrade`. It was lost from `post_upgrade` in the 1.4.0 update; do not lose it again.
+3. Commit to master, push, then create and push the annotated tag `vX.Y.Z`. The tag triggers the release workflow: per-distro builds (Ubuntu, Debian, Fedora), nfpm deb/rpm packaging, in-container install verification, and a GitHub Release with SHA256SUMS. Confirm every job succeeds before continuing.
+4. After the tag exists, download `https://github.com/Nomadcxx/gSlapper/archive/vX.Y.Z.tar.gz`, put its sha256 into `PKGBUILD` `sha256sums`, and commit that to master. The tag's own tarball necessarily carries the previous hash; master is what the AUR template is copied from, so master must be correct.
+5. If linked libraries changed, update `depends` in `PKGBUILD` and the dependency lists in the release workflow (check with `ldd build/gslapper`; example: `systemd-libs` was added in 1.5.1 for libsystemd).
+6. Update the AUR package (`ssh://aur@aur.archlinux.org/gslapper.git`):
+   - Copy `PKGBUILD` and `gslapper.install` from the repo.
+   - Verify with a real build: `makepkg -f` must download the tag tarball, pass the checksum, and build.
+   - Regenerate metadata: `makepkg --printsrcinfo > .SRCINFO`.
+   - Commit and push. Never commit tarballs, `pkg/`, or `src/`.
+7. Verify the release is live: the AUR cgit `.SRCINFO` shows the new `pkgver` (the RPC API caches for a few minutes), and the GitHub Release lists the deb, rpm, and SHA256SUMS assets.
+
 ## Questions?
 
 Feel free to open an issue for questions or discussions about contributions.
