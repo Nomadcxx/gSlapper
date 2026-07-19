@@ -58,18 +58,20 @@ iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAA
 EOF
 
 # Runs gslapper with an image wallpaper for a few seconds, then SIGTERMs it.
-# Success means the image decoded (cache add logged) with no decode error.
+# Success means the file decoded with no decode error: static images log
+# "Cache added"; GIFs route through the video pipeline when gst-libav is
+# installed and log "Loaded" instead.
 test_image_decode() {
     local file="$1" label="$2" log="$WORK_DIR/$label.log"
 
     timeout -s TERM 8 stdbuf -oL -eL "$GSLAPPER" --no-save-state -v '*' "$file" > "$log" 2>&1
 
-    if grep -q "Image decode error" "$log"; then
-        fail "$label wallpaper decodes ($(grep 'Image decode error' "$log" | head -1))"
-    elif grep -q "Cache added" "$log"; then
+    if grep -qE "Image decode error|GStreamer error" "$log"; then
+        fail "$label wallpaper decodes ($(grep -E 'Image decode error|GStreamer error' "$log" | head -1))"
+    elif grep -qE "Cache added|Loaded " "$log"; then
         pass "$label wallpaper decodes"
     else
-        fail "$label wallpaper decodes (no decode error but no cache add; log tail: $(tail -3 "$log" | tr '\n' ' '))"
+        fail "$label wallpaper decodes (no decode error but no success line; log tail: $(tail -3 "$log" | tr '\n' ' '))"
     fi
 }
 

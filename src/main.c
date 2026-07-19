@@ -158,6 +158,13 @@ static bool stretch_mode = false;  // Stretch to fill without maintaining aspect
 static bool fill_mode = false;       // Fill screen maintaining aspect ratio (crops excess)
 static bool is_image_mode = false;   // True if displaying static image vs video
 static gint64 gif_loop_start_us = 0; // Monotonic time the current GIF loop iteration started
+// CHANGED 2026-07-20 - Snapshot GIF-ness and expose a shutdown flag to the events thread - Problem:
+// the GStreamer events thread runs with cancellation disabled, so exit_cleanup's pthread_cancel never
+// stops it. It must not read video_path (freed by exit_cleanup) or sleep/seek against a pipeline being
+// torn down. video_is_gif is set once at startup (video changes restart the process, so it never goes
+// stale); shutting_down tells the events thread to stop touching the pipeline.
+static bool video_is_gif = false;    // True when the wallpaper is a GIF playing via the video pipeline
+static volatile sig_atomic_t shutting_down = 0;
 static bool image_frame_captured = false;  // True once image frame is decoded
 
 // State management for systemd service
@@ -290,6 +297,11 @@ static bool is_all_outputs_selector(const char *monitor);
 
 // Cleanup function
 static void exit_cleanup() {
+
+    // Tell the events thread to stop sleeping/seeking against the pipeline.
+    // It cannot be cancelled (it runs with cancellation disabled), so it must
+    // observe this flag before we free video_path and unref the pipeline.
+    shutting_down = 1;
 
     // Notify systemd that we're stopping
     notify_systemd_stopping();
@@ -1942,8 +1954,8 @@ static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data) {
             // CHANGED 2026-07-20 - GIFs loop via plain flush seeks - Problem: avdemux_gif mishandles
             // non-flushing segment seeks; after the first loop every buffer arrives late, sync stops
             // throttling, and the GIF plays at decode speed (~700 loops in 20s observed)
-            if (pipeline) {
-                GstSeekFlags eos_loop_flags = is_gif_file(video_path)
+            if (pipeline && !shutting_down) {
+                GstSeekFlags eos_loop_flags = video_is_gif
                     ? GST_SEEK_FLAG_FLUSH
                     : (GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT);
                 if (!gst_element_seek_simple(pipeline, GST_FORMAT_TIME, eos_loop_flags, 0)) {
@@ -1964,19 +1976,28 @@ static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data) {
             // queued frames, so wait out the remaining display time before flushing or the loop runs fast.
             // Regular videos keep the gapless non-flush seek; avdemux_gif also never posts EOS with
             // playbin3, so EOS-based looping is not an option.
-            if (pipeline && is_gif_file(video_path)) {
+            if (pipeline && video_is_gif) {
                 gint64 duration = 0;
                 if (gst_element_query_duration(pipeline, GST_FORMAT_TIME, &duration) && duration > 0) {
                     gint64 remaining_us = duration / 1000 - (g_get_monotonic_time() - gif_loop_start_us);
-                    if (remaining_us > 0 && remaining_us < 30 * G_USEC_PER_SEC)
-                        g_usleep(remaining_us);
+                    if (remaining_us > 30 * G_USEC_PER_SEC)
+                        remaining_us = 0;
+                    // Sleep in short chunks so shutdown is not held up and the
+                    // pipeline is never touched after exit_cleanup starts
+                    while (remaining_us > 0 && !shutting_down) {
+                        gint64 chunk = remaining_us < 50000 ? remaining_us : 50000;
+                        g_usleep(chunk);
+                        remaining_us -= chunk;
+                    }
                 }
+                if (shutting_down)
+                    break;
                 gif_loop_start_us = g_get_monotonic_time();
                 if (!gst_element_seek_simple(pipeline, GST_FORMAT_TIME,
                                            GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT, 0)) {
                     cflp_warning("GIF loop seek failed");
                 }
-            } else if (pipeline) {
+            } else if (pipeline && !shutting_down) {
                 if (!gst_element_seek_simple(pipeline, GST_FORMAT_TIME,
                                            GST_SEEK_FLAG_SEGMENT, 0)) {
                     cflp_warning("Segment seek failed for seamless loop");
@@ -3983,6 +4004,7 @@ int main(int argc, char **argv) {
         // Detect if input is a static image or video. GIFs count as video
         // when a GIF video decoder is available so they play animated.
         is_image_mode = is_static_image_path(video_path);
+        video_is_gif = !is_image_mode && is_gif_file(video_path);
 
         if (is_image_mode) {
             // Default to fill mode for images (unless user specified otherwise)
