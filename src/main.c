@@ -3729,10 +3729,24 @@ int main(int argc, char **argv) {
     mtrace();
 
     // CHANGED 2025-12-25 - Added SIGHUP handler for config reload - Problem: Need runtime config reload support
+    // CHANGED 2026-07-19 - Unblock signals after registering handlers - Problem: when gSlapper is spawned by a
+    // Wayland compositor (e.g. cagebreak) that uses wl_event_loop_add_signal, the compositor blocks SIGTERM
+    // via sigprocmask(SIG_BLOCK) so it can deliver the signal through signalfd. That blocked mask is inherited
+    // by exec'd children. signal() installs a handler but does not unblock the signal, so SIGTERM stays
+    // blocked and pkill/SIGTERM from session teardown or IPC restart paths never reaches the handler.
+    // gSlapper handles these signals itself via handle_signal(), so unblock them explicitly.
     signal(SIGINT, handle_signal);
     signal(SIGQUIT, handle_signal);
     signal(SIGTERM, handle_signal);
     signal(SIGHUP, handle_signal);
+
+    sigset_t unblock_set;
+    sigemptyset(&unblock_set);
+    sigaddset(&unblock_set, SIGINT);
+    sigaddset(&unblock_set, SIGQUIT);
+    sigaddset(&unblock_set, SIGTERM);
+    sigaddset(&unblock_set, SIGHUP);
+    sigprocmask(SIG_UNBLOCK, &unblock_set, NULL);
 
     check_paper_processes();
 
