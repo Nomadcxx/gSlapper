@@ -1,4 +1,4 @@
-project('gslapper', ['c'], version: '1.5.0', license: 'GPL-3.0-only')
+project('gslapper', ['c'], version: '1.5.1', license: 'GPL-3.0-only')
 cc = meson.get_compiler('c')
 
 dl_dep = cc.find_library('dl', required : false)
