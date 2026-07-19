@@ -207,8 +207,8 @@ ipc_send_response(client_fd, "STATUS: playing video /path/to/video.mp4\n");
 
 | Command | Parameters | Response | Description |
 |---------|------------|----------|-------------|
-| `pause` | None | `OK` | Pause video playback |
-| `resume` | None | `OK` | Resume paused playback |
+| `pause` | None | `OK` | Pause video playback (idempotent; repeats are no-ops) |
+| `resume` | None | `OK` | Release the IPC pause (idempotent; does not override auto-pause or pauselist holds) |
 | `stop`, `quit` | None | `OK` | Stop gSlapper (exits) |
 | `save-state` | None | `OK: state saved` | Save current wallpaper state |
 | `query` | None | `STATUS: <state> <type> <path>` | Get current wallpaper state |

@@ -171,6 +171,14 @@ static pthread_mutex_t state_mutex = PTHREAD_MUTEX_INITIALIZER;
 static double restore_position = 0.0;
 static bool restore_paused = false;
 
+// Whether IPC currently holds a pause contribution in halt_info.is_paused.
+// IPC pause/resume are idempotent: repeated pause commands must not stack
+// extra increments that would each require their own resume.
+// Written only from the main loop (execute_ipc_commands and
+// reload_image_pipeline); the auto-pause and pauselist threads adjust
+// halt_info.is_paused for their own holds but never touch this flag.
+static bool ipc_paused = false;
+
 // Cache configuration
 static size_t cache_size_mb = DEFAULT_CACHE_SIZE_MB;
 
@@ -2019,7 +2027,12 @@ static void execute_ipc_commands(void) {
 
         // Dispatch commands
         if (strcmp(cmd_name, "pause") == 0) {
-            if (pipeline) {
+            if (!pipeline) {
+                ipc_send_response(cmd->client_fd, "ERROR: no pipeline\n");
+            } else if (ipc_paused) {
+                // Already paused through IPC; repeating the command is a no-op
+                ipc_send_response(cmd->client_fd, "OK\n");
+            } else {
                 GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PAUSED);
                 if (ret == GST_STATE_CHANGE_FAILURE) {
                     ipc_send_response(cmd->client_fd, "ERROR: failed to pause\n");
@@ -2031,19 +2044,25 @@ static void execute_ipc_commands(void) {
                             ipc_send_response(cmd->client_fd, "ERROR: failed to pause\n");
                         } else {
                             halt_info.is_paused++;
+                            ipc_paused = true;
                             ipc_send_response(cmd->client_fd, "OK\n");
                         }
                     } else {
                         halt_info.is_paused++;
+                        ipc_paused = true;
                         ipc_send_response(cmd->client_fd, "OK\n");
                     }
                 }
-            } else {
-                ipc_send_response(cmd->client_fd, "ERROR: no pipeline\n");
             }
         }
         else if (strcmp(cmd_name, "resume") == 0) {
-            if (pipeline) {
+            if (!pipeline) {
+                ipc_send_response(cmd->client_fd, "ERROR: no pipeline\n");
+            } else if (!ipc_paused) {
+                // IPC holds no pause contribution; do not release pauses owned
+                // by auto-pause or the pauselist monitor
+                ipc_send_response(cmd->client_fd, "OK\n");
+            } else {
                 GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
                 if (ret == GST_STATE_CHANGE_FAILURE) {
                     ipc_send_response(cmd->client_fd, "ERROR: failed to resume\n");
@@ -2055,15 +2074,15 @@ static void execute_ipc_commands(void) {
                             ipc_send_response(cmd->client_fd, "ERROR: failed to resume\n");
                         } else {
                             if (halt_info.is_paused > 0) halt_info.is_paused--;
+                            ipc_paused = false;
                             ipc_send_response(cmd->client_fd, "OK\n");
                         }
                     } else {
                         if (halt_info.is_paused > 0) halt_info.is_paused--;
+                        ipc_paused = false;
                         ipc_send_response(cmd->client_fd, "OK\n");
                     }
                 }
-            } else {
-                ipc_send_response(cmd->client_fd, "ERROR: no pipeline\n");
             }
         }
         else if (strcmp(cmd_name, "query") == 0) {
@@ -2574,6 +2593,14 @@ static bool reload_image_pipeline(const char *new_path) {
         }
         gst_object_unref(pipeline);
         pipeline = NULL;
+    }
+
+    // The pipeline the IPC pause applied to is gone; release the IPC hold so
+    // an image change starts fresh like a video change does through its
+    // process restart. Holds owned by auto-pause or the pauselist stay.
+    if (ipc_paused) {
+        ipc_paused = false;
+        if (halt_info.is_paused > 0) halt_info.is_paused--;
     }
 
     // Reset image capture flag

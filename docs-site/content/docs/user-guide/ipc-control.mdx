@@ -49,15 +49,23 @@ echo "pause" | nc -U /tmp/gslapper.sock
 
 **Response:** `OK`
 
+`pause` is idempotent: repeating it on an already-paused instance answers `OK` and changes nothing. However many times you send `pause`, one `resume` restores playback.
+
 ### `resume`
 
-Resume paused playback.
+Resume playback that was paused through IPC.
 
 ```bash
 echo "resume" | nc -U /tmp/gslapper.sock
 ```
 
 **Response:** `OK`
+
+`resume` is idempotent and releases only the pause set through IPC. If playback is paused by `--auto-pause` or the pauselist, `resume` answers `OK` without overriding that hold; playback continues once the hold clears.
+
+<Callout type="info" title="Multi-monitor controllers">
+Front ends that drive one gSlapper instance per output can send the same `pause` or `resume` to every instance, including instances already in the requested state. Redundant commands are safe no-ops.
+</Callout>
 
 ### `query`
 
@@ -68,6 +76,8 @@ echo "query" | nc -U /tmp/gslapper.sock
 ```
 
 **Response:** `STATUS: playing image /path/to/wallpaper.jpg` or `STATUS: paused video /path/to/video.mp4`
+
+The `paused` state reflects every pause source: IPC `pause`, `--auto-pause`, and the pauselist.
 
 ### `change <path>`
 
