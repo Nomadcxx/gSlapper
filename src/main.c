@@ -157,6 +157,14 @@ static float panscan_value = 1.0f;  // Default to full size (no scaling)
 static bool stretch_mode = false;  // Stretch to fill without maintaining aspect ratio
 static bool fill_mode = false;       // Fill screen maintaining aspect ratio (crops excess)
 static bool is_image_mode = false;   // True if displaying static image vs video
+static gint64 gif_loop_start_us = 0; // Monotonic time the current GIF loop iteration started
+// CHANGED 2026-07-20 - Snapshot GIF-ness and expose a shutdown flag to the events thread - Problem:
+// the GStreamer events thread runs with cancellation disabled, so exit_cleanup's pthread_cancel never
+// stops it. It must not read video_path (freed by exit_cleanup) or sleep/seek against a pipeline being
+// torn down. video_is_gif is set once at startup (video changes restart the process, so it never goes
+// stale); shutting_down tells the events thread to stop touching the pipeline.
+static bool video_is_gif = false;    // True when the wallpaper is a GIF playing via the video pipeline
+static volatile sig_atomic_t shutting_down = 0;
 static bool image_frame_captured = false;  // True once image frame is decoded
 
 // State management for systemd service
@@ -270,6 +278,8 @@ static GLuint get_texture_for_dimensions(int width, int height);
 static GLuint create_shader_program();
 static GLuint create_transition_shader_program();
 static bool is_image_file(const char *path);
+static bool is_gif_file(const char *path);
+static bool is_static_image_path(const char *path);
 static bool should_use_transition(const char *new_path);
 static void start_transition(const char *new_path);
 static void update_transition(void);
@@ -287,6 +297,11 @@ static bool is_all_outputs_selector(const char *monitor);
 
 // Cleanup function
 static void exit_cleanup() {
+
+    // Tell the events thread to stop sleeping/seeking against the pipeline.
+    // It cannot be cancelled (it runs with cancellation disabled), so it must
+    // observe this flag before we free video_path and unref the pipeline.
+    shutting_down = 1;
 
     // Notify systemd that we're stopping
     notify_systemd_stopping();
@@ -767,8 +782,8 @@ static bool should_use_transition(const char *new_path) {
         return false;
     }
     
-    // Only transition between images (not videos)
-    if (!is_image_mode || !is_image_file(new_path)) {
+    // Only transition between static images (not videos or animated GIFs)
+    if (!is_image_mode || !is_static_image_path(new_path)) {
         return false;
     }
     
@@ -1936,9 +1951,14 @@ static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data) {
             if (VERBOSE)
                 cflp_info("End of stream reached - fallback loop method");
             // Fallback: if we get EOS instead of SEGMENT_DONE, still loop
-            if (pipeline) {
-                if (!gst_element_seek_simple(pipeline, GST_FORMAT_TIME, 
-                                           GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT, 0)) {
+            // CHANGED 2026-07-20 - GIFs loop via plain flush seeks - Problem: avdemux_gif mishandles
+            // non-flushing segment seeks; after the first loop every buffer arrives late, sync stops
+            // throttling, and the GIF plays at decode speed (~700 loops in 20s observed)
+            if (pipeline && !shutting_down) {
+                GstSeekFlags eos_loop_flags = video_is_gif
+                    ? GST_SEEK_FLAG_FLUSH
+                    : (GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT);
+                if (!gst_element_seek_simple(pipeline, GST_FORMAT_TIME, eos_loop_flags, 0)) {
                     cflp_warning("EOS fallback seek failed");
                 }
             }
@@ -1948,8 +1968,37 @@ static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data) {
                 cflp_info("Segment done - seamless loop restart");
             // CHANGED 2025-09-07 - Use segment-based seamless looping per GStreamer best practices
             // Problem: EOS-based seeking causes playback gaps, segment seeks provide seamless transitions
-            if (pipeline) {
-                if (!gst_element_seek_simple(pipeline, GST_FORMAT_TIME, 
+            // CHANGED 2026-07-20 - GIFs loop with a delayed flushing segment seek - Problem: avdemux_gif
+            // mishandles non-flushing segment seeks: after the first loop every buffer arrives late, sync
+            // stops throttling, and the GIF plays at decode speed (~700 loops in 20s observed). The flush
+            // resets running time so frame delays are honored each loop. SEGMENT_DONE is posted when the
+            // decoder finishes the segment, which for short GIFs is well before the sink has displayed the
+            // queued frames, so wait out the remaining display time before flushing or the loop runs fast.
+            // Regular videos keep the gapless non-flush seek; avdemux_gif also never posts EOS with
+            // playbin3, so EOS-based looping is not an option.
+            if (pipeline && video_is_gif) {
+                gint64 duration = 0;
+                if (gst_element_query_duration(pipeline, GST_FORMAT_TIME, &duration) && duration > 0) {
+                    gint64 remaining_us = duration / 1000 - (g_get_monotonic_time() - gif_loop_start_us);
+                    if (remaining_us > 30 * G_USEC_PER_SEC)
+                        remaining_us = 0;
+                    // Sleep in short chunks so shutdown is not held up and the
+                    // pipeline is never touched after exit_cleanup starts
+                    while (remaining_us > 0 && !shutting_down) {
+                        gint64 chunk = remaining_us < 50000 ? remaining_us : 50000;
+                        g_usleep(chunk);
+                        remaining_us -= chunk;
+                    }
+                }
+                if (shutting_down)
+                    break;
+                gif_loop_start_us = g_get_monotonic_time();
+                if (!gst_element_seek_simple(pipeline, GST_FORMAT_TIME,
+                                           GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT, 0)) {
+                    cflp_warning("GIF loop seek failed");
+                }
+            } else if (pipeline && !shutting_down) {
+                if (!gst_element_seek_simple(pipeline, GST_FORMAT_TIME,
                                            GST_SEEK_FLAG_SEGMENT, 0)) {
                     cflp_warning("Segment seek failed for seamless loop");
                     // Fallback to regular seek
@@ -1977,9 +2026,10 @@ static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data) {
                     if (!segment_initialized) {
                         if (VERBOSE)
                             cflp_info("Setting up seamless segment-based looping");
-                        
+                        gif_loop_start_us = g_get_monotonic_time();
+
                         // Perform initial seek to enable segment looping
-                        if (!gst_element_seek(pipeline, 1.0, GST_FORMAT_TIME, 
+                        if (!gst_element_seek(pipeline, 1.0, GST_FORMAT_TIME,
                                             GST_SEEK_FLAG_SEGMENT,
                                             GST_SEEK_TYPE_SET, 0,
                                             GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE)) {
@@ -2157,8 +2207,8 @@ static void execute_ipc_commands(void) {
                         if (VERBOSE)
                             cflp_info("IPC: Change command completed");
                     } else {
-                        // No transition - check if this is an image (can reload directly)
-                        if (is_image_mode && is_image_file(arg)) {
+                        // No transition - check if this is a static image (can reload directly)
+                        if (is_image_mode && is_static_image_path(arg)) {
                             // For images, reload pipeline directly without restart
                             if (reload_image_pipeline(arg)) {
                                 ipc_send_response(cmd->client_fd, "OK\n");
@@ -2562,6 +2612,57 @@ static bool is_image_file(const char *path) {
     return false;
 }
 
+// CHANGED 2026-07-20 - Route GIF through gdkpixbufdec - Problem: decodebin picks decoders by matching
+// typefind caps against sink pad templates, and gdkpixbufdec's template does not advertise image/gif
+// even though gdk-pixbuf decodes GIF fine. No other element provides an image/gif decoder on a standard
+// install, so decodebin fails with "missing a plug-in" for every GIF. Linking filesrc straight into
+// gdkpixbufdec skips caps-based selection and lets gdk-pixbuf sniff the format itself. Other image
+// formats keep decodebin so their dedicated decoders (pngdec, jpegdec, webpdec) stay in use.
+static bool is_gif_file(const char *path) {
+    if (!path) return false;
+
+    const char *ext = strrchr(path, '.');
+    if (!ext) return false;
+
+    char ext_lower[16] = {0};
+    for (int i = 0; ext[i] && i < 15; i++) {
+        ext_lower[i] = (ext[i] >= 'A' && ext[i] <= 'Z') ? ext[i] + 32 : ext[i];
+    }
+
+    return strcmp(ext_lower, ".gif") == 0;
+}
+
+// CHANGED 2026-07-20 - Play GIFs through the video pipeline when possible - Problem: the image pipeline
+// captures a single frame, so animated GIFs rendered as static images. A GIF video decoder (avdec_gif
+// from gst-libav) lets the normal video path play them animated with seamless looping.
+static bool gif_video_decoder_available(void) {
+    static int cached = -1;
+    if (cached == -1) {
+        gst_init(NULL, NULL);
+        GstCaps *gif_caps = gst_caps_new_empty_simple("image/gif");
+        // DECODABLE (decoders + demuxers + parsers) matches what decodebin
+        // autoplugs: gst-libav handles GIF as avdemux_gif ! avdec_gif, where
+        // only the demuxer's sink pad advertises image/gif.
+        GList *decoders = gst_element_factory_list_get_elements(
+            GST_ELEMENT_FACTORY_TYPE_DECODABLE, GST_RANK_MARGINAL);
+        GList *gif_decoders = gst_element_factory_list_filter(decoders, gif_caps, GST_PAD_SINK, FALSE);
+        cached = (gif_decoders != NULL);
+        gst_plugin_feature_list_free(gif_decoders);
+        gst_plugin_feature_list_free(decoders);
+        gst_caps_unref(gif_caps);
+    }
+    return cached;
+}
+
+// Whether path should display through the static image pipeline. GIFs go
+// through the video pipeline when a GIF video decoder is installed; without
+// one they fall back to a static first frame via gdkpixbufdec.
+static bool is_static_image_path(const char *path) {
+    if (!is_image_file(path)) return false;
+    if (is_gif_file(path) && gif_video_decoder_available()) return false;
+    return true;
+}
+
 // Callback for decodebin dynamic pad linking (image pipeline)
 static void on_decodebin_pad_added(GstElement *decodebin, GstPad *pad, gpointer data) {
     GstElement *videoconvert = (GstElement *)data;
@@ -2638,7 +2739,7 @@ static bool reload_image_pipeline(const char *new_path) {
     }
 
     // Update is_image_mode
-    is_image_mode = is_image_file(new_path);
+    is_image_mode = is_static_image_path(new_path);
 
     // Build the new image pipeline inline (don't call init_image_pipeline to avoid exit on error)
     char resolved_path[PATH_MAX];
@@ -2678,12 +2779,19 @@ static bool reload_image_pipeline(const char *new_path) {
         cflp_info("Loading new image: %s", resolved_path);
 
     // Create pipeline elements
+    // CHANGED 2026-07-20 - Select GIF decoder explicitly - Problem: decodebin has no image/gif decoder path
+    bool use_pixbuf_decoder = is_gif_file(resolved_path);
+    if (use_pixbuf_decoder)
+        cflp_warning("No GIF video decoder found (install gst-libav for animation); displaying first frame only");
     GstElement *filesrc = gst_element_factory_make("filesrc", "filesrc");
-    GstElement *decodebin = gst_element_factory_make("decodebin", "decodebin");
+    GstElement *decoder = gst_element_factory_make(
+        use_pixbuf_decoder ? "gdkpixbufdec" : "decodebin", "imagedec");
     GstElement *videoconvert = gst_element_factory_make("videoconvert", "videoconvert");
     GstElement *appsink = gst_element_factory_make("appsink", "appsink");
 
-    if (!filesrc || !decodebin || !videoconvert || !appsink) {
+    if (!filesrc || !decoder || !videoconvert || !appsink) {
+        if (use_pixbuf_decoder && !decoder)
+            cflp_error("gdkpixbufdec unavailable (install gst-plugins-good)");
         cflp_error("Failed to create image pipeline elements");
         cancel_transition();
         return false;
@@ -2712,11 +2820,11 @@ static bool reload_image_pipeline(const char *new_path) {
     gst_caps_unref(caps);
 
     // Add elements to pipeline
-    gst_bin_add_many(GST_BIN(pipeline), filesrc, decodebin, videoconvert, appsink, NULL);
+    gst_bin_add_many(GST_BIN(pipeline), filesrc, decoder, videoconvert, appsink, NULL);
 
-    // Link filesrc to decodebin
-    if (!gst_element_link(filesrc, decodebin)) {
-        cflp_error("Failed to link filesrc to decodebin");
+    // Link filesrc to decoder
+    if (!gst_element_link(filesrc, decoder)) {
+        cflp_error("Failed to link filesrc to image decoder");
         gst_object_unref(pipeline);
         pipeline = NULL;
         cancel_transition();
@@ -2732,8 +2840,18 @@ static bool reload_image_pipeline(const char *new_path) {
         return false;
     }
 
-    // Connect decodebin's dynamic pad to videoconvert
-    g_signal_connect(decodebin, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
+    // gdkpixbufdec has static pads and links directly; decodebin needs dynamic pad linking
+    if (use_pixbuf_decoder) {
+        if (!gst_element_link(decoder, videoconvert)) {
+            cflp_error("Failed to link gdkpixbufdec to videoconvert");
+            gst_object_unref(pipeline);
+            pipeline = NULL;
+            cancel_transition();
+            return false;
+        }
+    } else {
+        g_signal_connect(decoder, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
+    }
 
     // Set up buffer probe on appsink
     GstPad *sink_pad = gst_element_get_static_pad(appsink, "sink");
@@ -2864,18 +2982,25 @@ static void init_image_pipeline(void) {
     // Initialize GStreamer if not already done
     gst_init(NULL, NULL);
 
-    // Build simple image pipeline: filesrc ! decodebin ! videoconvert ! appsink
+    // Build simple image pipeline: filesrc ! (decodebin | gdkpixbufdec) ! videoconvert ! appsink
 
     if (VERBOSE)
         cflp_info("Loading image: %s", resolved_path);
 
     // Create pipeline elements
+    // CHANGED 2026-07-20 - Select GIF decoder explicitly - Problem: decodebin has no image/gif decoder path
+    bool use_pixbuf_decoder = is_gif_file(resolved_path);
+    if (use_pixbuf_decoder)
+        cflp_warning("No GIF video decoder found (install gst-libav for animation); displaying first frame only");
     GstElement *filesrc = gst_element_factory_make("filesrc", "filesrc");
-    GstElement *decodebin = gst_element_factory_make("decodebin", "decodebin");
+    GstElement *decoder = gst_element_factory_make(
+        use_pixbuf_decoder ? "gdkpixbufdec" : "decodebin", "imagedec");
     GstElement *videoconvert = gst_element_factory_make("videoconvert", "videoconvert");
     GstElement *appsink = gst_element_factory_make("appsink", "appsink");
 
-    if (!filesrc || !decodebin || !videoconvert || !appsink) {
+    if (!filesrc || !decoder || !videoconvert || !appsink) {
+        if (use_pixbuf_decoder && !decoder)
+            cflp_error("gdkpixbufdec unavailable (install gst-plugins-good)");
         cflp_error("Failed to create image pipeline elements");
         exit_slapper(EXIT_FAILURE);
     }
@@ -2902,11 +3027,11 @@ static void init_image_pipeline(void) {
     gst_caps_unref(caps);
 
     // Add elements to pipeline
-    gst_bin_add_many(GST_BIN(pipeline), filesrc, decodebin, videoconvert, appsink, NULL);
+    gst_bin_add_many(GST_BIN(pipeline), filesrc, decoder, videoconvert, appsink, NULL);
 
-    // Link filesrc to decodebin
-    if (!gst_element_link(filesrc, decodebin)) {
-        cflp_error("Failed to link filesrc to decodebin");
+    // Link filesrc to decoder
+    if (!gst_element_link(filesrc, decoder)) {
+        cflp_error("Failed to link filesrc to image decoder");
         exit_slapper(EXIT_FAILURE);
     }
 
@@ -2916,8 +3041,15 @@ static void init_image_pipeline(void) {
         exit_slapper(EXIT_FAILURE);
     }
 
-    // Connect decodebin's dynamic pad to videoconvert
-    g_signal_connect(decodebin, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
+    // gdkpixbufdec has static pads and links directly; decodebin needs dynamic pad linking
+    if (use_pixbuf_decoder) {
+        if (!gst_element_link(decoder, videoconvert)) {
+            cflp_error("Failed to link gdkpixbufdec to videoconvert");
+            exit_slapper(EXIT_FAILURE);
+        }
+    } else {
+        g_signal_connect(decoder, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
+    }
 
     // Set up buffer probe on appsink
     GstPad *sink_pad = gst_element_get_static_pad(appsink, "sink");
@@ -3869,8 +4001,10 @@ int main(int argc, char **argv) {
         if (VERBOSE)
             cflp_success("EGL initialized");
 
-        // Detect if input is image or video
-        is_image_mode = is_image_file(video_path);
+        // Detect if input is a static image or video. GIFs count as video
+        // when a GIF video decoder is available so they play animated.
+        is_image_mode = is_static_image_path(video_path);
+        video_is_gif = !is_image_mode && is_gif_file(video_path);
 
         if (is_image_mode) {
             // Default to fill mode for images (unless user specified otherwise)
