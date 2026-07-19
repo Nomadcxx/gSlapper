@@ -174,6 +174,9 @@ static bool restore_paused = false;
 // Whether IPC currently holds a pause contribution in halt_info.is_paused.
 // IPC pause/resume are idempotent: repeated pause commands must not stack
 // extra increments that would each require their own resume.
+// Written only from the main loop (execute_ipc_commands and
+// reload_image_pipeline); the auto-pause and pauselist threads adjust
+// halt_info.is_paused for their own holds but never touch this flag.
 static bool ipc_paused = false;
 
 // Cache configuration
@@ -2590,6 +2593,14 @@ static bool reload_image_pipeline(const char *new_path) {
         }
         gst_object_unref(pipeline);
         pipeline = NULL;
+    }
+
+    // The pipeline the IPC pause applied to is gone; release the IPC hold so
+    // an image change starts fresh like a video change does through its
+    // process restart. Holds owned by auto-pause or the pauselist stay.
+    if (ipc_paused) {
+        ipc_paused = false;
+        if (halt_info.is_paused > 0) halt_info.is_paused--;
     }
 
     // Reset image capture flag
