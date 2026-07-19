@@ -572,7 +572,27 @@ static void exit_slapper(int reason) {
 }
 
 // CHANGED 2025-12-25 - Implemented SIGHUP reload functionality - Problem: Need config reload without restarting process
+// CHANGED 2026-07-20 - Signal handler only records the signal - Problem: handle_signal called
+// save_current_state/exit_cleanup directly from signal context. Neither is async-signal-safe
+// (file I/O, usleep, pthread_cancel, g_object_unref of the pipeline), and the handler can run
+// on any thread: production coredumps show the main thread and a GStreamer streaming thread
+// both inside exit_cleanup, double-freeing the pipeline (SEGV). SIGTERM during startup crashed
+// or hung half of local test runs. The main poll() loop, which wakes on EINTR when a signal
+// is delivered, calls process_pending_signal() to do the shutdown from normal context.
+static volatile sig_atomic_t pending_signal = 0;
+
 static void handle_signal(int signum) {
+    pending_signal = signum;
+}
+
+// Performs the shutdown work handle_signal used to do, from normal context.
+// Called from the main loop and from init/reload wait loops.
+static void process_pending_signal(void) {
+    int signum = pending_signal;
+    if (signum == 0)
+        return;
+    pending_signal = 0;
+
     if (signum == SIGHUP) {
         // SIGHUP means reload - save state and restart gracefully
         cflp_info("Received SIGHUP, saving state for reload...");
@@ -2772,6 +2792,9 @@ static bool reload_image_pipeline(const char *new_path) {
             wl_display_flush(global_state->display);
         }
         
+        // Handle shutdown signals arriving during the decode wait
+        process_pending_signal();
+
         // Short sleep to avoid busy-waiting
         g_usleep(10000);  // 10ms - balance between responsiveness and CPU usage
         waited += 10;  // Increment by sleep duration
@@ -2917,6 +2940,9 @@ static void init_image_pipeline(void) {
     int timeout_ms = 5000;
     int waited = 0;
     while (!image_frame_captured && waited < timeout_ms) {
+        // Handle shutdown signals arriving during the decode wait
+        process_pending_signal();
+
         g_usleep(10000);  // 10ms
         waited += 10;
 
@@ -3913,6 +3939,11 @@ int main(int argc, char **argv) {
         int poll_result = poll(fds, nfds, poll_timeout);
         if (poll_result == -1 && errno != EINTR)
             break;
+
+        // Handle signals recorded by handle_signal() from normal context.
+        // A delivered signal interrupts poll() with EINTR, so this runs
+        // immediately after delivery.
+        process_pending_signal();
 
 
         // If wl_display_prepare_read() was successful as 0
