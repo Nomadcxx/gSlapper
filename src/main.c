@@ -2542,6 +2542,26 @@ static bool is_image_file(const char *path) {
     return false;
 }
 
+// CHANGED 2026-07-20 - Route GIF through gdkpixbufdec - Problem: decodebin picks decoders by matching
+// typefind caps against sink pad templates, and gdkpixbufdec's template does not advertise image/gif
+// even though gdk-pixbuf decodes GIF fine. No other element provides an image/gif decoder on a standard
+// install, so decodebin fails with "missing a plug-in" for every GIF. Linking filesrc straight into
+// gdkpixbufdec skips caps-based selection and lets gdk-pixbuf sniff the format itself. Other image
+// formats keep decodebin so their dedicated decoders (pngdec, jpegdec, webpdec) stay in use.
+static bool is_gif_file(const char *path) {
+    if (!path) return false;
+
+    const char *ext = strrchr(path, '.');
+    if (!ext) return false;
+
+    char ext_lower[16] = {0};
+    for (int i = 0; ext[i] && i < 15; i++) {
+        ext_lower[i] = (ext[i] >= 'A' && ext[i] <= 'Z') ? ext[i] + 32 : ext[i];
+    }
+
+    return strcmp(ext_lower, ".gif") == 0;
+}
+
 // Callback for decodebin dynamic pad linking (image pipeline)
 static void on_decodebin_pad_added(GstElement *decodebin, GstPad *pad, gpointer data) {
     GstElement *videoconvert = (GstElement *)data;
@@ -2658,12 +2678,17 @@ static bool reload_image_pipeline(const char *new_path) {
         cflp_info("Loading new image: %s", resolved_path);
 
     // Create pipeline elements
+    // CHANGED 2026-07-20 - Select GIF decoder explicitly - Problem: decodebin has no image/gif decoder path
+    bool use_pixbuf_decoder = is_gif_file(resolved_path);
     GstElement *filesrc = gst_element_factory_make("filesrc", "filesrc");
-    GstElement *decodebin = gst_element_factory_make("decodebin", "decodebin");
+    GstElement *decoder = gst_element_factory_make(
+        use_pixbuf_decoder ? "gdkpixbufdec" : "decodebin", "imagedec");
     GstElement *videoconvert = gst_element_factory_make("videoconvert", "videoconvert");
     GstElement *appsink = gst_element_factory_make("appsink", "appsink");
 
-    if (!filesrc || !decodebin || !videoconvert || !appsink) {
+    if (!filesrc || !decoder || !videoconvert || !appsink) {
+        if (use_pixbuf_decoder && !decoder)
+            cflp_error("gdkpixbufdec unavailable (install gst-plugins-good)");
         cflp_error("Failed to create image pipeline elements");
         cancel_transition();
         return false;
@@ -2692,11 +2717,11 @@ static bool reload_image_pipeline(const char *new_path) {
     gst_caps_unref(caps);
 
     // Add elements to pipeline
-    gst_bin_add_many(GST_BIN(pipeline), filesrc, decodebin, videoconvert, appsink, NULL);
+    gst_bin_add_many(GST_BIN(pipeline), filesrc, decoder, videoconvert, appsink, NULL);
 
-    // Link filesrc to decodebin
-    if (!gst_element_link(filesrc, decodebin)) {
-        cflp_error("Failed to link filesrc to decodebin");
+    // Link filesrc to decoder
+    if (!gst_element_link(filesrc, decoder)) {
+        cflp_error("Failed to link filesrc to image decoder");
         gst_object_unref(pipeline);
         pipeline = NULL;
         cancel_transition();
@@ -2712,8 +2737,18 @@ static bool reload_image_pipeline(const char *new_path) {
         return false;
     }
 
-    // Connect decodebin's dynamic pad to videoconvert
-    g_signal_connect(decodebin, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
+    // gdkpixbufdec has static pads and links directly; decodebin needs dynamic pad linking
+    if (use_pixbuf_decoder) {
+        if (!gst_element_link(decoder, videoconvert)) {
+            cflp_error("Failed to link gdkpixbufdec to videoconvert");
+            gst_object_unref(pipeline);
+            pipeline = NULL;
+            cancel_transition();
+            return false;
+        }
+    } else {
+        g_signal_connect(decoder, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
+    }
 
     // Set up buffer probe on appsink
     GstPad *sink_pad = gst_element_get_static_pad(appsink, "sink");
@@ -2841,18 +2876,23 @@ static void init_image_pipeline(void) {
     // Initialize GStreamer if not already done
     gst_init(NULL, NULL);
 
-    // Build simple image pipeline: filesrc ! decodebin ! videoconvert ! appsink
+    // Build simple image pipeline: filesrc ! (decodebin | gdkpixbufdec) ! videoconvert ! appsink
 
     if (VERBOSE)
         cflp_info("Loading image: %s", resolved_path);
 
     // Create pipeline elements
+    // CHANGED 2026-07-20 - Select GIF decoder explicitly - Problem: decodebin has no image/gif decoder path
+    bool use_pixbuf_decoder = is_gif_file(resolved_path);
     GstElement *filesrc = gst_element_factory_make("filesrc", "filesrc");
-    GstElement *decodebin = gst_element_factory_make("decodebin", "decodebin");
+    GstElement *decoder = gst_element_factory_make(
+        use_pixbuf_decoder ? "gdkpixbufdec" : "decodebin", "imagedec");
     GstElement *videoconvert = gst_element_factory_make("videoconvert", "videoconvert");
     GstElement *appsink = gst_element_factory_make("appsink", "appsink");
 
-    if (!filesrc || !decodebin || !videoconvert || !appsink) {
+    if (!filesrc || !decoder || !videoconvert || !appsink) {
+        if (use_pixbuf_decoder && !decoder)
+            cflp_error("gdkpixbufdec unavailable (install gst-plugins-good)");
         cflp_error("Failed to create image pipeline elements");
         exit_slapper(EXIT_FAILURE);
     }
@@ -2879,11 +2919,11 @@ static void init_image_pipeline(void) {
     gst_caps_unref(caps);
 
     // Add elements to pipeline
-    gst_bin_add_many(GST_BIN(pipeline), filesrc, decodebin, videoconvert, appsink, NULL);
+    gst_bin_add_many(GST_BIN(pipeline), filesrc, decoder, videoconvert, appsink, NULL);
 
-    // Link filesrc to decodebin
-    if (!gst_element_link(filesrc, decodebin)) {
-        cflp_error("Failed to link filesrc to decodebin");
+    // Link filesrc to decoder
+    if (!gst_element_link(filesrc, decoder)) {
+        cflp_error("Failed to link filesrc to image decoder");
         exit_slapper(EXIT_FAILURE);
     }
 
@@ -2893,8 +2933,15 @@ static void init_image_pipeline(void) {
         exit_slapper(EXIT_FAILURE);
     }
 
-    // Connect decodebin's dynamic pad to videoconvert
-    g_signal_connect(decodebin, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
+    // gdkpixbufdec has static pads and links directly; decodebin needs dynamic pad linking
+    if (use_pixbuf_decoder) {
+        if (!gst_element_link(decoder, videoconvert)) {
+            cflp_error("Failed to link gdkpixbufdec to videoconvert");
+            exit_slapper(EXIT_FAILURE);
+        }
+    } else {
+        g_signal_connect(decoder, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
+    }
 
     // Set up buffer probe on appsink
     GstPad *sink_pad = gst_element_get_static_pad(appsink, "sink");
