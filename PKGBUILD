@@ -6,7 +6,7 @@ pkgdesc="Modern mpvpaper replacement - Wayland wallpaper utility with video/imag
 arch=('x86_64')
 url="https://github.com/Nomadcxx/gSlapper"
 license=('GPL-3.0-only')
-depends=('gstreamer' 'gst-plugins-base' 'gst-plugins-good' 'gst-plugins-bad' 'wayland')
+depends=('gstreamer' 'gst-plugins-base' 'gst-plugins-good' 'gst-plugins-bad' 'wayland' 'systemd-libs')
 makedepends=('meson' 'ninja' 'wayland-protocols')
 optdepends=('gst-plugins-ugly: additional codec support'
             'gst-libav: FFmpeg-based codec support')
