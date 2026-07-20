@@ -46,7 +46,7 @@
               ninja
             ];
             pname = "gslapper";
-            version = "1.5.1";
+            version = "1.5.2";
 
             postFixup = ''
               wrapProgram $out/bin/gslapper \
