@@ -89,3 +89,8 @@ GPL-3.0 License - see [LICENSE](LICENSE)
 - [swww](https://github.com/Horus645/swww)
 - [GStreamer](https://gstreamer.freedesktop.org/)
 - [Clapper](https://github.com/Rafostar/clapper)
+
+---
+
+Built by [RAMA](https://github.com/Nomadcxx) — terminal-native tooling for the linux desktop.
+[More projects →](https://github.com/Nomadcxx) · [Sponsor ♥](https://github.com/sponsors/Nomadcxx)
