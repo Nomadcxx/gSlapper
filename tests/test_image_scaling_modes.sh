@@ -54,7 +54,8 @@ test_image_scale "fill" "Fill mode:" "fill"
 test_image_scale "stretch" "Stretch mode:" "stretch"
 test_image_scale "original" "Original resolution mode:" "original"
 test_image_scale "panscan=1.0" "Panscan mode:" "panscan"
+test_image_scale "panscan" "Panscan mode:" "panscan-default"
 test_image_scale "" "Fill mode:" "default"
 
-echo "=== Results: $((5 - TESTS_FAILED)) passed, $TESTS_FAILED failed ==="
+echo "=== Results: $((6 - TESTS_FAILED)) passed, $TESTS_FAILED failed ==="
 [[ $TESTS_FAILED -eq 0 ]]
