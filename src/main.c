@@ -156,6 +156,7 @@ static char *gst_options = "";
 static float panscan_value = 1.0f;  // Default to full size (no scaling)
 static bool stretch_mode = false;  // Stretch to fill without maintaining aspect ratio
 static bool fill_mode = false;       // Fill screen maintaining aspect ratio (crops excess)
+static bool scaling_mode_explicit = false;
 static bool is_image_mode = false;   // True if displaying static image vs video
 static gint64 gif_loop_start_us = 0; // Monotonic time the current GIF loop iteration started
 // CHANGED 2026-07-20 - Snapshot GIF-ness and expose a shutdown flag to the events thread - Problem:
@@ -2507,57 +2508,35 @@ static void set_frame_rate_cap(int fps) {
         cflp_info("Frame rate cap set to %d FPS", frame_rate_cap);
 }
 
-static void apply_gst_options() {
-    if (VERBOSE)
-        cflp_info("Applying GStreamer options: %s", gst_options);
-    
-    // Parse gst_options and apply them to the pipeline
-    if (strstr(gst_options, "no-audio") != NULL || strstr(gst_options, "mute") != NULL) {
-        // Disable audio by setting flags
-        gint flags = 0x00000001; // GST_PLAY_FLAG_VIDEO only
-        g_object_set(G_OBJECT(pipeline), "flags", flags, NULL);
-    } else {
-        // Enable both video and audio
-        gint flags = 0x00000003; // GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO
-        g_object_set(G_OBJECT(pipeline), "flags", flags, NULL);
-    }
-    
-    // Handle loop options
-    if (strstr(gst_options, "loop") != NULL || SLIDESHOW_TIME != 0) {
-        // Loop is handled by seeking to beginning on EOS
-        if (VERBOSE)
-            cflp_info("Looping enabled");
-    }
-
-    // Check for fill mode (fill screen maintaining aspect, crop excess)
+// CHANGED 2026-09-24 - Parse scaling before image/video setup - Problem: the image pipeline bypasses GStreamer option setup.
+static void apply_scaling_options() {
     if (strstr(gst_options, "fill") != NULL) {
+        scaling_mode_explicit = true;
         fill_mode = true;
         if (VERBOSE)
             cflp_info("Fill mode enabled (crop to fill screen)");
     }
 
-    // Handle stretch option
     if (strstr(gst_options, "stretch") != NULL) {
+        scaling_mode_explicit = true;
         stretch_mode = true;
         if (VERBOSE)
             cflp_info("Stretch mode enabled");
     }
-    
-    // Handle original resolution option
+
     if (strstr(gst_options, "original") != NULL) {
-        panscan_value = -1.0f; // Special value to indicate original resolution mode
-        stretch_mode = false; // Original overrides stretch
+        scaling_mode_explicit = true;
+        panscan_value = -1.0f;
+        stretch_mode = false;
         if (VERBOSE)
             cflp_info("Original resolution mode enabled");
     }
-    
-    // Handle panscan option (only if not using original resolution)
+
     if (panscan_value != -1.0f && strstr(gst_options, "panscan") != NULL) {
-        // Extract the panscan value from the options string
+        scaling_mode_explicit = true;
         char *panscan_str = strstr(gst_options, "panscan=");
         if (panscan_str) {
-            // Move pointer to the value part (after "panscan=")
-            panscan_str += 8; // Length of "panscan="
+            panscan_str += 8;
             float new_panscan = atof(panscan_str);
             if (VERBOSE)
                 cflp_info("Parsed panscan string '%s' -> value %.2f", panscan_str, new_panscan);
@@ -2569,19 +2548,40 @@ static void apply_gst_options() {
                 cflp_warning("Invalid panscan value (%.2f), using default (1.0)", new_panscan);
                 panscan_value = 1.0f;
             }
-        } else {
-            // Handle case where "panscan" is present but no value is specified
-            if (VERBOSE)
-                cflp_info("Panscan option detected without value, using default (1.0)");
+        } else if (VERBOSE) {
+            cflp_info("Panscan option detected without value, using default (1.0)");
         }
     }
-    
-    // If neither panscan nor original is specified, use default value of 1.0
+
     if (panscan_value != -1.0f && strstr(gst_options, "panscan") == NULL) {
         panscan_value = 1.0f;
         if (VERBOSE)
             cflp_info("Using default panscan value: 1.0");
     }
+}
+
+static void apply_gst_options() {
+    if (VERBOSE)
+        cflp_info("Applying GStreamer options: %s", gst_options);
+
+    // Parse gst_options and apply them to the pipeline
+    if (strstr(gst_options, "no-audio") != NULL || strstr(gst_options, "mute") != NULL) {
+        // Disable audio by setting flags
+        gint flags = 0x00000001; // GST_PLAY_FLAG_VIDEO only
+        g_object_set(G_OBJECT(pipeline), "flags", flags, NULL);
+    } else {
+        // Enable both video and audio
+        gint flags = 0x00000003; // GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO
+        g_object_set(G_OBJECT(pipeline), "flags", flags, NULL);
+    }
+
+    // Handle loop options
+    if (strstr(gst_options, "loop") != NULL || SLIDESHOW_TIME != 0) {
+        // Loop is handled by seeking to beginning on EOS
+        if (VERBOSE)
+            cflp_info("Looping enabled");
+    }
+
 }
 
 // Known image extensions for fast-path detection
@@ -3972,6 +3972,8 @@ int main(int argc, char **argv) {
                 cflp_info("No state file found or restore failed, continuing with fallback wallpaper");
         }
     }
+
+    apply_scaling_options();
     
     set_watch_lists();
     if (halt_info.auto_stop || halt_info.stoplist)
@@ -4007,8 +4009,8 @@ int main(int argc, char **argv) {
         video_is_gif = !is_image_mode && is_gif_file(video_path);
 
         if (is_image_mode) {
-            // Default to fill mode for images (unless user specified otherwise)
-            if (!stretch_mode && panscan_value == 1.0f && !fill_mode) {
+            // Default to fill mode for images only when no scaling mode was requested.
+            if (!scaling_mode_explicit) {
                 fill_mode = true;
                 if (VERBOSE)
                     cflp_info("Image detected, defaulting to fill mode");
