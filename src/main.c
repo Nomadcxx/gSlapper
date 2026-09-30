@@ -601,6 +601,28 @@ static void handle_signal(int signum) {
     pending_signal = signum;
 }
 
+// CHANGED 2026-09-30 - Deferred stop/exit requests from worker threads
+// stoplist/auto-stop monitors and the GStreamer bus error path used to call
+// stop_slapper()/exit_slapper() directly from their threads; exit_cleanup()
+// tears down the pipeline, EGL context and video_path while the main loop is
+// still rendering and dispatching, racing it into use-after-free crashes.
+// Worker threads now only record the request and wake the main poll loop,
+// which performs the teardown from its own context - the same pattern as
+// pending_signal above.
+#define STOP_REQ_NONE       0
+#define STOP_REQ_RESTART    1  // stop_slapper(): save state, exec gslapper-holder
+#define STOP_REQ_EXIT       2  // exit_slapper(EXIT_FAILURE): fatal GStreamer error
+static volatile sig_atomic_t pending_stop_request = STOP_REQ_NONE;
+
+// Called from worker threads only. wakeup_pipe is created before the monitor
+// threads start, and single-byte pipe writes are atomic.
+static void request_stop_from_thread(int request) {
+    pending_stop_request = request;
+    if (write(wakeup_pipe[1], "s", 1) == -1 && errno != EAGAIN) {
+        cflp_warning("Failed to write to wakeup pipe");
+    }
+}
+
 // Performs the shutdown work handle_signal used to do, from normal context.
 // Called from the main loop and from init/reload wait loops.
 static void process_pending_signal(void) {
@@ -631,6 +653,27 @@ static void process_pending_signal(void) {
         exit_cleanup();
         exit(EXIT_SUCCESS);
     }
+}
+
+// Performs the teardown work monitor_stoplist/handle_auto_stop and the
+// GStreamer bus error path requested, from main-loop context. Called from
+// the main loop and from init/reload wait loops, next to
+// process_pending_signal().
+static void process_pending_stop(void) {
+    int request = pending_stop_request;
+    if (request == STOP_REQ_NONE)
+        return;
+    pending_stop_request = STOP_REQ_NONE;
+
+    if (request == STOP_REQ_EXIT) {
+        cflp_error("Fatal GStreamer error, exiting...");
+        save_current_state();
+        exit_cleanup();
+        exit(EXIT_FAILURE);
+    }
+
+    // STOP_REQ_RESTART
+    stop_slapper();
 }
 
 const static struct wl_callback_listener wl_surface_frame_listener;
@@ -1799,7 +1842,10 @@ static void *monitor_stoplist(void *_) {
         if (app) {
             if (VERBOSE)
                 cflp_info("Stopping for %s", app);
-            stop_slapper();
+            // CHANGED 2026-09-30 - Request stop instead of tearing down here - Problem:
+            // exit_cleanup() frees the pipeline/EGL/video_path this main loop is using;
+            // teardown must happen on the main thread (see process_pending_stop())
+            request_stop_from_thread(STOP_REQ_RESTART);
         }
 
         pthread_sleep(1);
@@ -1847,7 +1893,10 @@ static void *handle_auto_stop(void *_) {
         if (!halt_info.frame_ready) {
             if (VERBOSE)
                 cflp_info("Stopping because clappie is hidden");
-            stop_slapper();
+            // CHANGED 2026-09-30 - Request stop instead of tearing down here - Problem:
+            // exit_cleanup() frees the pipeline/EGL/video_path this main loop is using;
+            // teardown must happen on the main thread (see process_pending_stop())
+            request_stop_from_thread(STOP_REQ_RESTART);
         }
     }
     pthread_exit(NULL);
@@ -1945,7 +1994,10 @@ static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data) {
             
             g_error_free(err);
             g_free(debug_info);
-            exit_slapper(EXIT_FAILURE);
+            // CHANGED 2026-09-30 - Request exit instead of tearing down here - Problem:
+            // this callback runs on the GStreamer events thread; exit_cleanup() would
+            // free the pipeline/EGL the main loop is using (see process_pending_stop())
+            request_stop_from_thread(STOP_REQ_EXIT);
             break;
         }
         case GST_MESSAGE_EOS:
@@ -2066,7 +2118,10 @@ static void *handle_gst_events(void *_) {
         }
 
         // Handle GStreamer messages
-        if (bus) {
+        // CHANGED 2026-09-30 - Stop touching the bus once shutdown starts - Problem:
+        // with teardown deferred to the main thread, exit_cleanup unrefs the bus
+        // while this thread is still popping from it (use-after-free window)
+        if (bus && !shutting_down) {
             GstMessage *msg = gst_bus_timed_pop_filtered(bus, 10000, GST_MESSAGE_ANY);
             
             if (msg) {
@@ -2912,6 +2967,8 @@ static bool reload_image_pipeline(const char *new_path) {
         
         // Handle shutdown signals arriving during the decode wait
         process_pending_signal();
+        // Handle stop/exit requests from monitor threads / bus errors
+        process_pending_stop();
 
         // Short sleep to avoid busy-waiting
         g_usleep(10000);  // 10ms - balance between responsiveness and CPU usage
@@ -4080,6 +4137,10 @@ int main(int argc, char **argv) {
         // A delivered signal interrupts poll() with EINTR, so this runs
         // immediately after delivery.
         process_pending_signal();
+
+        // Handle stop/exit requests recorded by the monitor threads and the
+        // GStreamer bus error path (see request_stop_from_thread()).
+        process_pending_stop();
 
 
         // If wl_display_prepare_read() was successful as 0
