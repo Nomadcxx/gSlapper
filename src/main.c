@@ -5,6 +5,7 @@
  * with GStreamer to solve memory leak issues on Wayland/NVIDIA systems.
  */
 
+#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -1747,15 +1748,49 @@ static void pthread_usleep(uint time) {
 }
 
 // Process monitoring
+// CHANGED 2026-09-30 - Replaced system("pidof %s") with a /proc scan - Problem:
+// watch-list entries come from user-writable config files and were interpolated
+// into a shell command unsanitized, so shell metacharacters in pauselist/stoplist
+// entries executed arbitrary commands every poll cycle. process_name_running()
+// reads comm names directly and never invokes a shell.
+static bool process_name_running(const char *name) {
+    DIR *proc = opendir("/proc");
+    if (!proc)
+        return false;
+
+    struct dirent *entry;
+    bool found = false;
+    while (!found && (entry = readdir(proc)) != NULL) {
+        // Numeric directories only - skip /proc entries like self, thread-self, acpi
+        char *end = NULL;
+        long pid = strtol(entry->d_name, &end, 10);
+        if (!end || *end != '\0' || pid <= 0)
+            continue;
+
+        char comm_path[64];
+        snprintf(comm_path, sizeof(comm_path), "/proc/%ld/comm", pid);
+        FILE *comm_file = fopen(comm_path, "r");
+        if (!comm_file)
+            continue; // Process may have exited, or not ours to read
+
+        char comm[64];
+        if (fgets(comm, sizeof(comm), comm_file) != NULL) {
+            comm[strcspn(comm, "\n")] = '\0';
+            // comm is truncated to 15 characters by the kernel
+            if (strncmp(comm, name, sizeof(comm) - 1) == 0)
+                found = true;
+        }
+        fclose(comm_file);
+    }
+    closedir(proc);
+    return found;
+}
+
 static char *check_watch_list(char **list) {
 
-    char pid_name[512] = {0};
-
     for (uint i=0; list[i] != NULL; i++) {
-        snprintf(pid_name, sizeof(pid_name), "pidof %s > /dev/null", list[i]);
-
         // Stop if program is open
-        if (!system(pid_name))
+        if (process_name_running(list[i]))
             return list[i];
     }
     return NULL;
@@ -3595,6 +3630,25 @@ static const struct wl_registry_listener registry_listener = {
 };
 
 // Command line parsing helpers
+// CHANGED 2026-09-30 - Validate watch-list entries at load time - Problem:
+// pauselist/stoplist entries were read and used verbatim; combined with the
+// old system("pidof") checks, metacharacters in the files executed as shell.
+// Entries are now restricted to safe process-name characters and anything
+// else is ignored with a warning.
+static bool valid_watch_list_entry(const char *app) {
+    if (!app || app[0] == '\0')
+        return false;
+    for (const char *c = app; *c; c++) {
+        unsigned char ch = (unsigned char)*c;
+        if (!((ch >= 'a' && ch <= 'z') ||
+              (ch >= 'A' && ch <= 'Z') ||
+              (ch >= '0' && ch <= '9') ||
+              ch == '_' || ch == '-' || ch == '.' || ch == '/'))
+            return false;
+    }
+    return true;
+}
+
 static char **get_watch_list(char *path_name) {
 
     FILE *file = fopen(path_name, "r");
@@ -3603,22 +3657,32 @@ static char **get_watch_list(char *path_name) {
         char app[512];
         char **list = NULL;
         uint i = 0;
-        for (i=0; fscanf(file, "%511s", app) != EOF; i++) {
+        for (i=0; fscanf(file, "%511s", app) != EOF;) {
+            if (!valid_watch_list_entry(app)) {
+                cflp_warning("Ignoring invalid watch list entry in %s: %s", path_name, app);
+                continue;
+            }
             list = realloc(list, (i+1) * sizeof(char *));
             if (!list) {
                 cflp_error("Failed to reallocate watch list");
                 exit(EXIT_FAILURE);
             }
             list[i] = strdup(app);
+            i++;
         }
         // Null terminate
         list = realloc(list, (i+1) * sizeof(char *));
+        if (!list) {
+            cflp_error("Failed to reallocate watch list");
+            exit(EXIT_FAILURE);
+        }
         list[i] = NULL;
 
         fclose(file);
         // If any app found
         if (list[0])
             return list;
+        free(list);
     }
     return NULL;
 }
@@ -3897,13 +3961,12 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
 
 static void check_paper_processes() {
     // Check for other wallpaper process running
+    // CHANGED 2026-09-30 - Use process_name_running() instead of system("pidof") - Problem:
+    // no need to invoke a shell for a fixed list of names; same helper as the watch lists
     const char *other_wallpapers[] = {"swaybg", "glpaper", "hyprpaper", "wpaperd", "swww-daemon"};
-    char wallpaper_sbuffer[64] = {0};
 
     for (int i=0; i < sizeof(other_wallpapers) / sizeof(other_wallpapers[0]); i++) {
-        snprintf(wallpaper_sbuffer, sizeof(wallpaper_sbuffer), "pidof %s > /dev/null", other_wallpapers[i]);
-
-        if (!system(wallpaper_sbuffer))
+        if (process_name_running(other_wallpapers[i]))
             cflp_warning("%s is running. This may block slapper from being seen.", other_wallpapers[i]);
     }
 }

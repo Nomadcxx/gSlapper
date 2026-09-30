@@ -1,3 +1,4 @@
+#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -78,14 +79,48 @@ static void revive_slapper() {
     exit(EXIT_FAILURE);
 }
 
+// CHANGED 2026-09-30 - Replaced system("pidof %s") with a /proc scan - Problem:
+// stoplist entries come from a user-writable config file and were interpolated
+// into a shell command unsanitized, so shell metacharacters in the stoplist
+// executed arbitrary commands every poll cycle. process_name_running() reads
+// comm names directly and never invokes a shell.
+static bool process_name_running(const char *name) {
+    DIR *proc = opendir("/proc");
+    if (!proc)
+        return false;
+
+    struct dirent *entry;
+    bool found = false;
+    while (!found && (entry = readdir(proc)) != NULL) {
+        // Numeric directories only - skip /proc entries like self, thread-self, acpi
+        char *end = NULL;
+        long pid = strtol(entry->d_name, &end, 10);
+        if (!end || *end != '\0' || pid <= 0)
+            continue;
+
+        char comm_path[64];
+        snprintf(comm_path, sizeof(comm_path), "/proc/%ld/comm", pid);
+        FILE *comm_file = fopen(comm_path, "r");
+        if (!comm_file)
+            continue; // Process may have exited, or not ours to read
+
+        char comm[64];
+        if (fgets(comm, sizeof(comm), comm_file) != NULL) {
+            comm[strcspn(comm, "\n")] = '\0';
+            // comm is truncated to 15 characters by the kernel
+            if (strncmp(comm, name, sizeof(comm) - 1) == 0)
+                found = true;
+        }
+        fclose(comm_file);
+    }
+    closedir(proc);
+    return found;
+}
+
 static void check_stoplist() {
 
-    char pid_name[512] = {0};
-
     for (uint i=0; halt_info.stoplist[i] != NULL; i++) {
-        snprintf(pid_name, sizeof(pid_name), "pidof %s > /dev/null", halt_info.stoplist[i]);
-
-        while (!system(pid_name))
+        while (process_name_running(halt_info.stoplist[i]))
             usleep(100000); // 0.1 sec
     }
     if (!halt_info.auto_stop)
