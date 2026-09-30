@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <sys/un.h>
 #include <unistd.h>
 #include <poll.h>
@@ -112,6 +113,17 @@ static int create_socket(const char *path) {
     if (bind(sock_fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         cflp_error("Failed to bind IPC socket to %s: %s", path, strerror(errno));
         close(sock_fd);
+        return -1;
+    }
+
+    // The socket inode is created as 0777 & ~umask, so with a permissive umask
+    // other local users could connect and drive IPC (change/stop/layer...).
+    // State files already fchmod 0600 in state.c; the socket gets the same
+    // treatment. Do this before listen() so no client can slip in between.
+    if (chmod(path, 0600) < 0) {
+        cflp_error("Failed to restrict IPC socket %s permissions: %s", path, strerror(errno));
+        close(sock_fd);
+        unlink(path);
         return -1;
     }
 
