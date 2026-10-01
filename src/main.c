@@ -14,6 +14,7 @@
 #include <pthread.h>
 #include <signal.h>
 #include <stdbool.h>
+#include <stdatomic.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,6 +39,8 @@
 #include "ipc.h"
 #include "state.h"
 #include "cache.h"
+#include "process_utils.h"
+#include "output_metadata.h"
 
 #ifdef HAVE_SYSTEMD
 #include <systemd/sd-daemon.h>
@@ -612,12 +615,17 @@ static void handle_signal(int signum) {
 #define STOP_REQ_NONE       0
 #define STOP_REQ_RESTART    1  // stop_slapper(): save state, exec gslapper-holder
 #define STOP_REQ_EXIT       2  // exit_slapper(EXIT_FAILURE): fatal GStreamer error
-static volatile sig_atomic_t pending_stop_request = STOP_REQ_NONE;
+static atomic_int pending_stop_request = STOP_REQ_NONE;
 
 // Called from worker threads only. wakeup_pipe is created before the monitor
 // threads start, and single-byte pipe writes are atomic.
 static void request_stop_from_thread(int request) {
-    pending_stop_request = request;
+    if (request == STOP_REQ_EXIT) {
+        atomic_store(&pending_stop_request, STOP_REQ_EXIT);
+    } else {
+        int expected = STOP_REQ_NONE;
+        atomic_compare_exchange_strong(&pending_stop_request, &expected, STOP_REQ_RESTART);
+    }
     if (write(wakeup_pipe[1], "s", 1) == -1 && errno != EAGAIN) {
         cflp_warning("Failed to write to wakeup pipe");
     }
@@ -660,10 +668,9 @@ static void process_pending_signal(void) {
 // the main loop and from init/reload wait loops, next to
 // process_pending_signal().
 static void process_pending_stop(void) {
-    int request = pending_stop_request;
+    int request = atomic_exchange(&pending_stop_request, STOP_REQ_NONE);
     if (request == STOP_REQ_NONE)
         return;
-    pending_stop_request = STOP_REQ_NONE;
 
     if (request == STOP_REQ_EXIT) {
         cflp_error("Fatal GStreamer error, exiting...");
@@ -1792,13 +1799,9 @@ static void pthread_usleep(uint time) {
 // Process monitoring
 static char *check_watch_list(char **list) {
 
-    char pid_name[512] = {0};
-
     for (uint i=0; list[i] != NULL; i++) {
-        snprintf(pid_name, sizeof(pid_name), "pidof %s > /dev/null", list[i]);
-
         // Stop if program is open
-        if (!system(pid_name))
+        if (process_is_running(list[i]))
             return list[i];
     }
     return NULL;
@@ -3547,22 +3550,17 @@ static void output_done(void *data, struct wl_output *wl_output) {
 
     struct display_output *output = data;
 
-    bool name_ok = (strstr(output->state->monitor, output->name) != NULL) ||
-            (strlen(output->identifier) != 0 && strstr(output->state->monitor, output->identifier) != NULL) ||
-            // Keep for legacy reasons
-            (strcmp(output->state->monitor, "*") == 0) ||
-            // Let's just cover all cases here
-            (strcmp(output->state->monitor, "ALL") == 0) ||
-            (strcmp(output->state->monitor, "All") == 0) ||
-            (strcmp(output->state->monitor, "all") == 0);
+    bool name_ok = output_matches_monitor(output->state->monitor, output->name, output->identifier);
+    const char *output_name = output->name ? output->name : "(unknown)";
+    const char *output_identifier = output->identifier ? output->identifier : "(unknown)";
     if (name_ok && !output->layer_surface) {
         if (VERBOSE)
-            cflp_info("Output %s (%s) selected", output->name, output->identifier);
+            cflp_info("Output %s (%s) selected", output_name, output_identifier);
         create_layer_surface(output);
     }
     if (!name_ok || (strcmp(output->state->monitor, "") == 0)) {
         if (SHOW_OUTPUTS)
-            cflp_info("Output: %s  Identifier: %s", output->name, output->identifier);
+            cflp_info("Output: %s  Identifier: %s", output_name, output_identifier);
         destroy_display_output(output);
     }
 }
@@ -3584,21 +3582,9 @@ static void output_description(void *data, struct wl_output *wl_output, const ch
 
     struct display_output *output = data;
 
-    // wlroots currently sets the description to `make model serial (name)`
-    // Having `(name)` is redundant and must be removed to have a clean identifier.
-    // If this changes in the future, this will need to be modified.
-    char *paren = strrchr(description, '(');
-    if (paren) {
-        size_t length = paren - description;
-        output->identifier = calloc(length, sizeof(char));
-        if (!output->identifier) {
-            cflp_warning("Failed to allocate output identifier");
-            return;
-        }
-        strncpy(output->identifier, description, length);
-        output->identifier[length - 1] = '\0';
-    } else {
-        output->identifier = strdup(description);
+    output->identifier = output_identifier_from_description(description);
+    if (!output->identifier) {
+        cflp_warning("Failed to allocate output identifier");
     }
 }
 
@@ -3955,12 +3941,9 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
 static void check_paper_processes() {
     // Check for other wallpaper process running
     const char *other_wallpapers[] = {"swaybg", "glpaper", "hyprpaper", "wpaperd", "swww-daemon"};
-    char wallpaper_sbuffer[64] = {0};
 
     for (int i=0; i < sizeof(other_wallpapers) / sizeof(other_wallpapers[0]); i++) {
-        snprintf(wallpaper_sbuffer, sizeof(wallpaper_sbuffer), "pidof %s > /dev/null", other_wallpapers[i]);
-
-        if (!system(wallpaper_sbuffer))
+        if (process_is_running(other_wallpapers[i]))
             cflp_warning("%s is running. This may block slapper from being seen.", other_wallpapers[i]);
     }
 }
