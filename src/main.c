@@ -14,6 +14,7 @@
 #include <pthread.h>
 #include <signal.h>
 #include <stdbool.h>
+#include <stdatomic.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,6 +39,8 @@
 #include "ipc.h"
 #include "state.h"
 #include "cache.h"
+#include "process_utils.h"
+#include "output_metadata.h"
 
 #ifdef HAVE_SYSTEMD
 #include <systemd/sd-daemon.h>
@@ -601,6 +604,33 @@ static void handle_signal(int signum) {
     pending_signal = signum;
 }
 
+// CHANGED 2026-09-30 - Deferred stop/exit requests from worker threads
+// stoplist/auto-stop monitors and the GStreamer bus error path used to call
+// stop_slapper()/exit_slapper() directly from their threads; exit_cleanup()
+// tears down the pipeline, EGL context and video_path while the main loop is
+// still rendering and dispatching, racing it into use-after-free crashes.
+// Worker threads now only record the request and wake the main poll loop,
+// which performs the teardown from its own context - the same pattern as
+// pending_signal above.
+#define STOP_REQ_NONE       0
+#define STOP_REQ_RESTART    1  // stop_slapper(): save state, exec gslapper-holder
+#define STOP_REQ_EXIT       2  // exit_slapper(EXIT_FAILURE): fatal GStreamer error
+static atomic_int pending_stop_request = STOP_REQ_NONE;
+
+// Called from worker threads only. wakeup_pipe is created before the monitor
+// threads start, and single-byte pipe writes are atomic.
+static void request_stop_from_thread(int request) {
+    if (request == STOP_REQ_EXIT) {
+        atomic_store(&pending_stop_request, STOP_REQ_EXIT);
+    } else {
+        int expected = STOP_REQ_NONE;
+        atomic_compare_exchange_strong(&pending_stop_request, &expected, STOP_REQ_RESTART);
+    }
+    if (write(wakeup_pipe[1], "s", 1) == -1 && errno != EAGAIN) {
+        cflp_warning("Failed to write to wakeup pipe");
+    }
+}
+
 // Performs the shutdown work handle_signal used to do, from normal context.
 // Called from the main loop and from init/reload wait loops.
 static void process_pending_signal(void) {
@@ -631,6 +661,26 @@ static void process_pending_signal(void) {
         exit_cleanup();
         exit(EXIT_SUCCESS);
     }
+}
+
+// Performs the teardown work monitor_stoplist/handle_auto_stop and the
+// GStreamer bus error path requested, from main-loop context. Called from
+// the main loop and from init/reload wait loops, next to
+// process_pending_signal().
+static void process_pending_stop(void) {
+    int request = atomic_exchange(&pending_stop_request, STOP_REQ_NONE);
+    if (request == STOP_REQ_NONE)
+        return;
+
+    if (request == STOP_REQ_EXIT) {
+        cflp_error("Fatal GStreamer error, exiting...");
+        save_current_state();
+        exit_cleanup();
+        exit(EXIT_FAILURE);
+    }
+
+    // STOP_REQ_RESTART
+    stop_slapper();
 }
 
 const static struct wl_callback_listener wl_surface_frame_listener;
@@ -1749,13 +1799,9 @@ static void pthread_usleep(uint time) {
 // Process monitoring
 static char *check_watch_list(char **list) {
 
-    char pid_name[512] = {0};
-
     for (uint i=0; list[i] != NULL; i++) {
-        snprintf(pid_name, sizeof(pid_name), "pidof %s > /dev/null", list[i]);
-
         // Stop if program is open
-        if (!system(pid_name))
+        if (process_is_running(list[i]))
             return list[i];
     }
     return NULL;
@@ -1799,7 +1845,10 @@ static void *monitor_stoplist(void *_) {
         if (app) {
             if (VERBOSE)
                 cflp_info("Stopping for %s", app);
-            stop_slapper();
+            // CHANGED 2026-09-30 - Request stop instead of tearing down here - Problem:
+            // exit_cleanup() frees the pipeline/EGL/video_path this main loop is using;
+            // teardown must happen on the main thread (see process_pending_stop())
+            request_stop_from_thread(STOP_REQ_RESTART);
         }
 
         pthread_sleep(1);
@@ -1847,7 +1896,10 @@ static void *handle_auto_stop(void *_) {
         if (!halt_info.frame_ready) {
             if (VERBOSE)
                 cflp_info("Stopping because clappie is hidden");
-            stop_slapper();
+            // CHANGED 2026-09-30 - Request stop instead of tearing down here - Problem:
+            // exit_cleanup() frees the pipeline/EGL/video_path this main loop is using;
+            // teardown must happen on the main thread (see process_pending_stop())
+            request_stop_from_thread(STOP_REQ_RESTART);
         }
     }
     pthread_exit(NULL);
@@ -1945,7 +1997,10 @@ static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data) {
             
             g_error_free(err);
             g_free(debug_info);
-            exit_slapper(EXIT_FAILURE);
+            // CHANGED 2026-09-30 - Request exit instead of tearing down here - Problem:
+            // this callback runs on the GStreamer events thread; exit_cleanup() would
+            // free the pipeline/EGL the main loop is using (see process_pending_stop())
+            request_stop_from_thread(STOP_REQ_EXIT);
             break;
         }
         case GST_MESSAGE_EOS:
@@ -2066,7 +2121,10 @@ static void *handle_gst_events(void *_) {
         }
 
         // Handle GStreamer messages
-        if (bus) {
+        // CHANGED 2026-09-30 - Stop touching the bus once shutdown starts - Problem:
+        // with teardown deferred to the main thread, exit_cleanup unrefs the bus
+        // while this thread is still popping from it (use-after-free window)
+        if (bus && !shutting_down) {
             GstMessage *msg = gst_bus_timed_pop_filtered(bus, 10000, GST_MESSAGE_ANY);
             
             if (msg) {
@@ -2912,6 +2970,8 @@ static bool reload_image_pipeline(const char *new_path) {
         
         // Handle shutdown signals arriving during the decode wait
         process_pending_signal();
+        // Handle stop/exit requests from monitor threads / bus errors
+        process_pending_stop();
 
         // Short sleep to avoid busy-waiting
         g_usleep(10000);  // 10ms - balance between responsiveness and CPU usage
@@ -3490,22 +3550,17 @@ static void output_done(void *data, struct wl_output *wl_output) {
 
     struct display_output *output = data;
 
-    bool name_ok = (strstr(output->state->monitor, output->name) != NULL) ||
-            (strlen(output->identifier) != 0 && strstr(output->state->monitor, output->identifier) != NULL) ||
-            // Keep for legacy reasons
-            (strcmp(output->state->monitor, "*") == 0) ||
-            // Let's just cover all cases here
-            (strcmp(output->state->monitor, "ALL") == 0) ||
-            (strcmp(output->state->monitor, "All") == 0) ||
-            (strcmp(output->state->monitor, "all") == 0);
+    bool name_ok = output_matches_monitor(output->state->monitor, output->name, output->identifier);
+    const char *output_name = output->name ? output->name : "(unknown)";
+    const char *output_identifier = output->identifier ? output->identifier : "(unknown)";
     if (name_ok && !output->layer_surface) {
         if (VERBOSE)
-            cflp_info("Output %s (%s) selected", output->name, output->identifier);
+            cflp_info("Output %s (%s) selected", output_name, output_identifier);
         create_layer_surface(output);
     }
     if (!name_ok || (strcmp(output->state->monitor, "") == 0)) {
         if (SHOW_OUTPUTS)
-            cflp_info("Output: %s  Identifier: %s", output->name, output->identifier);
+            cflp_info("Output: %s  Identifier: %s", output_name, output_identifier);
         destroy_display_output(output);
     }
 }
@@ -3527,21 +3582,9 @@ static void output_description(void *data, struct wl_output *wl_output, const ch
 
     struct display_output *output = data;
 
-    // wlroots currently sets the description to `make model serial (name)`
-    // Having `(name)` is redundant and must be removed to have a clean identifier.
-    // If this changes in the future, this will need to be modified.
-    char *paren = strrchr(description, '(');
-    if (paren) {
-        size_t length = paren - description;
-        output->identifier = calloc(length, sizeof(char));
-        if (!output->identifier) {
-            cflp_warning("Failed to allocate output identifier");
-            return;
-        }
-        strncpy(output->identifier, description, length);
-        output->identifier[length - 1] = '\0';
-    } else {
-        output->identifier = strdup(description);
+    output->identifier = output_identifier_from_description(description);
+    if (!output->identifier) {
+        cflp_warning("Failed to allocate output identifier");
     }
 }
 
@@ -3898,12 +3941,9 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
 static void check_paper_processes() {
     // Check for other wallpaper process running
     const char *other_wallpapers[] = {"swaybg", "glpaper", "hyprpaper", "wpaperd", "swww-daemon"};
-    char wallpaper_sbuffer[64] = {0};
 
     for (int i=0; i < sizeof(other_wallpapers) / sizeof(other_wallpapers[0]); i++) {
-        snprintf(wallpaper_sbuffer, sizeof(wallpaper_sbuffer), "pidof %s > /dev/null", other_wallpapers[i]);
-
-        if (!system(wallpaper_sbuffer))
+        if (process_is_running(other_wallpapers[i]))
             cflp_warning("%s is running. This may block slapper from being seen.", other_wallpapers[i]);
     }
 }
@@ -4080,6 +4120,10 @@ int main(int argc, char **argv) {
         // A delivered signal interrupts poll() with EINTR, so this runs
         // immediately after delivery.
         process_pending_signal();
+
+        // Handle stop/exit requests recorded by the monitor threads and the
+        // GStreamer bus error path (see request_stop_from_thread()).
+        process_pending_stop();
 
 
         // If wl_display_prepare_read() was successful as 0

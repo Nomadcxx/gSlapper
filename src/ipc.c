@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <sys/un.h>
 #include <unistd.h>
 #include <poll.h>
@@ -93,24 +94,33 @@ static int create_socket(const char *path) {
         return -1;
     }
 
-    // Check if socket is in use by another instance before removing
-    struct sockaddr_un test_addr = {0};
-    test_addr.sun_family = AF_UNIX;
-    strncpy(test_addr.sun_path, path, sizeof(test_addr.sun_path) - 1);
-    if (connect(sock_fd, (struct sockaddr *)&test_addr, sizeof(test_addr)) == 0) {
-        cflp_error("Another gslapper instance is using socket %s", path);
-        close(sock_fd);
-        return -1;
-    }
-    // Connection failed - socket is stale, safe to remove
-    unlink(path);
-
     struct sockaddr_un addr = {0};
     addr.sun_family = AF_UNIX;
     strncpy(addr.sun_path, path, sizeof(addr.sun_path) - 1);
 
+    // Check for a running instance, but leave stale paths untouched. bind() is
+    // atomic and will fail safely if another process claims the path meanwhile.
+    int probe_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (probe_fd >= 0 && connect(probe_fd, (struct sockaddr *)&addr, sizeof(addr)) == 0) {
+        cflp_error("Another gslapper instance is using socket %s", path);
+        close(probe_fd);
+        close(sock_fd);
+        return -1;
+    }
+    if (probe_fd >= 0)
+        close(probe_fd);
+
     if (bind(sock_fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-        cflp_error("Failed to bind IPC socket to %s: %s", path, strerror(errno));
+        if (errno == EADDRINUSE)
+            cflp_error("IPC socket path %s already exists; remove a stale socket if no instance is running", path);
+        else
+            cflp_error("Failed to bind IPC socket to %s: %s", path, strerror(errno));
+        close(sock_fd);
+        return -1;
+    }
+
+    if (chmod(path, 0600) < 0) {
+        cflp_error("Failed to restrict IPC socket permissions on %s: %s", path, strerror(errno));
         close(sock_fd);
         return -1;
     }

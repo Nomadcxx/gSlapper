@@ -13,6 +13,9 @@
 #include "wlr-layer-shell-unstable-v1-client-protocol.h"
 #include <wayland-client.h>
 
+#include "output_metadata.h"
+#include "process_utils.h"
+
 typedef unsigned int uint;
 
 struct wl_state {
@@ -80,12 +83,8 @@ static void revive_slapper() {
 
 static void check_stoplist() {
 
-    char pid_name[512] = {0};
-
     for (uint i=0; halt_info.stoplist[i] != NULL; i++) {
-        snprintf(pid_name, sizeof(pid_name), "pidof %s > /dev/null", halt_info.stoplist[i]);
-
-        while (!system(pid_name))
+        while (process_is_running(halt_info.stoplist[i]))
             usleep(100000); // 0.1 sec
     }
     if (!halt_info.auto_stop)
@@ -103,9 +102,13 @@ static struct wl_buffer *create_dummy_buffer(struct display_output *output) {
     snprintf(shm_name, sizeof(shm_name), "/gslapper-shm-%d", getpid());
     shm_unlink(shm_name);
     int fd = shm_open(shm_name, O_RDWR | O_CREAT | O_EXCL, 0600);
+    if (fd < 0) {
+        fprintf(stderr, "Failed to create shm: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
     shm_unlink(shm_name);
     if (ftruncate(fd, size) < 0) {
-        fprintf(stderr, "Failed to truncate shm");
+        fprintf(stderr, "Failed to truncate shm: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
@@ -230,12 +233,7 @@ static void output_done(void *data, struct wl_output *wl_output) {
 
     struct display_output *output = data;
 
-    bool name_ok = (strstr(output->state->monitor, output->name) != NULL) ||
-            (strstr(output->state->monitor, output->identifier) != NULL) ||
-            (strcmp(output->state->monitor, "*") == 0) ||
-            (strcmp(output->state->monitor, "ALL") == 0) ||
-            (strcmp(output->state->monitor, "All") == 0) ||
-            (strcmp(output->state->monitor, "all") == 0);
+    bool name_ok = output_matches_monitor(output->state->monitor, output->name, output->identifier);
     if (name_ok && !output->layer_surface)
         create_layer_surface(output);
     if (!name_ok)
@@ -258,14 +256,9 @@ static void output_description(void *data, struct wl_output *wl_output, const ch
 
     struct display_output *output = data;
 
-    char *paren = strrchr(description, '(');
-    if (paren) {
-        size_t length = paren - description;
-        output->identifier = calloc(length, sizeof(char));
-        strncpy(output->identifier, description, length);
-        output->identifier[length - 1] = '\0';
-    } else {
-        output->identifier = strdup(description);
+    output->identifier = output_identifier_from_description(description);
+    if (!output->identifier) {
+        fprintf(stderr, "Failed to allocate output identifier\n");
     }
 }
 
