@@ -125,6 +125,17 @@ static int create_socket(const char *path) {
         return -1;
     }
 
+    // The socket inode is created as 0777 & ~umask, so with a permissive umask
+    // other local users could connect and drive IPC (change/stop/layer...).
+    // State files already fchmod 0600 in state.c; the socket gets the same
+    // treatment. Do this before listen() so no client can slip in between.
+    if (chmod(path, 0600) < 0) {
+        cflp_error("Failed to restrict IPC socket %s permissions: %s", path, strerror(errno));
+        close(sock_fd);
+        unlink(path);
+        return -1;
+    }
+
     if (listen(sock_fd, 5) < 0) {
         cflp_error("Failed to listen on IPC socket: %s", strerror(errno));
         close(sock_fd);
