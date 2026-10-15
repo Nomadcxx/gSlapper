@@ -11,6 +11,12 @@ on:
       - '.github/workflows/release.yml'
       - 'nfpm.yaml'
 
+# Releases must not be cancelled mid-flight, so superseded runs queue
+# rather than cancel.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
