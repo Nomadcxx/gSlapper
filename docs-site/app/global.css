@@ -104,6 +104,15 @@ pre,
   white-space: nowrap;
 }
 
+.sidebar-brand-mark > [aria-hidden='true'] {
+  color: rgb(255 102 120 / 72%);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
 .operator-header-actions {
   display: flex;
   min-width: 0;

@@ -1,11 +1,15 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { Brand } from '@/components/brand';
 import { gitConfig } from './shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: <Brand />,
+      title: (
+        <span className="sidebar-brand-mark">
+          <span aria-hidden="true">////////</span>
+          <span className="sr-only">gSlapper documentation home</span>
+        </span>
+      ),
       url: '/docs',
     },
     githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
