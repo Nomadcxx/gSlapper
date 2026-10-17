@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs-site/public/brand/gslapper-wordmark.png" alt="gSlapper Logo" style="background: transparent;"/>
+  <img src="docs-site/public/brand/header.webp" alt="gSlapper Logo" style="background: transparent;"/>
 </div>
 
 <br>
