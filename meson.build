@@ -71,3 +71,8 @@ test_watch_list = executable('test-watch-list',
   dependencies: [dl_dep, wl_client, wl_egl, egl, gst_dep, gst_video_dep, gst_gl_dep, threads, protocols_dep, systemd_dep],
   build_by_default: false)
 test('watch-list-injection', test_watch_list)
+
+test_process_utils = executable('test-process-utils',
+  ['tests/test_process_utils.c', 'src/process_utils.c'],
+  build_by_default: false)
+test('process-utils', test_process_utils)

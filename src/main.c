@@ -1753,12 +1753,10 @@ static void stop_slapper() {
 
     // Get executable path safely with proper null termination and bounds checking
     char exe_path[PATH_MAX];
-    ssize_t path_len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1);
-    if (path_len == -1) {
+    if (executable_path(exe_path, sizeof(exe_path)) < 0) {
         cflp_error("Failed to read executable path: %s", strerror(errno));
         exit(EXIT_FAILURE);
     }
-    exe_path[path_len] = '\0';  // readlink doesn't null-terminate
 
     char *last_slash = strrchr(exe_path, '/');
     if (!last_slash) {

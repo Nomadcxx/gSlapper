@@ -4,10 +4,48 @@
 #include <stdbool.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#ifdef __FreeBSD__
+#include <sys/sysctl.h>
+#endif
 
 #include "process_utils.h"
 
 extern char **environ;
+
+// CHANGED 2026-10-26 - Use the native kernel interface for executable handoff.
+int executable_path(char *buffer, size_t size) {
+    if (!buffer || size == 0) {
+        errno = EINVAL;
+        return -1;
+    }
+#ifdef __FreeBSD__
+    int mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
+    size_t length = size;
+    if (sysctl(mib, 4, buffer, &length, NULL, 0) < 0) {
+        if (errno == ENOMEM)
+            errno = ENAMETOOLONG;
+        return -1;
+    }
+    if (length == 0) {
+        errno = ENOENT;
+        return -1;
+    }
+    if (length > size || buffer[length - 1] != '\0') {
+        errno = ENAMETOOLONG;
+        return -1;
+    }
+#else
+    ssize_t length = readlink("/proc/self/exe", buffer, size);
+    if (length < 0)
+        return -1;
+    if ((size_t)length >= size) {
+        errno = ENAMETOOLONG;
+        return -1;
+    }
+    buffer[length] = '\0';
+#endif
+    return 0;
+}
 
 // CHANGED 2026-10-01 - Pass process names as arguments so config entries never reach a shell.
 bool process_is_running(const char *name) {
