@@ -189,7 +189,7 @@ jobs:
           sha256sum *.xbps *-void-source.tar.gz > SHA256SUMS-void
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             *.deb

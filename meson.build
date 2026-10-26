@@ -45,11 +45,13 @@ executable(meson.project_name() + '-holder', ['src/holder.c', 'src/output_metada
 include_directories : ['inc'],
 dependencies: [dl_dep, wl_client, shm_dep, protocols_dep], install: true)
 
+test_sanitizer_args = cc.links('int main(void) { return 0; }', args: ['-fsanitize=address']) ? ['-fsanitize=address'] : []
+
 test_output_description = executable('test-output-description',
   ['tests/test_output_description.c', 'src/output_metadata.c', 'src/process_utils.c'],
   dependencies: [wl_client, protocols_dep],
-  c_args: ['-fsanitize=address'],
-  link_args: ['-fsanitize=address'],
+  c_args: test_sanitizer_args,
+  link_args: test_sanitizer_args,
   build_by_default: false)
 test('output-description', test_output_description, env: ['ASAN_OPTIONS=detect_leaks=0'])
 
@@ -57,8 +59,8 @@ test_ipc_socket = executable('test-ipc-socket',
   ['tests/test_ipc_socket.c', 'src/cflogprinter.c'],
   include_directories: ['inc'],
   dependencies: [threads, dependency('glib-2.0')],
-  c_args: ['-fsanitize=address'],
-  link_args: ['-fsanitize=address'],
+  c_args: test_sanitizer_args,
+  link_args: test_sanitizer_args,
   build_by_default: false)
 test('ipc-socket', test_ipc_socket, env: ['ASAN_OPTIONS=detect_leaks=0'])
 

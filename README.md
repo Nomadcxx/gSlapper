@@ -53,6 +53,18 @@ sudo apt install ./gslapper_<version>_ubuntu24.04_amd64.deb
 sudo dnf install ./gslapper-<version>-1.fedora42.x86_64.rpm
 ```
 
+### Void Linux
+
+Download the native XBPS package for `x86_64` (glibc) or `x86_64-musl` from [Releases](https://github.com/Nomadcxx/gSlapper/releases/latest). Verify it with `SHA256SUMS-void`, then install it from a local repository:
+
+```bash
+sha256sum --ignore-missing -c SHA256SUMS-void
+xbps-rindex -a ./gslapper-*.xbps
+sudo xbps-install -R "$PWD" gslapper
+```
+
+Release CI builds and install-checks both variants. Each release includes a source archive with the Void recipe.
+
 ### Manual Build
 ```bash
 git clone https://github.com/Nomadcxx/gSlapper.git
