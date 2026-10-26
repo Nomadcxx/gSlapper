@@ -12,7 +12,8 @@ mirror=https://repo-default.voidlinux.org/current
 [ "$arch" != x86_64-musl ] || mirror=$mirror/musl
 mkdir -p "$root/var/db/xbps/keys"
 cp /var/db/xbps/keys/* "$root/var/db/xbps/keys/"
-xbps-install -r "$root" -R "$mirror" -R "$repo" -Sy base-files gslapper
+xbps-install -r "$root" -R "$mirror" -Sy base-files dash coreutils
+xbps-install -r "$root" -R "$mirror" -R "$repo" -Sy gslapper
 xbps-pkgdb -r "$root" gslapper
 test "$(xbps-query -r "$root" -p pkgver gslapper)" = "$expected"
 test "$(xbps-query -r "$root" -p architecture gslapper)" = "$arch"
