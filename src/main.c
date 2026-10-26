@@ -9,7 +9,9 @@
 #include <fcntl.h>
 #include <getopt.h>
 #include <limits.h>
+#ifdef __GLIBC__
 #include <mcheck.h>
+#endif
 #include <poll.h>
 #include <pthread.h>
 #include <signal.h>
@@ -3950,8 +3952,10 @@ static void check_paper_processes() {
 
 // Main function
 int main(int argc, char **argv) {
+#ifdef __GLIBC__
     // Initialize mtrace for memory leak detection
     mtrace();
+#endif
 
     // CHANGED 2025-12-25 - Added SIGHUP handler for config reload - Problem: Need runtime config reload support
     // CHANGED 2026-07-19 - Unblock signals after registering handlers - Problem: when gSlapper is spawned by a
