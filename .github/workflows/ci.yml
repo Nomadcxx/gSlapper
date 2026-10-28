@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  # Keep this unfiltered because the branch ruleset requires a check on every PR.
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  meson:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential meson ninja-build pkg-config \
+            wayland-protocols libwayland-dev libegl-dev \
+            libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libsystemd-dev
+      - name: Build
+        run: |
+          meson setup build --prefix=/usr --buildtype=release
+          meson compile -C build
+      - name: Test
+        run: meson test -C build --print-errorlogs
+      - name: Smoke test
+        run: env -u WAYLAND_DISPLAY ./build/gslapper --help > /dev/null
