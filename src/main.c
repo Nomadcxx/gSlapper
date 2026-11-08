@@ -275,7 +275,7 @@ static void exit_cleanup();
 static void exit_slapper(int reason);
 static void handle_signal(int signum);
 static void render(struct display_output *output);
-static void stop_slapper();
+static void stop_slapper(bool keep_position);
 static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data);
 static void *handle_gst_events(void *);
 static void init_texture_manager();
@@ -296,7 +296,6 @@ static void init_image_pipeline(void);
 static bool reload_image_pipeline(const char *new_path);
 static void save_current_state(void);
 static int restore_from_state(const char *path);
-static void restore_video_position(void);
 static void notify_systemd_ready(void);
 static void notify_systemd_stopping(void);
 static bool is_all_outputs_selector(const char *monitor);
@@ -682,7 +681,7 @@ static void process_pending_stop(void) {
     }
 
     // STOP_REQ_RESTART
-    stop_slapper();
+    stop_slapper(true);
 }
 
 const static struct wl_callback_listener wl_surface_frame_listener;
@@ -1675,41 +1674,15 @@ static void notify_systemd_stopping(void) {
 #endif
 }
 
-// Restore video position after pipeline starts (call this after pipeline is PLAYING)
-static void restore_video_position(void) {
-    if (is_image_mode || !pipeline) return;
-    
-    pthread_mutex_lock(&state_mutex);
-    double pos = restore_position;
-    bool paused = restore_paused;
-    pthread_mutex_unlock(&state_mutex);
-    
-    if (pos > 0.0) {
-        gint64 pos_ns = (gint64)(pos * GST_SECOND);
-        if (!gst_element_seek(pipeline, 1.0, GST_FORMAT_TIME,
-                GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT,
-                GST_SEEK_TYPE_SET, pos_ns,
-                GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE)) {
-            cflp_warning("Failed to seek to restored position: %.2f", pos);
-        } else {
-            if (VERBOSE)
-                cflp_info("Restored video position: %.2f seconds", pos);
-        }
-    }
-    
-    if (paused) {
-        gst_element_set_state(pipeline, GST_STATE_PAUSED);
-        if (VERBOSE)
-            cflp_info("Restored video to paused state");
-    }
-}
-
-static void stop_slapper() {
+static void stop_slapper(bool keep_position) {
 
     // Save video position to arg -Z
     char save_info[64] = "0 0"; // Default position
     
-    if (pipeline) {
+    // CHANGED 2026-11-08 - Only carry the position over when restarting the same video - Problem:
+    // IPC change restarts with a different file, which then started at the old video's position
+    // (masked until now by the issue #40 seek that sent playback back to 0 shortly after)
+    if (pipeline && keep_position) {
         gint64 position = 0;
         // Query the current position from GStreamer
         if (gst_element_query_position(pipeline, GST_FORMAT_TIME, &position)) {
@@ -2069,33 +2042,12 @@ static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data) {
                 if (new_state == GST_STATE_PLAYING) {
                     if (VERBOSE)
                         cflp_success("GStreamer pipeline is playing");
-                    // Restore video position if we have a saved position
-                    if (restore_position > 0.0) {
-                        restore_video_position();
-                    }
+                    // CHANGED 2026-11-08 - Moved position restore and segment loop setup into
+                    // init_gst() - Problem: this runs on every transition to PLAYING (resume after
+                    // auto-pause re-seeked to the restore position), and the non-flushing seek to 0
+                    // queued a restart behind the frames already playing (issue #40)
                     // Notify systemd that we're ready
                     notify_systemd_ready();
-                    
-                    // CHANGED 2025-09-07 - Initialize segment-based looping when pipeline starts
-                    // Problem: Need initial segment seek to enable SEGMENT_DONE messages instead of EOS
-                    static bool segment_initialized = false;
-                    if (!segment_initialized) {
-                        if (VERBOSE)
-                            cflp_info("Setting up seamless segment-based looping");
-                        gif_loop_start_us = g_get_monotonic_time();
-
-                        // Perform initial seek to enable segment looping
-                        if (!gst_element_seek(pipeline, 1.0, GST_FORMAT_TIME,
-                                            GST_SEEK_FLAG_SEGMENT,
-                                            GST_SEEK_TYPE_SET, 0,
-                                            GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE)) {
-                            cflp_warning("Failed to initialize segment looping - falling back to EOS method");
-                        } else {
-                            if (VERBOSE)
-                                cflp_success("Segment looping initialized successfully");
-                        }
-                        segment_initialized = true;
-                    }
                 }
             }
             break;
@@ -2287,7 +2239,8 @@ static void execute_ipc_commands(void) {
                                 // Close write side to ensure response is flushed
                                 shutdown(cmd->client_fd, SHUT_WR);
                                 usleep(50000);  // Delay to ensure response is sent before restart
-                                stop_slapper();
+                                // New file, so it starts from the beginning
+                                stop_slapper(false);
                             }
                         } else {
                             ipc_send_response(cmd->client_fd, "ERROR: cannot update path (use --auto-stop for video changes)\n");
@@ -3271,13 +3224,16 @@ static void init_gst(const struct wl_state *state) {
         gst_object_unref(video_sink);
     }
 
-    // Start playing
-    GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
+    // CHANGED 2026-11-08 - Preroll paused and set up looping with one flushing segment seek
+    // before playing - Problem: the loop setup used to run once the bus reported PLAYING, as a
+    // non-flushing seek to 0 that queued a restart behind the frames already playing (issue #40);
+    // it also undid any resume position seeked to just before it
+    GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PAUSED);
     
     // Handle the state change result properly
     if (ret == GST_STATE_CHANGE_FAILURE) {
         // This is a real error - the state change failed
-        cflp_error("Failed to set pipeline to playing state");
+        cflp_error("Failed to set pipeline to paused state");
         
         // Get more detailed error information
         GError *error = NULL;
@@ -3296,51 +3252,87 @@ static void init_gst(const struct wl_state *state) {
         }
         
         exit_slapper(EXIT_FAILURE);
-    } else {
-        // Either GST_STATE_CHANGE_ASYNC (normal) or GST_STATE_CHANGE_SUCCESS (immediate)
-        if (VERBOSE) {
-            if (ret == GST_STATE_CHANGE_ASYNC) {
-                cflp_info("Pipeline state change in progress (async)");
-            } else if (ret == GST_STATE_CHANGE_SUCCESS) {
-                cflp_info("Pipeline started immediately");
-            }
-        }
-        
-        // Wait a bit to see if the pipeline actually starts
+    }
+
+    // Either GST_STATE_CHANGE_ASYNC (normal) or GST_STATE_CHANGE_SUCCESS (immediate)
+    if (VERBOSE) {
         if (ret == GST_STATE_CHANGE_ASYNC) {
-            GstStateChangeReturn wait_ret = gst_element_get_state(pipeline, NULL, NULL, 5 * GST_SECOND);
-            if (wait_ret == GST_STATE_CHANGE_FAILURE) {
-                cflp_error("Pipeline failed to reach playing state");
-                cflp_error("This is often caused by missing codec support. Try:");
-                cflp_error("  Arch: sudo pacman -S gst-plugins-ugly gst-libav");
-                cflp_error("  Ubuntu: sudo apt install gstreamer1.0-plugins-ugly gstreamer1.0-libav");
-                cflp_error("Or run with GST_DEBUG=3 for more details");
-                exit_slapper(EXIT_FAILURE);
-            }
+            cflp_info("Pipeline state change in progress (async)");
+        } else if (ret == GST_STATE_CHANGE_SUCCESS) {
+            cflp_info("Pipeline prerolled immediately");
         }
+    }
+    
+    // Wait for preroll so the seek below applies before any frame plays
+    if (ret == GST_STATE_CHANGE_ASYNC) {
+        GstStateChangeReturn wait_ret = gst_element_get_state(pipeline, NULL, NULL, 5 * GST_SECOND);
+        if (wait_ret == GST_STATE_CHANGE_FAILURE) {
+            cflp_error("Pipeline failed to preroll");
+            cflp_error("This is often caused by missing codec support. Try:");
+            cflp_error("  Arch: sudo pacman -S gst-plugins-ugly gst-libav");
+            cflp_error("  Ubuntu: sudo apt install gstreamer1.0-plugins-ugly gstreamer1.0-libav");
+            cflp_error("Or run with GST_DEBUG=3 for more details");
+            exit_slapper(EXIT_FAILURE);
+        }
+    }
+
+    // Start position: holder restart info (-Z) first, then saved state (--restore)
+    gint64 start_ns = 0;
+    GstSeekFlags seek_flags = GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT;
+    bool start_paused = false;
+    if (halt_info.save_info && strlen(halt_info.save_info) > 0) {
+        // Parse the saved position (format: "seconds playlist_position")
+        gint64 saved_seconds = 0;
+        gint64 playlist_pos = 0;
         
-        // Restore position if we have saved info
-        if (halt_info.save_info && strlen(halt_info.save_info) > 0) {
-            // Parse the saved position (format: "seconds playlist_position")
-            gint64 saved_seconds = 0;
-            gint64 playlist_pos = 0;
-            
-            if (sscanf(halt_info.save_info, "%" G_GINT64_FORMAT " %" G_GINT64_FORMAT, &saved_seconds, &playlist_pos) == 2) {
-                if (saved_seconds > 0) {
-                    gint64 seek_pos = saved_seconds * GST_SECOND;
-                    if (gst_element_seek(pipeline, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
-                                       GST_SEEK_TYPE_SET, seek_pos,
-                                       GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE)) {
-                        if (VERBOSE) {
-                            cflp_info("Restored position to %" G_GINT64_FORMAT " seconds", saved_seconds);
-                        }
-                    } else {
-                        cflp_warning("Failed to restore position to %" G_GINT64_FORMAT " seconds", saved_seconds);
-                    }
-                }
-            } else {
-                cflp_warning("Failed to parse saved position info: %s", halt_info.save_info);
-            }
+        if (sscanf(halt_info.save_info, "%" G_GINT64_FORMAT " %" G_GINT64_FORMAT, &saved_seconds, &playlist_pos) == 2) {
+            if (saved_seconds > 0)
+                start_ns = saved_seconds * GST_SECOND;
+        } else {
+            cflp_warning("Failed to parse saved position info: %s", halt_info.save_info);
+        }
+    }
+    if (start_ns == 0) {
+        pthread_mutex_lock(&state_mutex);
+        if (restore_position > 0.0) {
+            start_ns = (gint64)(restore_position * GST_SECOND);
+            seek_flags |= GST_SEEK_FLAG_KEY_UNIT;
+            start_paused = restore_paused;
+        }
+        pthread_mutex_unlock(&state_mutex);
+    }
+
+    // The segment seek makes the pipeline post SEGMENT_DONE instead of EOS for seamless looping
+    if (VERBOSE)
+        cflp_info("Setting up seamless segment-based looping");
+    if (!gst_element_seek(pipeline, 1.0, GST_FORMAT_TIME, seek_flags,
+                          GST_SEEK_TYPE_SET, start_ns,
+                          GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE)) {
+        cflp_warning("Failed to initialize segment looping - falling back to EOS method");
+        if (start_ns > 0)
+            cflp_warning("Failed to restore position to %.2f seconds", (double)start_ns / GST_SECOND);
+    } else {
+        if (VERBOSE) {
+            cflp_success("Segment looping initialized successfully");
+            if (start_ns > 0)
+                cflp_info("Restored position to %.2f seconds", (double)start_ns / GST_SECOND);
+        }
+    }
+
+    if (start_paused) {
+        // Stays prerolled on the restored frame. Owned like an IPC pause so query
+        // reports it, resume releases it, and auto-pause leaves it alone.
+        halt_info.is_paused++;
+        ipc_paused = true;
+        // Nothing else reports readiness while paused
+        notify_systemd_ready();
+        if (VERBOSE)
+            cflp_info("Restored video to paused state");
+    } else {
+        gif_loop_start_us = g_get_monotonic_time();
+        if (gst_element_set_state(pipeline, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
+            cflp_error("Failed to set pipeline to playing state");
+            exit_slapper(EXIT_FAILURE);
         }
     }
 
