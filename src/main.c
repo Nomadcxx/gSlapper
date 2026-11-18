@@ -4192,8 +4192,6 @@ int main(int argc, char **argv) {
         }
     }
 
-    struct display_output *output, *tmp_output;
-    wl_list_for_each_safe(output, tmp_output, &state.outputs, link) { destroy_display_output(output); }
-
+    exit_cleanup();
     return EXIT_SUCCESS;
 }
