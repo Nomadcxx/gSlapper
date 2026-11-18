@@ -2309,30 +2309,7 @@ static void execute_ipc_commands(void) {
                 ipc_send_response(cmd->client_fd, "OK: state saved\n");
             }
         }
-        else if (strcmp(cmd_name, "preload") == 0) {
-            if (!arg || strlen(arg) == 0) {
-                ipc_send_response(cmd->client_fd, "ERROR: missing path argument\n");
-            } else if (access(arg, R_OK) != 0) {
-                ipc_send_response(cmd->client_fd, "ERROR: file not accessible\n");
-            } else if (!is_image_file(arg)) {
-                ipc_send_response(cmd->client_fd, "ERROR: not an image file\n");
-            } else {
-                // TODO: Implement preload cache in Phase 2
-                ipc_send_response(cmd->client_fd, "OK: preload queued\n");
-            }
-        }
-        else if (strcmp(cmd_name, "unload") == 0) {
-            if (!arg || strlen(arg) == 0) {
-                ipc_send_response(cmd->client_fd, "ERROR: missing path argument\n");
-            } else {
-                // TODO: Implement preload cache in Phase 2
-                ipc_send_response(cmd->client_fd, "OK: unloaded\n");
-            }
-        }
-        else if (strcmp(cmd_name, "list") == 0) {
-            // TODO: Implement preload cache listing in Phase 2
-            ipc_send_response(cmd->client_fd, "PRELOADED: (none)\n");
-        }
+        // CHANGED 2026-11-19 - Removed stub preload/unload/list handlers - Problem: they matched first, so unload never reached the cache and preload claimed success without doing anything
         else if (strcmp(cmd_name, "set-transition") == 0) {
             if (!arg || strlen(arg) == 0) {
                 ipc_send_response(cmd->client_fd, "ERROR: missing transition type argument\n");
