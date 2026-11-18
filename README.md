@@ -74,7 +74,7 @@ ninja -C build
 sudo ninja -C build install
 ```
 
-Run the unit checks with `meson test -C build --print-errorlogs`. To check compositor disconnect cleanup, run as an ordinary user with Sway and software Mesa installed:
+Run the unit checks with `meson test -C build --print-errorlogs`. The runtime checks start a headless Sway and read pixels back with grim. Run them as an ordinary user with Sway, grim and software Mesa installed:
 
 ```sh
 python3 tests/check_compositor_disconnect.py build/gslapper /path/to/wallpaper.png
