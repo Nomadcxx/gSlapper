@@ -42,6 +42,7 @@
 #include "state.h"
 #include "cache.h"
 #include "cli_options.h"
+#include "scaling.h"
 #include "process_utils.h"
 #include "output_metadata.h"
 
@@ -1080,79 +1081,18 @@ static void update_vertex_data(struct display_output *output) {
     if (VERBOSE == 2)
         cflp_info("Updating vertex data with panscan_value=%.2f", panscan_value);
     
+    // CHANGED 2026-11-19 - Scale computed by compute_quad_scale - Problem: transitions need the same math for the outgoing image
     float scale_x, scale_y;
-    
-    if (panscan_value == -1.0f) {
-        // Original resolution mode - display video at its actual pixel dimensions
-        // Calculate the scale needed to show actual pixels (accounting for display scaling)
-        scale_x = (float)vid_width / (float)output->width;
-        scale_y = (float)vid_height / (float)output->height;
-        
-        // If video is smaller than display, show at actual size (don't scale up)
-        // If video is larger than display, it will be clipped (which is expected)
-        
-        if (VERBOSE == 2) {
-            cflp_info("Original resolution mode: video=%dx%d, display=%dx%d, scale_x=%.3f, scale_y=%.3f",
-                     vid_width, vid_height, output->width, output->height, scale_x, scale_y);
-        }
-    } else if (fill_mode) {
-        // Fill mode - fill entire screen maintaining aspect ratio (crop excess)
-        float video_aspect = (float)vid_width / (float)vid_height;
-        float display_aspect = (float)output->width / (float)output->height;
+    compute_quad_scale(vid_width, vid_height, output->width, output->height, panscan_value,
+                       fill_mode, stretch_mode, &scale_x, &scale_y);
 
-        // Start with full coverage
-        scale_x = 1.0f;
-        scale_y = 1.0f;
-
-        if (video_aspect > display_aspect) {
-            // Video/image is wider than display - scale based on height, crop width
-            scale_x = video_aspect / display_aspect;
-        } else {
-            // Video/image is taller than display - scale based on width, crop height
-            scale_y = display_aspect / video_aspect;
-        }
-
-        if (VERBOSE == 2) {
-            cflp_info("Fill mode: scale_x=%.3f, scale_y=%.3f (video_aspect=%.3f, display_aspect=%.3f)",
-                     scale_x, scale_y, video_aspect, display_aspect);
-        }
-    } else if (stretch_mode) {
-        // Stretch mode - fill entire screen without maintaining aspect ratio
-        scale_x = panscan_value;
-        scale_y = panscan_value;
-        
-        if (VERBOSE) {
-            cflp_info("Stretch mode: panscan=%.2f, scale_x=%.3f, scale_y=%.3f (ignoring aspect ratio)", 
-                     panscan_value, scale_x, scale_y);
-        }
-    } else {
-        // Normal panscan mode - fit/contain behavior (scale to fit inside screen)
-        scale_x = panscan_value;
-        scale_y = panscan_value;
-        
-        // Adjust for aspect ratio to maintain proper proportions
-        float video_aspect = (float)vid_width / (float)vid_height;
-        float display_aspect = (float)output->width / (float)output->height;
-        
-        if (video_aspect > display_aspect) {
-            // Video is wider than display (letterbox situation)
-            scale_y = scale_y * (display_aspect / video_aspect);
-        } else {
-            // Video is taller than display (pillarbox situation)
-            scale_x = scale_x * (video_aspect / display_aspect);
-        }
-        
-        if (VERBOSE == 2) {
-            cflp_info("Panscan mode: panscan=%.2f, scale_x=%.3f, scale_y=%.3f (video_aspect=%.3f, display_aspect=%.3f)", 
-                     panscan_value, scale_x, scale_y, video_aspect, display_aspect);
-        }
+    if (VERBOSE == 2) {
+        const char *mode = panscan_value == -1.0f ? "Original resolution" : fill_mode ? "Fill" :
+                           stretch_mode ? "Stretch" : "Panscan";
+        cflp_info("%s mode: video=%dx%d, display=%dx%d, panscan=%.2f, scale_x=%.3f, scale_y=%.3f",
+                 mode, vid_width, vid_height, output->width, output->height, panscan_value,
+                 scale_x, scale_y);
     }
-    
-    // Clamp scaling to valid range
-    if (scale_x < 0.1f) scale_x = 0.1f;
-    if (scale_x > 10.0f) scale_x = 10.0f;
-    if (scale_y < 0.1f) scale_y = 0.1f;
-    if (scale_y > 10.0f) scale_y = 10.0f;
     
     // Create vertices with calculated scaling (centered)
     float vertices[] = {
