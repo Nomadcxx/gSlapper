@@ -43,6 +43,7 @@
 #include "cache.h"
 #include "cli_options.h"
 #include "scaling.h"
+#include "transition.h"
 #include "process_utils.h"
 #include "output_metadata.h"
 
@@ -198,12 +199,7 @@ static bool ipc_paused = false;
 // Cache configuration
 static size_t cache_size_mb = DEFAULT_CACHE_SIZE_MB;
 
-// Transition effects
-typedef enum {
-    TRANSITION_NONE = 0,
-    TRANSITION_FADE
-} transition_type_t;
-
+// Transition effects (types and parameters in transition.h)
 typedef struct {
     transition_type_t type;
     bool active;
