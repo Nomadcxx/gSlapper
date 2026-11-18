@@ -49,6 +49,7 @@ test_sanitizer_args = cc.links('int main(void) { return 0; }', args: ['-fsanitiz
 
 test_output_description = executable('test-output-description',
   ['tests/test_output_description.c', 'src/output_metadata.c', 'src/process_utils.c'],
+  include_directories: ['inc'],
   dependencies: [wl_client, protocols_dep],
   c_args: test_sanitizer_args,
   link_args: test_sanitizer_args,
@@ -76,3 +77,12 @@ test_process_utils = executable('test-process-utils',
   ['tests/test_process_utils.c', 'src/process_utils.c'],
   build_by_default: false)
 test('process-utils', test_process_utils)
+
+test_holder_args = executable('test-holder-args',
+  ['tests/test_holder_args.c', 'src/output_metadata.c', 'src/process_utils.c'],
+  include_directories: ['inc'],
+  dependencies: [wl_client, protocols_dep],
+  c_args: test_sanitizer_args,
+  link_args: test_sanitizer_args,
+  build_by_default: false)
+test('holder-args', test_holder_args, env: ['ASAN_OPTIONS=detect_leaks=0'])

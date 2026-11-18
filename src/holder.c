@@ -13,6 +13,7 @@
 #include "wlr-layer-shell-unstable-v1-client-protocol.h"
 #include <wayland-client.h>
 
+#include "cli_options.h"
 #include "output_metadata.h"
 #include "process_utils.h"
 
@@ -355,22 +356,9 @@ static void set_stop_list() {
 
 static void parse_command_line(int argc, char **argv, struct wl_state *state) {
 
+    // CHANGED 2026-11-19 - Use gslapper's option table - Problem: the hand-copied table lacked -T/-D/-S/-R and the state options, so their arguments were taken as the output name
     static struct option long_options[] = {
-        {"help", no_argument, NULL, 'h'},
-        {"help-output", no_argument, NULL, 'd'},
-        {"verbose", no_argument, NULL, 'v'},
-        {"fork", no_argument, NULL, 'f'},
-        {"auto-pause", no_argument, NULL, 'p'},
-        {"auto-stop", no_argument, NULL, 's'},
-        {"slideshow", required_argument, NULL, 'n'},
-        {"layer", required_argument, NULL, 'l'},
-        {"gst-options", required_argument, NULL, 'o'},
-        {"ipc-socket", required_argument, NULL, 'I'},
-        {"transition-type", required_argument, NULL, 1001},
-        {"transition-duration", required_argument, NULL, 1002},
-        {"cache-size", required_argument, NULL, 1003},
-        {"fps-cap", required_argument, NULL, 'r'},
-        {0, 0, 0, 0}
+        GSLAPPER_LONG_OPTIONS
     };
 
     const char *usage =
@@ -384,7 +372,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
 
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "hdvfpsn:l:o:I:r:Z:", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, GSLAPPER_SHORT_OPTIONS, long_options, NULL)) != -1) {
 
         switch (opt) {
             case 'h':

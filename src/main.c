@@ -41,6 +41,7 @@
 #include "ipc.h"
 #include "state.h"
 #include "cache.h"
+#include "cli_options.h"
 #include "process_utils.h"
 #include "output_metadata.h"
 
@@ -3683,27 +3684,9 @@ static void set_watch_lists() {
 // Command line parsing
 static void parse_command_line(int argc, char **argv, struct wl_state *state) {
 
+    // CHANGED 2026-11-19 - Option table moved to cli_options.h - Problem: gslapper-holder kept a stale copy and misread the output name
     static struct option long_options[] = {
-        {"help", no_argument, NULL, 'h'},
-        {"help-output", no_argument, NULL, 'd'},
-        {"verbose", no_argument, NULL, 'v'},
-        {"fork", no_argument, NULL, 'f'},
-        {"auto-pause", no_argument, NULL, 'p'},
-        {"auto-stop", no_argument, NULL, 's'},
-        {"slideshow", required_argument, NULL, 'n'},
-        {"layer", required_argument, NULL, 'l'},
-        {"gst-options", required_argument, NULL, 'o'},
-        {"fps-cap", required_argument, NULL, 'r'},
-        {"ipc-socket", required_argument, NULL, 'I'},
-        {"transition-type", required_argument, NULL, 'T'},
-        {"transition-duration", required_argument, NULL, 'D'},
-        {"systemd", no_argument, NULL, 'S'},
-        {"restore", no_argument, NULL, 'R'},
-        {"save-state", no_argument, NULL, 1000},
-        {"state-file", required_argument, NULL, 1001},
-        {"no-save-state", no_argument, NULL, 1002},
-        {"cache-size", required_argument, NULL, 1003},
-        {0, 0, 0, 0}
+        GSLAPPER_LONG_OPTIONS
     };
 
     const char *usage =
@@ -3746,7 +3729,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
     char *layer_name;
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "hdvfpsn:l:o:r:I:T:D:Z:SR", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, GSLAPPER_SHORT_OPTIONS, long_options, NULL)) != -1) {
 
         switch (opt) {
             case 'h':
