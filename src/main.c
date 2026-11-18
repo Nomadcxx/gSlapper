@@ -1121,7 +1121,12 @@ static void render(struct display_output *output) {
     }
 
     // For image mode, only render once unless redraw explicitly needed or transitioning
-    if (is_image_mode && !output->redraw_needed && texture_manager.initialized && !transition_state.active) {
+    // CHANGED 2026-11-19 - Also render when a new image frame is waiting - Problem: after the first frame's callback fired, an image change without a transition never reached the screen
+    pthread_mutex_lock(&video_mutex);
+    bool image_frame_pending = video_frame_data.has_new_frame;
+    pthread_mutex_unlock(&video_mutex);
+    if (is_image_mode && !output->redraw_needed && !image_frame_pending && texture_manager.initialized &&
+        !transition_state.active) {
         return;  // Image already rendered, no continuous updates needed
     }
 
@@ -2688,6 +2693,10 @@ static bool reload_image_pipeline(const char *new_path) {
         video_frame_data.has_new_frame = TRUE;
         image_frame_captured = true;
         pthread_mutex_unlock(&video_mutex);
+
+        // CHANGED 2026-11-19 - Wake the render loop like buffer_probe does - Problem: a cache hit never triggered a render
+        if (write(wakeup_pipe[1], "f", 1) == -1 && errno != EAGAIN && VERBOSE)
+            cflp_warning("Failed to write to wakeup pipe");
 
         // Update display status
         if (old_resolved_path[0] != '\0') {
