@@ -2624,6 +2624,21 @@ static void on_decodebin_pad_added(GstElement *decodebin, GstPad *pad, gpointer 
 // Image pipeline initialization (for static images)
 // Reload image pipeline with new path (for transitions)
 // Returns true on success, false on failure
+// Tear down a failed image load. The previous image and path stay in place.
+static bool fail_image_reload(GstBus *load_bus, char *previous_path) {
+    free(video_path);
+    video_path = previous_path;
+    if (load_bus)
+        gst_object_unref(load_bus);
+    if (pipeline) {
+        gst_element_set_state(pipeline, GST_STATE_NULL);
+        gst_object_unref(pipeline);
+        pipeline = NULL;
+    }
+    cancel_transition();
+    return false;
+}
+
 static bool reload_image_pipeline(const char *new_path) {
     if (VERBOSE)
         cflp_info("Reloading image pipeline for: %s", new_path);
@@ -2657,13 +2672,12 @@ static bool reload_image_pipeline(const char *new_path) {
     // Reset image capture flag
     image_frame_captured = false;
 
-    // Update video_path
-    if (video_path) {
-        free(video_path);
-    }
+    // CHANGED 2026-11-19 - Keep the previous path until the new image loads - Problem: a failed change left query and saved state pointing at the broken file
+    char *previous_path = video_path;
     video_path = strdup(new_path);
     if (!video_path) {
         cflp_error("Failed to allocate memory for new path");
+        video_path = previous_path;
         cancel_transition();
         return false;
     }
@@ -2675,8 +2689,7 @@ static bool reload_image_pipeline(const char *new_path) {
     char resolved_path[PATH_MAX];
     if (realpath(new_path, resolved_path) == NULL) {
         cflp_error("Failed to resolve image path '%s': %s", new_path, strerror(errno));
-        cancel_transition();
-        return false;
+        return fail_image_reload(NULL, previous_path);
     }
 
     // Check cache first
@@ -2706,6 +2719,7 @@ static bool reload_image_pipeline(const char *new_path) {
 
         if (VERBOSE)
             cflp_success("New image loaded from cache: %dx%d", cached->width, cached->height);
+        free(previous_path);
         return true;
     }
 
@@ -2759,29 +2773,20 @@ static bool reload_image_pipeline(const char *new_path) {
     // Link filesrc to decoder
     if (!gst_element_link(filesrc, decoder)) {
         cflp_error("Failed to link filesrc to image decoder");
-        gst_object_unref(pipeline);
-        pipeline = NULL;
-        cancel_transition();
-        return false;
+        return fail_image_reload(NULL, previous_path);
     }
 
     // Link videoconvert to appsink
     if (!gst_element_link(videoconvert, appsink)) {
         cflp_error("Failed to link videoconvert to appsink");
-        gst_object_unref(pipeline);
-        pipeline = NULL;
-        cancel_transition();
-        return false;
+        return fail_image_reload(NULL, previous_path);
     }
 
     // gdkpixbufdec has static pads and links directly; decodebin needs dynamic pad linking
     if (use_pixbuf_decoder) {
         if (!gst_element_link(decoder, videoconvert)) {
             cflp_error("Failed to link gdkpixbufdec to videoconvert");
-            gst_object_unref(pipeline);
-            pipeline = NULL;
-            cancel_transition();
-            return false;
+            return fail_image_reload(NULL, previous_path);
         }
     } else {
         g_signal_connect(decoder, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
@@ -2794,19 +2799,14 @@ static bool reload_image_pipeline(const char *new_path) {
         gst_object_unref(sink_pad);
     }
 
-    // Get bus for messages
-    bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
+    // CHANGED 2026-11-19 - Keep the loading pipeline's bus private until the frame arrives - Problem: the events thread popped decode errors from it, treated them as fatal and exited, and could use the bus after it was freed here
+    GstBus *load_bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
 
     // Start pipeline
     GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
     if (ret == GST_STATE_CHANGE_FAILURE) {
         cflp_error("Failed to start image pipeline");
-        gst_object_unref(bus);
-        bus = NULL;
-        gst_object_unref(pipeline);
-        pipeline = NULL;
-        cancel_transition();
-        return false;
+        return fail_image_reload(load_bus, previous_path);
     }
 
     // Wait for the frame to be captured (with timeout)
@@ -2815,7 +2815,7 @@ static bool reload_image_pipeline(const char *new_path) {
     int waited = 0;
     while (!image_frame_captured && waited < timeout_ms) {
         // Process GStreamer bus messages (non-blocking)
-        GstMessage *msg = gst_bus_pop(bus);
+        GstMessage *msg = gst_bus_pop(load_bus);
         if (msg) {
             if (GST_MESSAGE_TYPE(msg) == GST_MESSAGE_ERROR) {
                 GError *error = NULL;
@@ -2825,12 +2825,7 @@ static bool reload_image_pipeline(const char *new_path) {
                 g_error_free(error);
                 g_free(debug);
                 gst_message_unref(msg);
-                gst_object_unref(bus);
-                bus = NULL;
-                gst_object_unref(pipeline);
-                pipeline = NULL;
-                cancel_transition();
-                return false;
+                return fail_image_reload(load_bus, previous_path);
             }
             gst_message_unref(msg);
         }
@@ -2856,16 +2851,12 @@ static bool reload_image_pipeline(const char *new_path) {
 
     if (!image_frame_captured) {
         cflp_error("Timeout waiting for image frame");
-        gst_object_unref(bus);
-        bus = NULL;
-        gst_object_unref(pipeline);
-        pipeline = NULL;
-        cancel_transition();
-        return false;
+        return fail_image_reload(load_bus, previous_path);
     }
 
     // Stop pipeline (we have the frame in texture)
     gst_element_set_state(pipeline, GST_STATE_NULL);
+    bus = load_bus;
 
     // Add to cache for instant loading next time
     if (cache_enabled() && video_frame_data.data) {
@@ -2883,6 +2874,7 @@ static bool reload_image_pipeline(const char *new_path) {
     if (VERBOSE)
         cflp_success("New image loaded: %dx%d", video_frame_data.width, video_frame_data.height);
 
+    free(previous_path);
     return true;
 }
 
