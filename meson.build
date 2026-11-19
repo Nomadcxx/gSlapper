@@ -37,7 +37,7 @@ protocols_headers=[
 lib_protocols=static_library('protocols',protocols_src+protocols_headers,dependencies: wl_client)
 protocols_dep=declare_dependency(link_with: lib_protocols,sources: protocols_headers)
 
-executable(meson.project_name(), ['src/main.c', 'src/output_metadata.c', 'src/process_utils.c', 'src/glad.c', 'src/cflogprinter.c', 'src/ipc.c', 'src/state.c', 'src/cache.c', 'src/scaling.c', 'src/transition.c'],
+executable(meson.project_name(), ['src/main.c', 'src/output_metadata.c', 'src/process_utils.c', 'src/glad.c', 'src/cflogprinter.c', 'src/ipc.c', 'src/state.c', 'src/cache.c', 'src/scaling.c', 'src/transition.c', 'src/playlist.c'],
 include_directories : ['inc'],
 dependencies: [dl_dep, m_dep, wl_client, wl_egl, egl, gst_dep, gst_video_dep, gst_gl_dep, threads, protocols_dep, systemd_dep], install: true)
 
@@ -68,7 +68,7 @@ test('ipc-socket', test_ipc_socket, env: ['ASAN_OPTIONS=detect_leaks=0'])
 
 test_watch_list = executable('test-watch-list',
   ['tests/test_watch_list.c', 'src/glad.c', 'src/cflogprinter.c', 'src/ipc.c', 'src/state.c',
-   'src/cache.c', 'src/scaling.c', 'src/transition.c', 'src/output_metadata.c', 'src/process_utils.c'],
+   'src/cache.c', 'src/scaling.c', 'src/transition.c', 'src/playlist.c', 'src/output_metadata.c', 'src/process_utils.c'],
   include_directories: ['inc'],
   dependencies: [dl_dep, m_dep, wl_client, wl_egl, egl, gst_dep, gst_video_dep, gst_gl_dep, threads, protocols_dep, systemd_dep],
   build_by_default: false)
@@ -101,3 +101,9 @@ test_transition = executable('test-transition',
   dependencies: [m_dep],
   build_by_default: false)
 test('transition', test_transition)
+
+test_playlist = executable('test-playlist',
+  ['tests/test_playlist.c', 'src/playlist.c'],
+  include_directories: ['inc'],
+  build_by_default: false)
+test('playlist', test_playlist)
