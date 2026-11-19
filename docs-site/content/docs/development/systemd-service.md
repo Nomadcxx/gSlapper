@@ -448,16 +448,6 @@ Restart=on-failure
 
 ---
 
-## Future Enhancements
-
-**Planned** (tracked in GitHub issues):
-1. **Playlist Support** - Rotate through multiple wallpapers
-2. **Scheduled Wallpapers** - Change based on time of day
-3. **State Encryption** - Optional encryption for sensitive paths
-4. **Multiple State Profiles** - Switch between wallpaper configurations
-
----
-
 ## See Also
 
 - **[Systemd Service Setup (User Guide)](../systemd-service-setup)** - End-user setup guide

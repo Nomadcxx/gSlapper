@@ -129,14 +129,15 @@ echo "save-state" | nc -U /tmp/gslapper.sock
 
 ### `set-transition <type>`
 
-Set transition effect type. Options: `none`, `fade`.
+Set transition effect type: `none`, `fade`, `left`, `right`, `top`, `bottom`, `wipe`, `wave`, `grow`, `center`, `outer`, `any` or `random`. See [Transitions](../advanced/transitions) for what each one does.
 
 ```bash
 echo "set-transition fade" | nc -U /tmp/gslapper.sock
+echo "set-transition wave" | nc -U /tmp/gslapper.sock
 echo "set-transition none" | nc -U /tmp/gslapper.sock
 ```
 
-**Response:** `OK` or `ERROR: <message>`
+**Response:** `OK: fade transitions enabled`, `OK: <type> transitions enabled`, `OK: transitions disabled`, or `ERROR: unknown transition type`
 
 <Callout type="info" title="Transitions">
 Transitions only work between static images. Videos always use instant switch regardless of transition settings.
@@ -152,6 +153,27 @@ echo "set-transition-duration 2.0" | nc -U /tmp/gslapper.sock
 
 **Response:** `OK` or `ERROR: <message>`
 
+### `set-transition-angle <degrees>`
+
+Set the direction the edge travels for `wipe` and `wave`: `0` moves left to right, `90` top to bottom. Values wrap into 0-360.
+
+```bash
+echo "set-transition-angle 135" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** `OK: angle set to 135` or `ERROR: invalid angle`
+
+### `set-transition-pos <position>`
+
+Set the circle origin for `grow` and `outer`: `x,y` fractions from the top-left corner, or a name such as `center`, `top-left` or `bottom-right`.
+
+```bash
+echo "set-transition-pos 0.25,0.75" | nc -U /tmp/gslapper.sock
+echo "set-transition-pos top-right" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** `OK: position set to 0.25,0.75` or `ERROR: invalid position`
+
 ### `get-transition`
 
 Query current transition settings.
@@ -160,9 +182,11 @@ Query current transition settings.
 echo "get-transition" | nc -U /tmp/gslapper.sock
 ```
 
-**Response:** `TRANSITION: <type> <enabled|disabled> <duration>`
+**Response:** `TRANSITION: <type> <enabled|disabled> <duration> angle=<degrees> pos=<x>,<y>`
 
-Example: `TRANSITION: fade enabled 1.50`
+Example: `TRANSITION: fade enabled 1.50 angle=45 pos=0.50,0.50`
+
+The first three fields have not changed since earlier releases, so scripts that read only those keep working.
 
 ## Response Format
 
@@ -173,7 +197,7 @@ Example: `TRANSITION: fade enabled 1.50`
 - `ERROR: Permission denied: <path>` - Permission error with system details
 - `ERROR: Invalid input: <reason>` - Input validation failed
 - `STATUS: <state> <type> <path>` - Query response
-- `TRANSITION: <type> <enabled|disabled> <duration>` - Transition query response
+- `TRANSITION: <type> <enabled|disabled> <duration> angle=<degrees> pos=<x>,<y>` - Transition query response
 
 ### Error Messages
 

@@ -127,7 +127,7 @@ filesrc → typefind → decoder → videoconvert → imagefreeze → appsink (R
 - Format detection via file extension (case-insensitive)
 - Uses GStreamer `imagefreeze` element for static display
 - Default scaling mode: `fill` (crop to fill screen)
-- Transitions: Supports fade transition between images (opt-in)
+- Transitions: fades, wipes, waves and circles between images (opt-in, see Transition System)
 
 ## Wayland Integration
 
@@ -145,42 +145,17 @@ filesrc → typefind → decoder → videoconvert → imagefreeze → appsink (R
 
 ## Transition System
 
-### Architecture
+Pure logic lives in `src/transition.c` (`inc/transition.h`): type names, parameter parsing, easing, and `transition_resolve()`, which turns a type plus the configured angle and position into a `transition_params_t` (shape, angle, origin). `random` and `any` are resolved there, once per change.
 
-Transition state structure:
+The GL side lives in `src/main.c`:
 
-```c
-typedef struct {
-    transition_type_t type;      // TRANSITION_NONE or TRANSITION_FADE
-    bool active;                 // Currently transitioning?
-    bool enabled;                // Globally enabled?
-    float duration;              // Total duration in seconds
-    float progress;              // Progress 0.0-1.0
-    uint8_t *old_pixels;         // Old image pixels (RGBA)
-    uint8_t *new_pixels;         // New image pixels (RGBA)
-    uint8_t *blend_pixels;       // Blended result for display
-    int width, height;           // Display resolution
-    struct timespec start_time;
-} transition_state_t;
-```
+1. `start_transition()` - finishes any running transition, keeps the current texture as the outgoing image (with its uploaded size), resolves the parameters, and gives the incoming image a fresh texture. The clock does not start yet.
+2. `render()` - when the incoming frame is uploaded, the clock starts (`waiting_for_frame` clears). Until then the outgoing image is drawn alone.
+3. `update_transition()` - advances progress from the monotonic clock and calls `complete_transition()` at 1.0.
+4. `render_transition()` - draws a full-screen quad with the transition shader. Each texture gets its own scale from `compute_quad_scale()`, so differing aspect ratios and letterboxing render correctly. A shape mask, computed in buffer pixels, mixes the two.
+5. `complete_transition()` / `cancel_transition()` - free the outgoing texture. A cancel before the incoming frame arrived (a failed load) restores the outgoing texture instead.
 
-### Core Functions
-
-1. `start_transition()` - Captures current wallpaper, prepares buffers
-2. `activate_transition()` - Loads new image and starts blending
-3. `update_transition()` - Blends pixels each frame using integer math
-4. `complete_transition()` - Cleans up after completion
-5. `cancel_transition()` - Cancels ongoing transition
-
-### Blending Algorithm
-
-CPU-based alpha blending for speed:
-
-```c
-// Integer-based alpha blending
-int step = (int)(progress * 256.0f);
-blend[i] = ((old[i] * (256 - step) + new[i] * step) >> 8);
-```
+Shapes (`transition_shape_t`, shared with the shader's `u_shape`): fade, wipe (straight edge along an angle), wave (wipe with a sinusoidal edge), grow (expanding circle) and outer (shrinking circle). Edge feather is 8 px; wave amplitude 24 px and wavelength 160 px.
 
 ## Memory Management
 
@@ -258,21 +233,18 @@ gSlapper/
 │   ├── main.c          # Main application (~2000 lines)
 │   ├── holder.c        # Process monitoring (~420 lines)
 │   ├── ipc.c           # IPC control system (~500 lines)
+│   ├── scaling.c       # Quad scaling for fill/fit/stretch/original
+│   ├── transition.c    # Transition types, parameters, easing
 │   ├── cflogprinter.c  # Logging system
 │   └── glad.c          # OpenGL loader
 ├── inc/
 │   ├── ipc.h           # IPC interface
+│   ├── cli_options.h   # Option table shared with gslapper-holder
+│   ├── scaling.h
+│   ├── transition.h
 │   ├── cflogprinter.h  # Logging interface
 │   └── glad/           # OpenGL headers
 ├── proto/
 │   └── wlr-layer-shell-unstable-v1.xml  # Wayland protocol
 └── docs/               # Documentation
 ```
-
-## Future Improvements
-
-- GPU-accelerated transitions (shader-based blending)
-- Image preloading and caching
-- Additional transition effects (wipe, center, outer, random)
-- Hardware-accelerated video decoding
-- Better error recovery and resilience

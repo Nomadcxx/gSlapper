@@ -25,7 +25,7 @@ Full documentation available at: https://nomadcxx.github.io/gSlapper/
 
 - Play videos (MP4, MKV, WebM) and images (JPEG, PNG, WebP, GIF)
 - Animated GIF playback with correct frame timing and looping (requires gst-libav; shows the first frame statically without it)
-- Fade transitions between images
+- Transitions between images: fade, wipes, waves and circles
 - Multi-monitor support
 - IPC control via Unix socket (pause, resume, change wallpaper)
 - Scaling modes: fill, stretch, original, panscan
