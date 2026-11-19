@@ -67,7 +67,17 @@ gslapper -o "fill" DP-3 /path/to/image2.jpg &
 
 ## Transitions
 
-gSlapper supports smooth fade transitions between images. See [Transitions](../advanced/transitions) for details.
+gSlapper can fade, wipe, wave or grow a circle between images. See [Transitions](../advanced/transitions) for details.
+
+## Slideshows
+
+Pass a directory or a playlist file with `-n SECS` to cycle through images:
+
+```bash
+gslapper -n 600 --transition-type fade --transition-duration 1 '*' ~/Pictures/wallpapers
+```
+
+See [`--slideshow`](./command-line-options#-n---slideshow-secs) for playlist rules.
 
 ## Making Image Wallpapers Persistent
 

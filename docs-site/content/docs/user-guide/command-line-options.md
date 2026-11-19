@@ -56,6 +56,19 @@ Automatically stop when wallpaper is hidden.
 gslapper -s -o "loop" DP-1 video.mp4
 ```
 
+### `-n, --slideshow SECS`
+
+Cycle through images every SECS seconds. Give a directory or a playlist file (`.m3u`, `.m3u8` or `.txt`) as the path:
+
+- **Directory**: its image files, in name order. Other files are skipped.
+- **Playlist**: one path per line, in file order. Blank lines and lines starting with `#` are ignored; relative paths are resolved against the playlist's folder. gSlapper refuses to start if an entry is missing or is not a static image (videos and animated GIFs are not supported).
+
+```bash
+gslapper -n 300 --transition-type random -I /tmp/sock '*' ~/Pictures/wallpapers
+```
+
+The slideshow wraps around, uses the configured transition, and waits while playback is paused. An IPC `change` shows that image and restarts the timer; the next step continues from the list. State saving records the image on screen, not the slideshow, so `--restore` brings back that single image.
+
 ### `-r, --fps-cap FPS`
 
 Set frame rate cap. Available values: 30, 60, or 100 FPS.

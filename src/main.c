@@ -44,6 +44,7 @@
 #include "cli_options.h"
 #include "scaling.h"
 #include "transition.h"
+#include "playlist.h"
 #include "process_utils.h"
 #include "output_metadata.h"
 
@@ -254,6 +255,10 @@ static struct {
 static pthread_t threads[5] = {0};
 
 static uint SLIDESHOW_TIME = 0;
+// Slideshow playlist loaded from a directory or playlist file (main thread only)
+static char **slideshow_entries = NULL;
+static size_t slideshow_count = 0, slideshow_index = 0;
+static struct timespec slideshow_next = {0};
 static bool SHOW_OUTPUTS = false;
 static int VERBOSE = 0;
 static char *ipc_socket_path = NULL;
@@ -282,6 +287,8 @@ static void complete_transition(void);
 static void cancel_transition(void);
 static void init_image_pipeline(void);
 static bool reload_image_pipeline(const char *new_path);
+static bool change_static_image(const char *path, int reply_fd);
+static void slideshow_schedule(void);
 static bool decode_image_to_rgba(const char *resolved_path, unsigned char **data_out,
                                  int *width_out, int *height_out);
 static void save_current_state(void);
@@ -331,6 +338,9 @@ static void exit_cleanup() {
 
     // Clean up image cache
     cache_shutdown();
+    playlist_free(slideshow_entries, slideshow_count);
+    slideshow_entries = NULL;
+    slideshow_count = 0;
 
     // Clean up transition resources
     cancel_transition();
@@ -2023,18 +2033,8 @@ static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data) {
 
 static void *handle_gst_events(void *_) {
     pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
-    time_t start_time = time(NULL);
 
     while (true) {
-        if (SLIDESHOW_TIME) {
-            if ((time(NULL) - start_time) >= SLIDESHOW_TIME) {
-                // For slideshow mode, we would need to implement playlist handling
-                // This is a placeholder
-                cflp_info("Slideshow next (not implemented)");
-                start_time = time(NULL);
-            }
-        }
-
         // Handle GStreamer messages
         // CHANGED 2026-09-30 - Stop touching the bus once shutdown starts - Problem:
         // with teardown deferred to the main thread, exit_cleanup unrefs the bus
@@ -2149,65 +2149,29 @@ static void execute_ipc_commands(void) {
                     snprintf(errmsg, sizeof(errmsg), "ERROR: file not accessible: %s\n", strerror(errno));
                     ipc_send_response(cmd->client_fd, errmsg);
                 } else {
-                    // Check if we should use a transition for this change
-                    bool use_transition = should_use_transition(arg);
-                    
-                    if (use_transition && is_image_mode) {
-                        if (VERBOSE)
-                            cflp_info("IPC: Starting transition to %s", arg);
-                        
-                        // Start transition before changing wallpaper
-                        start_transition(arg);
-                        
-                        // Send response IMMEDIATELY so IPC doesn't block
-                        // Image loading will happen asynchronously
-                        ipc_send_response(cmd->client_fd, "OK: transition started\n");
-                        
-                        if (VERBOSE)
-                            cflp_info("IPC: Transition started, loading new image asynchronously...");
-                        
-                        // Reload image pipeline with new path (will update texture_manager.texture)
-                        // This may block briefly, but response is already sent
-                        if (!reload_image_pipeline(arg)) {
-                            // Transition was canceled due to error in reload_image_pipeline
-                            cflp_warning("IPC: Failed to load new image for transition");
-                            // Note: Can't send error response here as response already sent
-                            // Transition will be canceled automatically
+                    // CHANGED 2026-11-19 - Image changes go through change_static_image, shared with the slideshow - Problem: slideshow advances need the same transition logic and replies
+                    if (is_image_mode && is_static_image_path(arg)) {
+                        change_static_image(arg, cmd->client_fd);
+                        if (slideshow_count > 1)
+                            slideshow_schedule();
+                    } else if (halt_info.argv_copy && halt_info.argc > 0) {
+                        // For videos or when auto-stop enabled, update path and restart
+                        free(halt_info.argv_copy[halt_info.argc - 1]);
+                        halt_info.argv_copy[halt_info.argc - 1] = strdup(arg);
+                        if (!halt_info.argv_copy[halt_info.argc - 1]) {
+                            ipc_send_response(cmd->client_fd, "ERROR: failed to allocate memory\n");
                         } else {
-                            if (VERBOSE)
-                                cflp_info("IPC: New image loaded, transition active=%d", transition_state.active);
+                            // Preserve IPC socket path in argv if set
+                            // (stop_slapper will restart with same args)
+                            ipc_send_response(cmd->client_fd, "OK\n");
+                            // Close write side to ensure response is flushed
+                            shutdown(cmd->client_fd, SHUT_WR);
+                            usleep(50000);  // Delay to ensure response is sent before restart
+                            // New file, so it starts from the beginning
+                            stop_slapper(false);
                         }
-                        
-                        if (VERBOSE)
-                            cflp_info("IPC: Change command completed");
                     } else {
-                        // No transition - check if this is a static image (can reload directly)
-                        if (is_image_mode && is_static_image_path(arg)) {
-                            // For images, reload pipeline directly without restart
-                            if (reload_image_pipeline(arg)) {
-                                ipc_send_response(cmd->client_fd, "OK\n");
-                            } else {
-                                ipc_send_response(cmd->client_fd, "ERROR: failed to load image\n");
-                            }
-                        } else if (halt_info.argv_copy && halt_info.argc > 0) {
-                            // For videos or when auto-stop enabled, update path and restart
-                            free(halt_info.argv_copy[halt_info.argc - 1]);
-                            halt_info.argv_copy[halt_info.argc - 1] = strdup(arg);
-                            if (!halt_info.argv_copy[halt_info.argc - 1]) {
-                                ipc_send_response(cmd->client_fd, "ERROR: failed to allocate memory\n");
-                            } else {
-                                // Preserve IPC socket path in argv if set
-                                // (stop_slapper will restart with same args)
-                                ipc_send_response(cmd->client_fd, "OK\n");
-                                // Close write side to ensure response is flushed
-                                shutdown(cmd->client_fd, SHUT_WR);
-                                usleep(50000);  // Delay to ensure response is sent before restart
-                                // New file, so it starts from the beginning
-                                stop_slapper(false);
-                            }
-                        } else {
-                            ipc_send_response(cmd->client_fd, "ERROR: cannot update path (use --auto-stop for video changes)\n");
-                        }
+                        ipc_send_response(cmd->client_fd, "ERROR: cannot update path (use --auto-stop for video changes)\n");
                     }
                 }
             }
@@ -2451,6 +2415,54 @@ static void execute_ipc_commands(void) {
         free(cmd->cmd_line);
         free(cmd);
     }
+}
+
+// Show a static image, with the configured transition when one applies.
+// reply_fd >= 0 receives the replies the IPC change command has always sent.
+static bool change_static_image(const char *path, int reply_fd) {
+    if (should_use_transition(path)) {
+        start_transition(path);
+        // Reply before loading so the client is not held up by the decode
+        if (reply_fd >= 0)
+            ipc_send_response(reply_fd, "OK: transition started\n");
+        if (!reload_image_pipeline(path)) {
+            cflp_warning("Failed to load %s for transition", path);
+            return false;
+        }
+        return true;
+    }
+    bool loaded = reload_image_pipeline(path);
+    if (reply_fd >= 0)
+        ipc_send_response(reply_fd, loaded ? "OK\n" : "ERROR: failed to load image\n");
+    return loaded;
+}
+
+static void slideshow_schedule(void) {
+    clock_gettime(CLOCK_MONOTONIC, &slideshow_next);
+    slideshow_next.tv_sec += SLIDESHOW_TIME;
+}
+
+// Advance the slideshow when its interval has passed. While paused the deadline
+// keeps moving, so playback resumes with a full interval.
+static void slideshow_tick(void) {
+    if (slideshow_count < 2)
+        return;
+    if (halt_info.is_paused) {
+        slideshow_schedule();
+        return;
+    }
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    if (now.tv_sec < slideshow_next.tv_sec ||
+        (now.tv_sec == slideshow_next.tv_sec && now.tv_nsec < slideshow_next.tv_nsec))
+        return;
+
+    slideshow_index = (slideshow_index + 1) % slideshow_count;
+    slideshow_schedule();
+    if (VERBOSE)
+        cflp_info("Slideshow: showing %s", slideshow_entries[slideshow_index]);
+    if (!change_static_image(slideshow_entries[slideshow_index], -1))
+        cflp_warning("Slideshow: failed to show %s", slideshow_entries[slideshow_index]);
 }
 
 static void init_threads() {
@@ -3723,7 +3735,7 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         "--fork         -f              Forks slapper so you can close the terminal\n"
         "--auto-pause   -p              Pause playback when wallpaper is hidden (saves CPU)\n"
         "--auto-stop    -s              Stop and restart when hidden (required for video IPC changes)\n"
-        "--slideshow    -n SECS         Slideshow mode plays the next video in a playlist every ? seconds\n"
+        "--slideshow    -n SECS         Cycle images from a directory or playlist (.m3u/.m3u8/.txt) every SECS seconds\n"
         "--layer        -l LAYER        Specifies shell surface layer to run on (background by default)\n"
         "--gst-options  -o \"OPTIONS\"    Forwards GStreamer options (Must be within quotes\"\")\n"
         "--fps-cap      -r FPS           Frame rate cap (30, 60, or 100 FPS, default: 30)\n"
@@ -4026,6 +4038,27 @@ int main(int argc, char **argv) {
 
     // Don't start egl and gst if just displaying outputs
     if (!SHOW_OUTPUTS) {
+        // CHANGED 2026-11-19 - Load the slideshow list before anything else starts - Problem: -n was a stub
+        if (SLIDESHOW_TIME > 0 && playlist_is_source(video_path)) {
+            char err[PATH_MAX + 64];
+            if (!playlist_load(video_path, is_static_image_path, &slideshow_entries, &slideshow_count,
+                               err, sizeof(err))) {
+                cflp_error("Slideshow: %s", err);
+                exit_slapper(EXIT_FAILURE);
+            }
+            char *first = strdup(slideshow_entries[0]);
+            if (!first) {
+                cflp_error("Failed to allocate memory for slideshow path");
+                exit_slapper(EXIT_FAILURE);
+            }
+            free(video_path);
+            video_path = first;
+            if (VERBOSE)
+                cflp_info("Slideshow: %zu images, every %u seconds", slideshow_count, SLIDESHOW_TIME);
+        }
+        if (SLIDESHOW_TIME > 0 && slideshow_count < 2)
+            cflp_warning("slideshow needs a directory or playlist with more than one image; showing a single image");
+
         // Init render before outputs
         init_egl(&state);
         if (VERBOSE)
@@ -4079,6 +4112,9 @@ int main(int argc, char **argv) {
 
     // Start monitoring threads after surfaces are ready
     init_threads();
+
+    if (slideshow_count > 1)
+        slideshow_schedule();
 
     // Main Loop
     while (true) {
@@ -4166,6 +4202,8 @@ int main(int argc, char **argv) {
             if (VERBOSE == 2)
                 cflp_info("Main loop: IPC commands processed");
         }
+
+        slideshow_tick();
         
         // During transitions, force continuous rendering
         // We can't rely on frame callbacks for smooth transitions
