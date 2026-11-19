@@ -271,6 +271,18 @@ echo "cache-stats" | nc -U /tmp/gslapper.sock
 
 **Response:** `45.70/256.00 MB (2 images)` or `Cache disabled`
 
+### `preload <path>`
+
+Decode an image into the cache without showing it, so a later `change` to it is instant. Images are also cached automatically when displayed.
+
+```bash
+echo "preload /path/to/next.jpg" | nc -U /tmp/gslapper.sock
+```
+
+**Response:** `OK: preloaded`, `OK: already cached`, `ERROR: cache disabled` (with `--cache-size 0`), `ERROR: image exceeds cache size`, `ERROR: failed to decode image`, `ERROR: file not accessible`, or `ERROR: not a valid image file`
+
+The decode runs in the main loop, so very large images briefly pause animation while they load.
+
 ### `unload <target>`
 
 Remove images from cache. Target can be:

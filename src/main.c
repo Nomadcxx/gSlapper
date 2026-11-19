@@ -282,6 +282,8 @@ static void complete_transition(void);
 static void cancel_transition(void);
 static void init_image_pipeline(void);
 static bool reload_image_pipeline(const char *new_path);
+static bool decode_image_to_rgba(const char *resolved_path, unsigned char **data_out,
+                                 int *width_out, int *height_out);
 static void save_current_state(void);
 static int restore_from_state(const char *path);
 static void notify_systemd_ready(void);
@@ -2362,19 +2364,38 @@ static void execute_ipc_commands(void) {
                 ipc_send_response(cmd->client_fd, "OK: removed from cache\n");
             }
         }
+        // CHANGED 2026-11-19 - Decode into the cache without displaying - Problem: preload was a stub
         else if (strcmp(cmd_name, "preload") == 0) {
+            char resolved[PATH_MAX];
             if (!arg || strlen(arg) == 0) {
                 ipc_send_response(cmd->client_fd, "ERROR: missing path argument\n");
             } else if (access(arg, R_OK) != 0) {
                 ipc_send_response(cmd->client_fd, "ERROR: file not accessible\n");
             } else if (!is_image_file(arg)) {
                 ipc_send_response(cmd->client_fd, "ERROR: not a valid image file\n");
-            } else if (cache_contains(arg)) {
+            } else if (!realpath(arg, resolved)) {
+                ipc_send_response(cmd->client_fd, "ERROR: file not accessible\n");
+            } else if (!cache_enabled()) {
+                ipc_send_response(cmd->client_fd, "ERROR: cache disabled\n");
+            } else if (cache_contains(resolved)) {
                 ipc_send_response(cmd->client_fd, "OK: already cached\n");
             } else {
-                // TODO: Full preload implementation requires separate decode pipeline
-                // For now, images are auto-cached when displayed via 'change' command
-                ipc_send_response(cmd->client_fd, "ERROR: preload not yet implemented, use 'change' to display and auto-cache\n");
+                unsigned char *data = NULL;
+                int width = 0, height = 0;
+                size_t used = 0, max_bytes = 0;
+                int entries = 0;
+                cache_stats(&used, &max_bytes, &entries);
+                if (!decode_image_to_rgba(resolved, &data, &width, &height)) {
+                    ipc_send_response(cmd->client_fd, "ERROR: failed to decode image\n");
+                } else if ((size_t)width * (size_t)height * 4 > max_bytes) {
+                    // cache_add would evict everything and still insert it
+                    free(data);
+                    ipc_send_response(cmd->client_fd, "ERROR: image exceeds cache size\n");
+                } else if (!cache_add(resolved, data, width, height)) {
+                    ipc_send_response(cmd->client_fd, "ERROR: failed to cache image\n");
+                } else {
+                    ipc_send_response(cmd->client_fd, "OK: preloaded\n");
+                }
             }
         }
         else if (strcmp(cmd_name, "listactive") == 0) {
@@ -2670,6 +2691,139 @@ static void on_decodebin_pad_added(GstElement *decodebin, GstPad *pad, gpointer 
 // Image pipeline initialization (for static images)
 // Reload image pipeline with new path (for transitions)
 // Returns true on success, false on failure
+// filesrc ! (decodebin | gdkpixbufdec) ! videoconvert ! appsink (RGBA)
+// Returns a new pipeline in the NULL state, or NULL after logging why.
+static GstElement *create_image_decode_pipeline(const char *resolved_path, GstElement **appsink_out) {
+    // CHANGED 2026-07-20 - Select GIF decoder explicitly - Problem: decodebin has no image/gif decoder path
+    bool use_pixbuf_decoder = is_gif_file(resolved_path);
+    if (use_pixbuf_decoder)
+        cflp_warning("No GIF video decoder found (install gst-libav for animation); displaying first frame only");
+
+    GstElement *image_pipeline = gst_pipeline_new("image-pipeline");
+    GstElement *filesrc = gst_element_factory_make("filesrc", "filesrc");
+    GstElement *decoder = gst_element_factory_make(
+        use_pixbuf_decoder ? "gdkpixbufdec" : "decodebin", "imagedec");
+    GstElement *videoconvert = gst_element_factory_make("videoconvert", "videoconvert");
+    GstElement *appsink = gst_element_factory_make("appsink", "appsink");
+
+    if (!image_pipeline || !filesrc || !decoder || !videoconvert || !appsink) {
+        if (use_pixbuf_decoder && !decoder)
+            cflp_error("gdkpixbufdec unavailable (install gst-plugins-good)");
+        cflp_error("Failed to create image pipeline elements");
+        GstElement *made[] = {filesrc, decoder, videoconvert, appsink};
+        for (size_t i = 0; i < sizeof(made) / sizeof(made[0]); i++) {
+            if (made[i])
+                gst_object_unref(gst_object_ref_sink(made[i]));
+        }
+        if (image_pipeline)
+            gst_object_unref(image_pipeline);
+        return NULL;
+    }
+
+    g_object_set(G_OBJECT(filesrc), "location", resolved_path, NULL);
+
+    // Configure appsink for RGBA output
+    GstCaps *caps = gst_caps_from_string("video/x-raw,format=RGBA");
+    g_object_set(G_OBJECT(appsink),
+                 "caps", caps,
+                 "emit-signals", TRUE,
+                 "sync", FALSE,  // No sync needed for single frame
+                 "drop", FALSE,
+                 "max-buffers", 1,
+                 NULL);
+    gst_caps_unref(caps);
+
+    gst_bin_add_many(GST_BIN(image_pipeline), filesrc, decoder, videoconvert, appsink, NULL);
+
+    const char *link_error = NULL;
+    if (!gst_element_link(filesrc, decoder))
+        link_error = "Failed to link filesrc to image decoder";
+    else if (!gst_element_link(videoconvert, appsink))
+        link_error = "Failed to link videoconvert to appsink";
+    // gdkpixbufdec has static pads and links directly; decodebin needs dynamic pad linking
+    else if (use_pixbuf_decoder && !gst_element_link(decoder, videoconvert))
+        link_error = "Failed to link gdkpixbufdec to videoconvert";
+    if (link_error) {
+        cflp_error("%s", link_error);
+        gst_object_unref(image_pipeline);
+        return NULL;
+    }
+    if (!use_pixbuf_decoder)
+        g_signal_connect(decoder, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
+
+    *appsink_out = appsink;
+    return image_pipeline;
+}
+
+// Decode an image off-screen into a tightly packed RGBA buffer (malloc, caller frees).
+// Uses its own pipeline, so the displayed frame and the global pipeline are untouched.
+static bool decode_image_to_rgba(const char *resolved_path, unsigned char **data_out,
+                                 int *width_out, int *height_out) {
+    GstElement *appsink = NULL;
+    GstElement *decode_pipeline = create_image_decode_pipeline(resolved_path, &appsink);
+    if (!decode_pipeline)
+        return false;
+
+    GstSample *sample = NULL;
+    if (gst_element_set_state(decode_pipeline, GST_STATE_PLAYING) != GST_STATE_CHANGE_FAILURE) {
+        GstBus *decode_bus = gst_pipeline_get_bus(GST_PIPELINE(decode_pipeline));
+        // Same 5 s budget and responsiveness as the display loaders' wait loop
+        for (int waited = 0; waited < 5000; waited += 10) {
+            g_signal_emit_by_name(appsink, "try-pull-sample", (GstClockTime)(10 * GST_MSECOND), &sample);
+            if (sample)
+                break;
+            GstMessage *msg = gst_bus_pop_filtered(decode_bus, GST_MESSAGE_ERROR);
+            if (msg) {
+                GError *error = NULL;
+                gst_message_parse_error(msg, &error, NULL);
+                cflp_error("Image decode error: %s", error ? error->message : "unknown");
+                if (error)
+                    g_error_free(error);
+                gst_message_unref(msg);
+                break;
+            }
+            process_pending_signal();
+            process_pending_stop();
+        }
+        gst_object_unref(decode_bus);
+    }
+
+    bool ok = false;
+    if (sample) {
+        GstVideoInfo info;
+        GstBuffer *buffer = gst_sample_get_buffer(sample);
+        GstMapInfo map;
+        if (buffer && gst_video_info_from_caps(&info, gst_sample_get_caps(sample)) &&
+            gst_buffer_map(buffer, &map, GST_MAP_READ)) {
+            int width = GST_VIDEO_INFO_WIDTH(&info);
+            int height = GST_VIDEO_INFO_HEIGHT(&info);
+            size_t stride = GST_VIDEO_INFO_PLANE_STRIDE(&info, 0);
+            size_t offset = GST_VIDEO_INFO_PLANE_OFFSET(&info, 0);
+            size_t row = (size_t)width * 4;
+            if (width > 0 && height > 0 && stride >= row &&
+                map.size >= offset + stride * (size_t)(height - 1) + row) {
+                unsigned char *data = malloc(row * (size_t)height);
+                if (data) {
+                    for (int y = 0; y < height; y++)
+                        memcpy(data + row * y, map.data + offset + stride * y, row);
+                    *data_out = data;
+                    *width_out = width;
+                    *height_out = height;
+                    ok = true;
+                }
+            }
+            gst_buffer_unmap(buffer, &map);
+        }
+        gst_sample_unref(sample);
+    } else {
+        cflp_error("Timed out or failed decoding %s", resolved_path);
+    }
+
+    gst_element_set_state(decode_pipeline, GST_STATE_NULL);
+    gst_object_unref(decode_pipeline);
+    return ok;
+}
+
 // Tear down a failed image load. The previous image and path stay in place.
 static bool fail_image_reload(GstBus *load_bus, char *previous_path) {
     free(video_path);
@@ -2772,70 +2926,11 @@ static bool reload_image_pipeline(const char *new_path) {
     if (VERBOSE)
         cflp_info("Loading new image: %s", resolved_path);
 
-    // Create pipeline elements
-    // CHANGED 2026-07-20 - Select GIF decoder explicitly - Problem: decodebin has no image/gif decoder path
-    bool use_pixbuf_decoder = is_gif_file(resolved_path);
-    if (use_pixbuf_decoder)
-        cflp_warning("No GIF video decoder found (install gst-libav for animation); displaying first frame only");
-    GstElement *filesrc = gst_element_factory_make("filesrc", "filesrc");
-    GstElement *decoder = gst_element_factory_make(
-        use_pixbuf_decoder ? "gdkpixbufdec" : "decodebin", "imagedec");
-    GstElement *videoconvert = gst_element_factory_make("videoconvert", "videoconvert");
-    GstElement *appsink = gst_element_factory_make("appsink", "appsink");
-
-    if (!filesrc || !decoder || !videoconvert || !appsink) {
-        if (use_pixbuf_decoder && !decoder)
-            cflp_error("gdkpixbufdec unavailable (install gst-plugins-good)");
-        cflp_error("Failed to create image pipeline elements");
-        cancel_transition();
-        return false;
-    }
-
-    // Create pipeline
-    pipeline = gst_pipeline_new("image-pipeline");
+    // CHANGED 2026-11-19 - Element construction shared with preload - Problem: three copies of the same pipeline
+    GstElement *appsink = NULL;
+    pipeline = create_image_decode_pipeline(resolved_path, &appsink);
     if (!pipeline) {
-        cflp_error("Failed to create image pipeline");
-        cancel_transition();
-        return false;
-    }
-
-    // Configure filesrc
-    g_object_set(G_OBJECT(filesrc), "location", resolved_path, NULL);
-
-    // Configure appsink for RGBA output
-    GstCaps *caps = gst_caps_from_string("video/x-raw,format=RGBA");
-    g_object_set(G_OBJECT(appsink),
-                 "caps", caps,
-                 "emit-signals", TRUE,
-                 "sync", FALSE,
-                 "drop", FALSE,
-                 "max-buffers", 1,
-                 NULL);
-    gst_caps_unref(caps);
-
-    // Add elements to pipeline
-    gst_bin_add_many(GST_BIN(pipeline), filesrc, decoder, videoconvert, appsink, NULL);
-
-    // Link filesrc to decoder
-    if (!gst_element_link(filesrc, decoder)) {
-        cflp_error("Failed to link filesrc to image decoder");
         return fail_image_reload(NULL, previous_path);
-    }
-
-    // Link videoconvert to appsink
-    if (!gst_element_link(videoconvert, appsink)) {
-        cflp_error("Failed to link videoconvert to appsink");
-        return fail_image_reload(NULL, previous_path);
-    }
-
-    // gdkpixbufdec has static pads and links directly; decodebin needs dynamic pad linking
-    if (use_pixbuf_decoder) {
-        if (!gst_element_link(decoder, videoconvert)) {
-            cflp_error("Failed to link gdkpixbufdec to videoconvert");
-            return fail_image_reload(NULL, previous_path);
-        }
-    } else {
-        g_signal_connect(decoder, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
     }
 
     // Set up buffer probe on appsink
@@ -2961,68 +3056,11 @@ static void init_image_pipeline(void) {
     if (VERBOSE)
         cflp_info("Loading image: %s", resolved_path);
 
-    // Create pipeline elements
-    // CHANGED 2026-07-20 - Select GIF decoder explicitly - Problem: decodebin has no image/gif decoder path
-    bool use_pixbuf_decoder = is_gif_file(resolved_path);
-    if (use_pixbuf_decoder)
-        cflp_warning("No GIF video decoder found (install gst-libav for animation); displaying first frame only");
-    GstElement *filesrc = gst_element_factory_make("filesrc", "filesrc");
-    GstElement *decoder = gst_element_factory_make(
-        use_pixbuf_decoder ? "gdkpixbufdec" : "decodebin", "imagedec");
-    GstElement *videoconvert = gst_element_factory_make("videoconvert", "videoconvert");
-    GstElement *appsink = gst_element_factory_make("appsink", "appsink");
-
-    if (!filesrc || !decoder || !videoconvert || !appsink) {
-        if (use_pixbuf_decoder && !decoder)
-            cflp_error("gdkpixbufdec unavailable (install gst-plugins-good)");
-        cflp_error("Failed to create image pipeline elements");
-        exit_slapper(EXIT_FAILURE);
-    }
-
-    // Create pipeline
-    pipeline = gst_pipeline_new("image-pipeline");
+    // CHANGED 2026-11-19 - Element construction shared with preload - Problem: three copies of the same pipeline
+    GstElement *appsink = NULL;
+    pipeline = create_image_decode_pipeline(resolved_path, &appsink);
     if (!pipeline) {
-        cflp_error("Failed to create image pipeline");
         exit_slapper(EXIT_FAILURE);
-    }
-
-    // Configure filesrc
-    g_object_set(G_OBJECT(filesrc), "location", resolved_path, NULL);
-
-    // Configure appsink for RGBA output
-    GstCaps *caps = gst_caps_from_string("video/x-raw,format=RGBA");
-    g_object_set(G_OBJECT(appsink),
-                 "caps", caps,
-                 "emit-signals", TRUE,
-                 "sync", FALSE,  // No sync needed for single frame
-                 "drop", FALSE,
-                 "max-buffers", 1,
-                 NULL);
-    gst_caps_unref(caps);
-
-    // Add elements to pipeline
-    gst_bin_add_many(GST_BIN(pipeline), filesrc, decoder, videoconvert, appsink, NULL);
-
-    // Link filesrc to decoder
-    if (!gst_element_link(filesrc, decoder)) {
-        cflp_error("Failed to link filesrc to image decoder");
-        exit_slapper(EXIT_FAILURE);
-    }
-
-    // Link videoconvert to appsink
-    if (!gst_element_link(videoconvert, appsink)) {
-        cflp_error("Failed to link videoconvert to appsink");
-        exit_slapper(EXIT_FAILURE);
-    }
-
-    // gdkpixbufdec has static pads and links directly; decodebin needs dynamic pad linking
-    if (use_pixbuf_decoder) {
-        if (!gst_element_link(decoder, videoconvert)) {
-            cflp_error("Failed to link gdkpixbufdec to videoconvert");
-            exit_slapper(EXIT_FAILURE);
-        }
-    } else {
-        g_signal_connect(decoder, "pad-added", G_CALLBACK(on_decodebin_pad_added), videoconvert);
     }
 
     // Set up buffer probe on appsink
