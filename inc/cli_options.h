@@ -27,6 +27,8 @@
     {"state-file", required_argument, NULL, 1001},              \
     {"no-save-state", no_argument, NULL, 1002},                 \
     {"cache-size", required_argument, NULL, 1003},              \
+    {"transition-angle", required_argument, NULL, 1004},        \
+    {"transition-pos", required_argument, NULL, 1005},          \
     {0, 0, 0, 0}
 
 #endif // CLI_OPTIONS_H

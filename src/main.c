@@ -200,42 +200,32 @@ static bool ipc_paused = false;
 static size_t cache_size_mb = DEFAULT_CACHE_SIZE_MB;
 
 // Transition effects (types and parameters in transition.h)
+// CHANGED 2026-11-19 - Track resolved parameters and wait for the incoming frame - Problem: the outgoing image used the incoming image's geometry and the clock ran during decode
 typedef struct {
     transition_type_t type;
     bool active;
     bool enabled;
+    bool waiting_for_frame;      // Clock starts when the incoming image reaches its texture
     float duration;
-    float elapsed;
-    float progress;
+    float progress;              // Raw 0..1, before easing
     GLuint old_texture;
-    GLuint new_texture;
     int old_width, old_height;
-    int new_width, new_height;
-    float old_scale_x, old_scale_y;
-    float alpha_old;
-    float alpha_new;
+    float angle_deg;             // Configured wipe/wave direction
+    float pos_x, pos_y;          // Configured grow/outer origin
+    transition_params_t params;  // Resolved for the active transition
     struct timespec start_time;
 } transition_state_t;
 
 static transition_state_t transition_state = {
     .type = TRANSITION_NONE,
-    .active = false,
-    .enabled = false,
     .duration = 0.5f,
-    .elapsed = 0.0f,
-    .progress = 0.0f,
-    .old_texture = 0,
-    .new_texture = 0,
-    .old_width = 0,
-    .old_height = 0,
-    .new_width = 0,
-    .new_height = 0,
-    .old_scale_x = 1.0f,
-    .old_scale_y = 1.0f,
-    .alpha_old = 1.0f,
-    .alpha_new = 0.0f,
-    .start_time = {0}
+    .angle_deg = 45.0f,
+    .pos_x = 0.5f,
+    .pos_y = 0.5f,
 };
+
+// Full-screen quad for the transition pass (positions only)
+static GLuint transition_vao = 0, transition_vbo = 0;
 
 static EGLConfig egl_config;
 static EGLDisplay *egl_display;
@@ -446,6 +436,14 @@ static void exit_cleanup() {
     if (shader_program != 0) {
         glDeleteProgram(shader_program);
         shader_program = 0;
+    }
+    if (transition_vao != 0) {
+        glDeleteVertexArrays(1, &transition_vao);
+        transition_vao = 0;
+    }
+    if (transition_vbo != 0) {
+        glDeleteBuffers(1, &transition_vbo);
+        transition_vbo = 0;
     }
 
     // Free IPC socket path
@@ -752,29 +750,73 @@ static GLuint create_shader_program() {
     return program;
 }
 
-// Create shader program for transition effects (blends two textures)
+// Create shader program for transition effects (blends two textures through a shape mask)
+// CHANGED 2026-11-19 - Per-texture scaling and shape masks - Problem: both textures shared the incoming image's quad and only fade existed
 static GLuint create_transition_shader_program() {
-    const char *vertex_shader_source = 
+    const char *vertex_shader_source =
         "#version 330 core\n"
         "layout (location = 0) in vec2 aPos;\n"
-        "layout (location = 1) in vec2 aTexCoord;\n"
-        "out vec2 TexCoord;\n"
+        "out vec2 vNdc;\n"
         "void main() {\n"
         "    gl_Position = vec4(aPos, 0.0, 1.0);\n"
-        "    TexCoord = aTexCoord;\n"
+        "    vNdc = aPos;\n"
         "}\0";
-    
-    const char *fragment_shader_source = 
+
+    // Masks work in buffer pixels with the origin top-left, so circles stay round
+    // on any output. u_shape values match transition_shape_t.
+    const char *fragment_shader_source =
         "#version 330 core\n"
-        "in vec2 TexCoord;\n"
+        "in vec2 vNdc;\n"
         "out vec4 FragColor;\n"
         "uniform sampler2D oldTexture;\n"
         "uniform sampler2D newTexture;\n"
-        "uniform float alpha;\n"
+        "uniform vec2 u_old_scale;\n"
+        "uniform vec2 u_new_scale;\n"
+        "uniform int u_shape;\n"
+        "uniform float u_progress;\n"
+        "uniform vec2 u_resolution;\n"
+        "uniform float u_angle;\n"
+        "uniform vec2 u_pos;\n"
+        "uniform float u_feather;\n"
+        "uniform float u_wave_amp;\n"
+        "uniform float u_wave_len;\n"
+        "vec4 sample_scaled(sampler2D tex, vec2 scale) {\n"
+        "    vec2 uv = vec2(vNdc.x / scale.x, -vNdc.y / scale.y) * 0.5 + 0.5;\n"
+        "    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)\n"
+        "        return vec4(0.0, 0.0, 0.0, 1.0);\n"
+        "    return texture(tex, uv);\n"
+        "}\n"
+        "float shape_mask(vec2 p) {\n"
+        "    float t = u_progress;\n"
+        "    float f = u_feather;\n"
+        "    vec2 r = u_resolution;\n"
+        "    if (u_shape == 0)\n"
+        "        return t;\n"
+        "    if (u_shape == 1 || u_shape == 2) {\n"
+        "        vec2 d = vec2(cos(u_angle), sin(u_angle));\n"
+        "        float c1 = r.x * d.x, c2 = r.y * d.y, c3 = dot(r, d);\n"
+        "        float lo = min(min(0.0, c1), min(c2, c3));\n"
+        "        float hi = max(max(0.0, c1), max(c2, c3));\n"
+        "        float a = u_shape == 2 ? u_wave_amp : 0.0;\n"
+        "        float s = dot(p, d) + a * sin(dot(p, vec2(-d.y, d.x)) * 6.2831853 / u_wave_len);\n"
+        "        float e = mix(lo - f - a, hi + f + a, t);\n"
+        "        return 1.0 - smoothstep(e - f, e, s);\n"
+        "    }\n"
+        "    vec2 c = u_pos * r;\n"
+        "    float far = max(max(distance(c, vec2(0.0)), distance(c, vec2(r.x, 0.0))),\n"
+        "                    max(distance(c, vec2(0.0, r.y)), distance(c, r))) + f;\n"
+        "    float dist = distance(p, c);\n"
+        "    if (u_shape == 3) {\n"
+        "        float radius = t * far;\n"
+        "        return 1.0 - smoothstep(radius - f, radius, dist);\n"
+        "    }\n"
+        "    float radius = (1.0 - t) * far;\n"
+        "    return smoothstep(radius - f, radius, dist);\n"
+        "}\n"
         "void main() {\n"
-        "    vec4 oldColor = texture(oldTexture, TexCoord);\n"
-        "    vec4 newColor = texture(newTexture, TexCoord);\n"
-        "    FragColor = mix(oldColor, newColor, alpha);\n"
+        "    vec2 p = vec2(gl_FragCoord.x, u_resolution.y - gl_FragCoord.y);\n"
+        "    FragColor = mix(sample_scaled(oldTexture, u_old_scale),\n"
+        "                    sample_scaled(newTexture, u_new_scale), shape_mask(p));\n"
         "}\0";
     
     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -837,11 +879,6 @@ static bool should_use_transition(const char *new_path) {
         return false;
     }
     
-    // Don't start a new transition if one is already active
-    if (transition_state.active) {
-        return false;
-    }
-    
     // Need a valid current texture to transition from
     pthread_mutex_lock(&video_mutex);
     bool has_current_texture = texture_manager.initialized && texture_manager.texture != 0;
@@ -855,97 +892,77 @@ static bool should_use_transition(const char *new_path) {
 }
 
 // Start a transition by capturing the current wallpaper state
+// CHANGED 2026-11-19 - Finish an active transition first, resolve the shape, defer the clock - Problem: changes during a transition skipped it, and decode time ate into the transition
 static void start_transition(const char *new_path) {
+    // A change during a transition jumps to its end and continues from that image
+    if (transition_state.active)
+        complete_transition();
+
     if (!should_use_transition(new_path)) {
         return;
     }
-    
+
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    uint32_t seed = (uint32_t)now.tv_nsec ^ (uint32_t)now.tv_sec;
+
     pthread_mutex_lock(&video_mutex);
-    
-    // Capture current texture and dimensions
+
+    // Capture the current texture with the dimensions it was uploaded at
     transition_state.old_texture = texture_manager.texture;
-    transition_state.old_width = video_frame_data.width;
-    transition_state.old_height = video_frame_data.height;
-    
-    // Capture current scaling (needed for rendering old texture during transition)
-    // For now, store current scale values (will be updated in render_transition)
-    transition_state.old_scale_x = 1.0f;
-    transition_state.old_scale_y = 1.0f;
-    
-    // Mark transition as active
+    transition_state.old_width = texture_manager.current_width;
+    transition_state.old_height = texture_manager.current_height;
+
+    transition_state.params = transition_resolve(transition_state.type, transition_state.angle_deg,
+                                                 transition_state.pos_x, transition_state.pos_y, seed);
     transition_state.active = true;
-    transition_state.elapsed = 0.0f;
+    transition_state.waiting_for_frame = true;
     transition_state.progress = 0.0f;
-    transition_state.alpha_old = 1.0f;
-    transition_state.alpha_new = 0.0f;
-    
-    // Record start time
-    clock_gettime(CLOCK_MONOTONIC, &transition_state.start_time);
-    
-    // Create a NEW texture for the incoming image
-    // The old texture is now in transition_state.old_texture
-    // We need a fresh texture for the new image
+
+    // Fresh texture for the incoming image; the old one now belongs to the transition
     glGenTextures(1, &texture_manager.texture);
     texture_manager.initialized = FALSE;  // Force re-initialization for new dimensions
     texture_manager.current_width = 0;
     texture_manager.current_height = 0;
-    
+
     if (VERBOSE)
-        cflp_info("Created new texture %u for transition (old: %u)", 
+        cflp_info("Created new texture %u for transition (old: %u)",
                  texture_manager.texture, transition_state.old_texture);
-    
+
     pthread_mutex_unlock(&video_mutex);
-    
+
     if (VERBOSE) {
         cflp_info("Starting %s transition from %dx%d to %s",
-                 transition_state.type == TRANSITION_FADE ? "fade" : "unknown",
+                 transition_type_name(transition_state.type),
                  transition_state.old_width, transition_state.old_height, new_path);
     }
 }
 
 // Update transition progress each frame
 static void update_transition(void) {
-    if (!transition_state.active) {
+    if (!transition_state.active || transition_state.waiting_for_frame) {
         return;
     }
-    
+
     struct timespec current_time;
     clock_gettime(CLOCK_MONOTONIC, &current_time);
-    
-    // Calculate elapsed time in seconds
+
     long long elapsed_ns = (current_time.tv_sec - transition_state.start_time.tv_sec) * 1000000000LL +
                           (current_time.tv_nsec - transition_state.start_time.tv_nsec);
-    transition_state.elapsed = (float)elapsed_ns / 1e9f;
-    
-    // Calculate progress (0.0 to 1.0)
-    transition_state.progress = transition_state.elapsed / transition_state.duration;
-    
+    transition_state.progress = ((float)elapsed_ns / 1e9f) / transition_state.duration;
+
     if (transition_state.progress >= 1.0f) {
         transition_state.progress = 1.0f;
-        transition_state.alpha_old = 0.0f;
-        transition_state.alpha_new = 1.0f;
-    } else {
-        // For fade: linear interpolation
-        transition_state.alpha_new = transition_state.progress;
-        transition_state.alpha_old = 1.0f - transition_state.progress;
-    }
-    
-    // Check if transition is complete
-    if (transition_state.progress >= 1.0f) {
         complete_transition();
     }
 }
 
-// Render the transition frame (blends old and new textures)
+// Render the transition frame (blends old and new textures through the shape mask)
 static void render_transition(struct display_output *output) {
     if (!transition_state.active) {
         return;
     }
-    
-    if (VERBOSE == 2)
-        cflp_info("render_transition called: old_texture=%u, new_texture=%u, alpha=%.2f",
-                 transition_state.old_texture, texture_manager.texture, transition_state.alpha_new);
-    
+
     // Make sure we have the transition shader
     if (transition_shader_program == 0) {
         transition_shader_program = create_transition_shader_program();
@@ -955,52 +972,71 @@ static void render_transition(struct display_output *output) {
             return;
         }
     }
-    
-    // NOTE: Caller (render()) already holds video_mutex - don't lock again!
-    
-    // Check if we have both textures
+
     if (transition_state.old_texture == 0 || texture_manager.texture == 0) {
         if (VERBOSE)
             cflp_warning("Missing textures for transition, canceling");
         cancel_transition();
         return;
     }
-    
-    // Update new texture dimensions if available
-    if (video_frame_data.width > 0 && video_frame_data.height > 0) {
-        transition_state.new_width = video_frame_data.width;
-        transition_state.new_height = video_frame_data.height;
+
+    if (transition_vao == 0) {
+        static const float quad[] = {-1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f};
+        glGenVertexArrays(1, &transition_vao);
+        glGenBuffers(1, &transition_vbo);
+        glBindVertexArray(transition_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, transition_vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
-    
-    // Use transition shader
-    glUseProgram(transition_shader_program);
-    
-    // Bind old texture to texture unit 0
+
+    // Each image keeps its own geometry; until the incoming image is uploaded only
+    // the outgoing one is drawn (progress stays 0)
+    float old_sx, old_sy, new_sx = 1.0f, new_sy = 1.0f;
+    compute_quad_scale(transition_state.old_width, transition_state.old_height,
+                       output->width, output->height, panscan_value, fill_mode, stretch_mode,
+                       &old_sx, &old_sy);
+    if (texture_manager.current_width > 0 && texture_manager.current_height > 0) {
+        compute_quad_scale(texture_manager.current_width, texture_manager.current_height,
+                           output->width, output->height, panscan_value, fill_mode, stretch_mode,
+                           &new_sx, &new_sy);
+    }
+    float progress = transition_state.waiting_for_frame ? 0.0f :
+                     transition_ease(transition_state.params.shape, transition_state.progress);
+
+    GLuint program = transition_shader_program;
+    glUseProgram(program);
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, transition_state.old_texture);
-    glUniform1i(glGetUniformLocation(transition_shader_program, "oldTexture"), 0);
-    
-    // Bind new texture to texture unit 1
+    glUniform1i(glGetUniformLocation(program, "oldTexture"), 0);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture_manager.texture);
-    glUniform1i(glGetUniformLocation(transition_shader_program, "newTexture"), 1);
-    
-    // Set alpha blend value
-    glUniform1f(glGetUniformLocation(transition_shader_program, "alpha"), transition_state.alpha_new);
-    
-    // Use the same vertex data as normal rendering
-    // (update_vertex_data will have been called with new dimensions)
-    glBindVertexArray(vao);
+    glUniform1i(glGetUniformLocation(program, "newTexture"), 1);
+
+    glUniform2f(glGetUniformLocation(program, "u_old_scale"), old_sx, old_sy);
+    glUniform2f(glGetUniformLocation(program, "u_new_scale"), new_sx, new_sy);
+    glUniform1i(glGetUniformLocation(program, "u_shape"), (int)transition_state.params.shape);
+    glUniform1f(glGetUniformLocation(program, "u_progress"), progress);
+    glUniform2f(glGetUniformLocation(program, "u_resolution"),
+                (float)(output->width * output->scale), (float)(output->height * output->scale));
+    glUniform1f(glGetUniformLocation(program, "u_angle"), transition_state.params.angle_deg * (float)M_PI / 180.0f);
+    glUniform2f(glGetUniformLocation(program, "u_pos"), transition_state.params.pos_x, transition_state.params.pos_y);
+    glUniform1f(glGetUniformLocation(program, "u_feather"), 8.0f);
+    glUniform1f(glGetUniformLocation(program, "u_wave_amp"), 24.0f);
+    glUniform1f(glGetUniformLocation(program, "u_wave_len"), 160.0f);
+
+    glBindVertexArray(transition_vao);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     glBindVertexArray(0);
-    
-    // Clean up
+
     glUseProgram(0);
     glBindTexture(GL_TEXTURE_2D, 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
-    
-    // NOTE: Don't unlock mutex - caller (render()) will do it
 }
 
 // Complete transition - cleanup old texture
@@ -1008,48 +1044,52 @@ static void complete_transition(void) {
     if (!transition_state.active) {
         return;
     }
-    
+
     pthread_mutex_lock(&video_mutex);
-    
-    // Delete old texture
+
     if (transition_state.old_texture != 0) {
         glDeleteTextures(1, &transition_state.old_texture);
         transition_state.old_texture = 0;
     }
-    
-    // Reset transition state
+
     transition_state.active = false;
+    transition_state.waiting_for_frame = false;
     transition_state.progress = 1.0f;
-    transition_state.elapsed = transition_state.duration;
-    
+
     pthread_mutex_unlock(&video_mutex);
-    
+
     if (VERBOSE) {
         cflp_info("Transition completed");
     }
 }
 
-// Cancel transition - cleanup both textures
+// Cancel transition - cleanup old texture
 static void cancel_transition(void) {
     if (!transition_state.active && transition_state.old_texture == 0) {
         return;  // Nothing to cancel
     }
-    
+
     pthread_mutex_lock(&video_mutex);
-    
-    // Delete old texture if it exists
-    if (transition_state.old_texture != 0) {
+
+    if (transition_state.waiting_for_frame && transition_state.old_texture != 0) {
+        // CHANGED 2026-11-19 - Put the outgoing image back when the incoming one never arrived - Problem: a failed load left an empty texture and a black screen
+        glDeleteTextures(1, &texture_manager.texture);
+        texture_manager.texture = transition_state.old_texture;
+        texture_manager.current_width = transition_state.old_width;
+        texture_manager.current_height = transition_state.old_height;
+        texture_manager.initialized = TRUE;
+        transition_state.old_texture = 0;
+    } else if (transition_state.old_texture != 0) {
         glDeleteTextures(1, &transition_state.old_texture);
         transition_state.old_texture = 0;
     }
-    
-    // Reset transition state
+
     transition_state.active = false;
+    transition_state.waiting_for_frame = false;
     transition_state.progress = 0.0f;
-    transition_state.elapsed = 0.0f;
-    
+
     pthread_mutex_unlock(&video_mutex);
-    
+
     if (VERBOSE) {
         cflp_info("Transition canceled");
     }
@@ -1183,6 +1223,12 @@ static void render(struct display_output *output) {
         GLuint current_texture = get_texture_for_dimensions(video_frame_data.width, video_frame_data.height);
         upload_frame_to_texture(current_texture, video_frame_data.data, video_frame_data.size,
                                 video_frame_data.width, video_frame_data.height);
+
+        // CHANGED 2026-11-19 - Start the transition clock once the incoming image is in its texture - Problem: decode time ate into the transition
+        if (transition_state.active && transition_state.waiting_for_frame) {
+            transition_state.waiting_for_frame = false;
+            transition_state.start_time = current_time;
+        }
         
         // Check OpenGL error after texture update
         GLenum err_after = glGetError();
@@ -1223,35 +1269,8 @@ static void render(struct display_output *output) {
     // Check if we're in a transition - render transition if active
     if (transition_state.active) {
         if (VERBOSE == 2)
-            cflp_info("Rendering transition frame (progress=%.2f, alpha_new=%.2f)", 
-                     transition_state.progress, transition_state.alpha_new);
-        
-        // Create VAO and VBO if needed (shared with normal rendering)
-        if (vao == 0) {
-            glGenVertexArrays(1, &vao);
-            glGenBuffers(1, &vbo);
-            
-            glBindVertexArray(vao);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            
-            // Position attribute
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-            glEnableVertexAttribArray(0);
-            
-            // Texture coordinate attribute
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-            glEnableVertexAttribArray(1);
-            
-            glBindVertexArray(0);
-            
-            if (VERBOSE)
-                cflp_info("Created VAO %u and VBO %u", vao, vbo);
-        }
-        
-        // Update vertex data for new texture dimensions
-        update_vertex_data(output);
-        
-        // Render transition blend
+            cflp_info("Rendering transition frame (progress=%.2f%s)", transition_state.progress,
+                     transition_state.waiting_for_frame ? ", waiting for new image" : "");
         render_transition(output);
     }
     // Render video texture if available (normal rendering when not transitioning)
@@ -2256,27 +2275,32 @@ static void execute_ipc_commands(void) {
             if (!arg || strlen(arg) == 0) {
                 ipc_send_response(cmd->client_fd, "ERROR: missing transition type argument\n");
             } else {
-                if (strcmp(arg, "fade") == 0) {
-                    transition_state.type = TRANSITION_FADE;
-                    transition_state.enabled = true;
-                    ipc_send_response(cmd->client_fd, "OK: fade transitions enabled\n");
-                } else if (strcmp(arg, "none") == 0) {
+                // CHANGED 2026-11-19 - Accept every transition name; fade/none replies unchanged - Problem: only fade existed
+                transition_type_t type;
+                if (!transition_type_from_name(arg, &type)) {
+                    ipc_send_response(cmd->client_fd, "ERROR: unknown transition type\n");
+                } else if (type == TRANSITION_NONE) {
                     transition_state.type = TRANSITION_NONE;
                     transition_state.enabled = false;
                     cancel_transition();  // Cancel any active transition
                     ipc_send_response(cmd->client_fd, "OK: transitions disabled\n");
                 } else {
-                    ipc_send_response(cmd->client_fd, "ERROR: unknown transition type\n");
+                    transition_state.type = type;
+                    transition_state.enabled = true;
+                    char response[64];
+                    snprintf(response, sizeof(response), "OK: %s transitions enabled\n", arg);
+                    ipc_send_response(cmd->client_fd, response);
                 }
             }
         }
         else if (strcmp(cmd_name, "get-transition") == 0) {
+            // CHANGED 2026-11-19 - Append angle and position after the original three fields - Problem: new parameters had no query
             char response[128];
-            const char *type_str = transition_state.type == TRANSITION_FADE ? "fade" : "none";
-            snprintf(response, sizeof(response), "TRANSITION: %s %s %.2f\n",
-                    type_str,
+            snprintf(response, sizeof(response), "TRANSITION: %s %s %.2f angle=%.0f pos=%.2f,%.2f\n",
+                    transition_type_name(transition_state.type),
                     transition_state.enabled ? "enabled" : "disabled",
-                    transition_state.duration);
+                    transition_state.duration, transition_state.angle_deg,
+                    transition_state.pos_x, transition_state.pos_y);
             ipc_send_response(cmd->client_fd, response);
         }
         else if (strcmp(cmd_name, "set-transition-duration") == 0) {
@@ -2292,6 +2316,25 @@ static void execute_ipc_commands(void) {
                 } else {
                     ipc_send_response(cmd->client_fd, "ERROR: invalid duration (must be 0.0-5.0)\n");
                 }
+            }
+        }
+        else if (strcmp(cmd_name, "set-transition-angle") == 0) {
+            if (!arg || !transition_parse_angle(arg, &transition_state.angle_deg)) {
+                ipc_send_response(cmd->client_fd, "ERROR: invalid angle\n");
+            } else {
+                char response[64];
+                snprintf(response, sizeof(response), "OK: angle set to %.0f\n", transition_state.angle_deg);
+                ipc_send_response(cmd->client_fd, response);
+            }
+        }
+        else if (strcmp(cmd_name, "set-transition-pos") == 0) {
+            if (!arg || !transition_parse_pos(arg, &transition_state.pos_x, &transition_state.pos_y)) {
+                ipc_send_response(cmd->client_fd, "ERROR: invalid position\n");
+            } else {
+                char response[64];
+                snprintf(response, sizeof(response), "OK: position set to %.2f,%.2f\n",
+                         transition_state.pos_x, transition_state.pos_y);
+                ipc_send_response(cmd->client_fd, response);
             }
         }
         // Cache commands
@@ -2367,9 +2410,12 @@ static void execute_ipc_commands(void) {
                 "  unload <path|all|unused> Remove from cache\n"
                 "  cache-list               List cached images\n"
                 "  cache-stats              Show cache statistics\n"
-                "  set-transition <type>    Set transition (fade|none)\n"
+                "  set-transition <type>    Set transition (none|fade|left|right|top|bottom|\n"
+                "                           wipe|wave|grow|center|outer|any|random)\n"
                 "  get-transition           Get transition settings\n"
                 "  set-transition-duration <sec>  Set duration (0.0-5.0)\n"
+                "  set-transition-angle <deg>     Set wipe/wave edge direction\n"
+                "  set-transition-pos <x,y|name>  Set grow/outer circle origin\n"
                 "  listactive               List active outputs\n"
                 "  help                     Show this help\n";
             ipc_send_response(cmd->client_fd, help_text);
@@ -3644,8 +3690,11 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
         "--gst-options  -o \"OPTIONS\"    Forwards GStreamer options (Must be within quotes\"\")\n"
         "--fps-cap      -r FPS           Frame rate cap (30, 60, or 100 FPS, default: 30)\n"
         "--ipc-socket   -I PATH          Enable IPC control via Unix socket\n"
-        "--transition-type TYPE          Transition effect (fade, none, default: none)\n"
+        "--transition-type TYPE          Transition effect (none, fade, left, right, top, bottom, wipe,\n"
+        "                                wave, grow, center, outer, any, random; default: none)\n"
         "--transition-duration SECS      Transition duration in seconds (default: 0.5)\n"
+        "--transition-angle DEG          Edge direction for wipe/wave, 0 = left to right (default: 45)\n"
+        "--transition-pos POS            Circle origin for grow/outer: x,y in 0-1 or center, top-left...\n"
         "--systemd      -S              Enable systemd readiness notifications\n"
         "--restore      -R              Restore wallpaper from saved state\n"
         "--save-state                   Save current state and exit\n"
@@ -3740,14 +3789,11 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
                 ipc_socket_path = strdup(optarg);
                 break;
             case 'T':
-                if (strcmp(optarg, "fade") == 0) {
-                    transition_state.type = TRANSITION_FADE;
-                    transition_state.enabled = true;
-                    if (VERBOSE)
-                        cflp_info("Fade transitions enabled");
-                } else if (strcmp(optarg, "none") == 0) {
-                    transition_state.type = TRANSITION_NONE;
-                    transition_state.enabled = false;
+                // CHANGED 2026-11-19 - Accept every transition name - Problem: only fade existed
+                if (transition_type_from_name(optarg, &transition_state.type)) {
+                    transition_state.enabled = transition_state.type != TRANSITION_NONE;
+                    if (VERBOSE && transition_state.enabled)
+                        cflp_info("%s transitions enabled", optarg);
                 } else {
                     cflp_warning("Unknown transition type '%s', using 'none'", optarg);
                     transition_state.type = TRANSITION_NONE;
@@ -3764,6 +3810,19 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
                     } else {
                         cflp_warning("Invalid transition duration %.2f, using default (0.5)", duration);
                     }
+                }
+                break;
+
+            case 1004: // --transition-angle
+                if (!transition_parse_angle(optarg, &transition_state.angle_deg)) {
+                    cflp_error("Invalid transition angle '%s' (expected degrees)", optarg);
+                    exit_slapper(EXIT_FAILURE);
+                }
+                break;
+            case 1005: // --transition-pos
+                if (!transition_parse_pos(optarg, &transition_state.pos_x, &transition_state.pos_y)) {
+                    cflp_error("Invalid transition position '%s' (expected x,y in 0-1 or a name like center)", optarg);
+                    exit_slapper(EXIT_FAILURE);
                 }
                 break;
 

@@ -101,25 +101,28 @@ def capture(env):
     return Frame(int(fields[1]), int(fields[2]), ppm[pos + 1:])
 
 
+def _png_bytes(width, height, rows):
+    def chunk(kind, body):
+        return (struct.pack(">I", len(body)) + kind + body +
+                struct.pack(">I", zlib.crc32(kind + body) & 0xFFFFFFFF))
+
+    return (b"\x89PNG\r\n\x1a\n" +
+            chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)) +
+            chunk(b"IDAT", zlib.compress(rows, 1)) +
+            chunk(b"IEND", b""))
+
+
 def write_png(path, width, height, pixel_fn):
     rows = bytearray()
     for y in range(height):
         rows.append(0)
         for x in range(width):
             rows.extend(pixel_fn(x, y))
-
-    def chunk(kind, body):
-        return (struct.pack(">I", len(body)) + kind + body +
-                struct.pack(">I", zlib.crc32(kind + body) & 0xFFFFFFFF))
-
-    Path(path).write_bytes(b"\x89PNG\r\n\x1a\n" +
-                           chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)) +
-                           chunk(b"IDAT", zlib.compress(bytes(rows))) +
-                           chunk(b"IEND", b""))
+    Path(path).write_bytes(_png_bytes(width, height, bytes(rows)))
 
 
 def solid_png(path, rgb, width=64, height=64):
-    write_png(path, width, height, lambda x, y: rgb)
+    Path(path).write_bytes(_png_bytes(width, height, (b"\x00" + bytes(rgb) * width) * height))
 
 
 def wait_for_socket(path, timeout=15, process=None):
