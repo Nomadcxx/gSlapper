@@ -14,9 +14,10 @@ import zlib
 
 
 class HeadlessSway:
-    def __init__(self, width=640, height=360):
+    def __init__(self, width=640, height=360, outputs=1):
         self.width = width
         self.height = height
+        self.outputs = outputs
         self.processes = []
         self.root = None
         self.env = None
@@ -25,10 +26,13 @@ class HeadlessSway:
         # Short base dir: socket paths must fit in sun_path (108 bytes)
         self.root = Path(tempfile.mkdtemp(prefix="gsl-", dir="/tmp"))
         config = self.root / "sway.conf"
-        config.write_text(f"output HEADLESS-1 resolution {self.width}x{self.height}\n"
-                          "xwayland disable\n")
+        # Outputs sit side by side, so output n starts at x = n * width in a capture
+        lines = [f"output HEADLESS-{n + 1} resolution {self.width}x{self.height} "
+                 f"position {n * self.width} 0\n" for n in range(self.outputs)]
+        config.write_text("".join(lines) + "xwayland disable\n")
         self.env = dict(os.environ, XDG_RUNTIME_DIR=str(self.root), WLR_BACKENDS="headless",
-                        WLR_RENDERER="pixman", LIBGL_ALWAYS_SOFTWARE="1")
+                        WLR_RENDERER="pixman", LIBGL_ALWAYS_SOFTWARE="1",
+                        WLR_HEADLESS_OUTPUTS=str(self.outputs))
         self.env.pop("WAYLAND_DISPLAY", None)
         self.env.pop("DISPLAY", None)
         compositor = self.spawn(["sway", "--unsupported-gpu", "-c", str(config)], name="sway")

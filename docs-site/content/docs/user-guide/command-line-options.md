@@ -56,6 +56,8 @@ Automatically stop when wallpaper is hidden.
 gslapper -s -o "loop" DP-1 video.mp4
 ```
 
+Both options apply to videos. A static image uses no CPU once drawn, so gSlapper does not pause or stop it, and a slideshow keeps running.
+
 ### `-n, --slideshow SECS`
 
 Cycle through images every SECS seconds. Give a directory or a playlist file (`.m3u`, `.m3u8` or `.txt`) as the path:

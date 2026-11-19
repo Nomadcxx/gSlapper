@@ -1806,6 +1806,11 @@ static void *handle_auto_pause(void *_) {
     pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
 
     while (halt_info.auto_pause) {
+        // CHANGED 2026-11-19 - Skip the deadman for static images - Problem: images stop requesting frame callbacks after their first draw, so the wallpaper looked hidden and a slideshow paused for good
+        if (is_image_mode) {
+            pthread_sleep(2);
+            continue;
+        }
 
         // Set deadman switch timer
         halt_info.frame_ready = 0;
@@ -1835,6 +1840,11 @@ static void *handle_auto_stop(void *_) {
     pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
 
     while (halt_info.auto_stop) {
+        // CHANGED 2026-11-19 - Skip the deadman for static images - Problem: images stop requesting frame callbacks after their first draw, so a visible image was stopped and restarted
+        if (is_image_mode) {
+            pthread_sleep(2);
+            continue;
+        }
 
         // Set deadman switch timer
         halt_info.frame_ready = 0;
@@ -2071,7 +2081,14 @@ static void execute_ipc_commands(void) {
 
         // Dispatch commands
         if (strcmp(cmd_name, "pause") == 0) {
-            if (!pipeline) {
+            // CHANGED 2026-11-19 - Images pause logically - Problem: an image shown from the cache has no pipeline, so pause failed with "no pipeline" and a slideshow could not be paused
+            if (is_image_mode) {
+                if (!ipc_paused) {
+                    ipc_paused = true;
+                    halt_info.is_paused++;
+                }
+                ipc_send_response(cmd->client_fd, "OK\n");
+            } else if (!pipeline) {
                 ipc_send_response(cmd->client_fd, "ERROR: no pipeline\n");
             } else if (ipc_paused) {
                 // Already paused through IPC; repeating the command is a no-op
@@ -2100,7 +2117,13 @@ static void execute_ipc_commands(void) {
             }
         }
         else if (strcmp(cmd_name, "resume") == 0) {
-            if (!pipeline) {
+            if (is_image_mode) {
+                if (ipc_paused) {
+                    ipc_paused = false;
+                    if (halt_info.is_paused > 0) halt_info.is_paused--;
+                }
+                ipc_send_response(cmd->client_fd, "OK\n");
+            } else if (!pipeline) {
                 ipc_send_response(cmd->client_fd, "ERROR: no pipeline\n");
             } else if (!ipc_paused) {
                 // IPC holds no pause contribution; do not release pauses owned
@@ -2836,6 +2859,16 @@ static bool decode_image_to_rgba(const char *resolved_path, unsigned char **data
     return ok;
 }
 
+// A new image frame is installed: every output must draw it, not only the first
+// one to render (which consumes has_new_frame)
+static void request_image_redraw(void) {
+    if (!global_state)
+        return;
+    struct display_output *output;
+    wl_list_for_each(output, &global_state->outputs, link)
+        output->redraw_needed = true;
+}
+
 // Tear down a failed image load. The previous image and path stay in place.
 static bool fail_image_reload(GstBus *load_bus, char *previous_path) {
     free(video_path);
@@ -2932,6 +2965,8 @@ static bool reload_image_pipeline(const char *new_path) {
         if (VERBOSE)
             cflp_success("New image loaded from cache: %dx%d", cached->width, cached->height);
         free(previous_path);
+        // CHANGED 2026-11-19 - Redraw on all outputs - Problem: only the first output repainted after a change
+        request_image_redraw();
         return true;
     }
 
@@ -2952,7 +2987,7 @@ static bool reload_image_pipeline(const char *new_path) {
         gst_object_unref(sink_pad);
     }
 
-    // CHANGED 2026-11-19 - Keep the loading pipeline's bus private until the frame arrives - Problem: the events thread popped decode errors from it, treated them as fatal and exited, and could use the bus after it was freed here
+    // CHANGED 2026-11-19 - Keep the loading pipeline's bus private - Problem: the events thread popped decode errors from it, treated them as fatal and exited, and could use the bus after it was freed here
     GstBus *load_bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
 
     // Start pipeline
@@ -3009,7 +3044,7 @@ static bool reload_image_pipeline(const char *new_path) {
 
     // Stop pipeline (we have the frame in texture)
     gst_element_set_state(pipeline, GST_STATE_NULL);
-    bus = load_bus;
+    gst_object_unref(load_bus);
 
     // Add to cache for instant loading next time
     if (cache_enabled() && video_frame_data.data) {
@@ -3028,6 +3063,7 @@ static bool reload_image_pipeline(const char *new_path) {
         cflp_success("New image loaded: %dx%d", video_frame_data.width, video_frame_data.height);
 
     free(previous_path);
+    request_image_redraw();
     return true;
 }
 
@@ -3126,6 +3162,10 @@ static void init_image_pipeline(void) {
 
     // Stop pipeline (we have the frame in texture)
     gst_element_set_state(pipeline, GST_STATE_NULL);
+
+    // CHANGED 2026-11-19 - Never publish an image pipeline's bus - Problem: reload freed it while the events thread could be popping from it; images need nothing from that thread
+    gst_object_unref(bus);
+    bus = NULL;
 
     // Add to cache for instant loading next time
     if (cache_enabled() && video_frame_data.data) {

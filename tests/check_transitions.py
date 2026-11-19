@@ -49,6 +49,39 @@ def check_instant_change():
         expect(change_and_capture(sway, sock, img["red"], 0.5), (320, 180), RED, "cached change")
 
 
+def check_two_outputs_instant_change():
+    with HeadlessSway(outputs=2) as sway:
+        img = images(sway)
+        sock, _ = start(sway, img["red"])
+        frame = change_and_capture(sway, sock, img["blue"], 0.5)
+        expect(frame, (320, 180), BLUE, "first output")
+        expect(frame, (960, 180), BLUE, "second output")
+        frame = change_and_capture(sway, sock, img["red"], 0.5)
+        expect(frame, (320, 180), RED, "first output, cached")
+        expect(frame, (960, 180), RED, "second output, cached")
+
+
+def check_cached_image_pause():
+    with HeadlessSway() as sway:
+        img = images(sway)
+        sock, _ = start(sway, img["red"])
+        assert ipc(sock, f"preload {img['blue']}") == "OK: preloaded\n"
+        assert ipc(sock, f"change {img['blue']}").startswith("OK")
+        assert ipc(sock, "pause") == "OK\n"
+        assert ipc(sock, "query").startswith("STATUS: paused"), ipc(sock, "query")
+        assert ipc(sock, "resume") == "OK\n"
+        assert ipc(sock, "query").startswith("STATUS: playing"), ipc(sock, "query")
+
+
+def check_auto_stop_image_stays():
+    with HeadlessSway() as sway:
+        img = images(sway)
+        sock, player = start(sway, img["red"], "-s")
+        time.sleep(8)
+        assert player.poll() is None, "gslapper stopped a visible static image"
+        expect(capture(sway.env), (320, 180), RED, "image still shown")
+
+
 def check_left_wipe():
     with HeadlessSway() as sway:
         img = images(sway)
@@ -220,7 +253,8 @@ def check_ipc_contract():
         assert option in help_text, option
 
 
-CHECKS = [check_instant_change, check_ipc_contract, check_left_wipe, check_center_round, check_outer,
+CHECKS = [check_instant_change, check_two_outputs_instant_change, check_cached_image_pause,
+          check_auto_stop_image_stays, check_ipc_contract, check_left_wipe, check_center_round, check_outer,
           check_fade_midway, check_old_image_aspect, check_no_black_flash,
           check_failed_change_keeps_image, check_rapid_changes, check_video_change_ignores_transition]
 

@@ -65,6 +65,44 @@ def check_slideshow_pause():
         expect_centre(sway, GREEN, "after a full interval")
 
 
+def check_slideshow_pause_after_wrap():
+    with HeadlessSway() as sway:
+        sock, _, t0 = start(sway, slides(sway), "-n", "1", "--transition-type", "none")
+        at(t0, 3.5)  # red again, this time from the cache
+        expect_centre(sway, RED, "wrapped to the first image")
+        assert ipc(sock, "pause") == "OK\n"
+        at(t0, 6.5)
+        expect_centre(sway, RED, "paused after wrap")
+
+
+def check_slideshow_two_outputs():
+    with HeadlessSway(outputs=2) as sway:
+        sock, _, t0 = start(sway, slides(sway), "-n", "2", "--transition-type", "none")
+        at(t0, 3)
+        frame = capture(sway.env)
+        for x in (320, 960):
+            assert is_close(frame.pixel(x, 180), GREEN), f"x={x}: {frame.pixel(x, 180)}"
+
+
+def check_slideshow_auto_pause():
+    with HeadlessSway() as sway:
+        sock, _, t0 = start(sway, slides(sway), "-p", "-n", "2", "--transition-type", "none")
+        for seconds, rgb in ((5, BLUE), (7, RED), (9, GREEN)):
+            at(t0, seconds)
+            expect_centre(sway, rgb, f"t={seconds}s with --auto-pause")
+
+
+def check_slideshow_uncached():
+    # Every advance decodes through a fresh pipeline
+    with HeadlessSway() as sway:
+        sock, player, t0 = start(sway, slides(sway), "-n", "1", "--cache-size", "0",
+                                 "--transition-type", "none")
+        at(t0, 12)
+        assert player.poll() is None, "gslapper exited during uncached slideshow"
+        assert "CRITICAL" not in sway.log("gslapper"), sway.log("gslapper")[-1500:]
+        assert ipc(sock, "query").startswith("STATUS: playing image")
+
+
 def check_slideshow_ipc_change():
     with HeadlessSway() as sway:
         folder = slides(sway)
@@ -104,7 +142,9 @@ def check_slideshow_with_transition():
         assert is_close(frame.pixel(600, 180), RED), f"right edge {frame.pixel(600, 180)}"
 
 
-CHECKS = [check_slideshow_cycle, check_slideshow_pause, check_slideshow_ipc_change,
+CHECKS = [check_slideshow_cycle, check_slideshow_pause, check_slideshow_pause_after_wrap,
+          check_slideshow_two_outputs, check_slideshow_auto_pause, check_slideshow_uncached,
+          check_slideshow_ipc_change,
           check_slideshow_rejects_video, check_slideshow_with_transition]
 
 if __name__ == "__main__":
