@@ -283,21 +283,6 @@ typedef struct ipc_command {
 - Dequeued by main thread for processing
 - Must be freed by caller after processing
 
-#### `preload_entry_t`
-
-```c
-typedef struct preload_entry {
-    char *path;              // File path of preloaded image
-    gpointer frame_data;       // GLib pointer to frame data
-    gsize frame_size;         // Size of frame data in bytes
-    gint width;               // Image width in pixels
-    gint height;              // Image height in pixels
-    struct preload_entry *next; // Next entry in cache (linked list)
-} preload_entry_t;
-```
-
-**Note**: Currently reserved for future implementation.
-
 ---
 
 ## State Management API
@@ -786,7 +771,7 @@ static struct {
 | `-d` | `--help-output` | flag | Display all available outputs and quit |
 | `-p` | `--auto-pause` | flag | Auto-pause when wallpaper hidden |
 | `-s` | `--auto-stop` | flag | Auto-stop when wallpaper hidden |
-| `-n` | `--slideshow` | seconds | Slideshow mode (TODO: not fully implemented) |
+| `-n` | `--slideshow` | seconds | Cycle images from a directory or playlist file |
 | `-l` | `--layer` | string | Shell surface layer (background, bottom, top, overlay) |
 | `-o` | `--gst-options` | string | GStreamer options (see below) |
 | `-r` | `--fps-cap` | int | Frame rate cap (30, 60, or 100 FPS) |

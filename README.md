@@ -25,7 +25,7 @@ Full documentation available at: https://nomadcxx.github.io/gSlapper/
 
 - Play videos (MP4, MKV, WebM) and images (JPEG, PNG, WebP, GIF)
 - Animated GIF playback with correct frame timing and looping (requires gst-libav; shows the first frame statically without it)
-- Fade transitions between images
+- Transitions between images: fade, wipes, waves and circles
 - Multi-monitor support
 - IPC control via Unix socket (pause, resume, change wallpaper)
 - Scaling modes: fill, stretch, original, panscan
@@ -72,6 +72,12 @@ cd gSlapper
 meson setup build --prefix=/usr/local
 ninja -C build
 sudo ninja -C build install
+```
+
+Run the unit checks with `meson test -C build --print-errorlogs`. The runtime checks start a headless Sway and read pixels back with grim. Run them as an ordinary user with Sway, grim and software Mesa installed:
+
+```sh
+python3 tests/check_compositor_disconnect.py build/gslapper /path/to/wallpaper.png
 ```
 
 ### Nix / NixOS

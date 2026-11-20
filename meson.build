@@ -2,6 +2,7 @@ project('gslapper', ['c'], version: '1.5.4', license: 'GPL-3.0-only')
 cc = meson.get_compiler('c')
 
 dl_dep = cc.find_library('dl', required : false)
+m_dep = cc.find_library('m', required : false)
 wl_protocols=dependency('wayland-protocols')
 wl_client=dependency('wayland-client')
 wl_egl=dependency('wayland-egl')
@@ -36,9 +37,9 @@ protocols_headers=[
 lib_protocols=static_library('protocols',protocols_src+protocols_headers,dependencies: wl_client)
 protocols_dep=declare_dependency(link_with: lib_protocols,sources: protocols_headers)
 
-executable(meson.project_name(), ['src/main.c', 'src/output_metadata.c', 'src/process_utils.c', 'src/glad.c', 'src/cflogprinter.c', 'src/ipc.c', 'src/state.c', 'src/cache.c'],
+executable(meson.project_name(), ['src/main.c', 'src/output_metadata.c', 'src/process_utils.c', 'src/glad.c', 'src/cflogprinter.c', 'src/ipc.c', 'src/state.c', 'src/cache.c', 'src/scaling.c', 'src/transition.c', 'src/playlist.c'],
 include_directories : ['inc'],
-dependencies: [dl_dep, wl_client, wl_egl, egl, gst_dep, gst_video_dep, gst_gl_dep, threads, protocols_dep, systemd_dep], install: true)
+dependencies: [dl_dep, m_dep, wl_client, wl_egl, egl, gst_dep, gst_video_dep, gst_gl_dep, threads, protocols_dep, systemd_dep], install: true)
 
 shm_dep = cc.find_library('rt', required : false)
 executable(meson.project_name() + '-holder', ['src/holder.c', 'src/output_metadata.c', 'src/process_utils.c'],
@@ -49,6 +50,7 @@ test_sanitizer_args = cc.links('int main(void) { return 0; }', args: ['-fsanitiz
 
 test_output_description = executable('test-output-description',
   ['tests/test_output_description.c', 'src/output_metadata.c', 'src/process_utils.c'],
+  include_directories: ['inc'],
   dependencies: [wl_client, protocols_dep],
   c_args: test_sanitizer_args,
   link_args: test_sanitizer_args,
@@ -66,9 +68,9 @@ test('ipc-socket', test_ipc_socket, env: ['ASAN_OPTIONS=detect_leaks=0'])
 
 test_watch_list = executable('test-watch-list',
   ['tests/test_watch_list.c', 'src/glad.c', 'src/cflogprinter.c', 'src/ipc.c', 'src/state.c',
-   'src/cache.c', 'src/output_metadata.c', 'src/process_utils.c'],
+   'src/cache.c', 'src/scaling.c', 'src/transition.c', 'src/playlist.c', 'src/output_metadata.c', 'src/process_utils.c'],
   include_directories: ['inc'],
-  dependencies: [dl_dep, wl_client, wl_egl, egl, gst_dep, gst_video_dep, gst_gl_dep, threads, protocols_dep, systemd_dep],
+  dependencies: [dl_dep, m_dep, wl_client, wl_egl, egl, gst_dep, gst_video_dep, gst_gl_dep, threads, protocols_dep, systemd_dep],
   build_by_default: false)
 test('watch-list-injection', test_watch_list)
 
@@ -76,3 +78,32 @@ test_process_utils = executable('test-process-utils',
   ['tests/test_process_utils.c', 'src/process_utils.c'],
   build_by_default: false)
 test('process-utils', test_process_utils)
+
+test_holder_args = executable('test-holder-args',
+  ['tests/test_holder_args.c', 'src/output_metadata.c', 'src/process_utils.c'],
+  include_directories: ['inc'],
+  dependencies: [wl_client, protocols_dep],
+  c_args: test_sanitizer_args,
+  link_args: test_sanitizer_args,
+  build_by_default: false)
+test('holder-args', test_holder_args, env: ['ASAN_OPTIONS=detect_leaks=0'])
+
+test_scaling = executable('test-scaling',
+  ['tests/test_scaling.c', 'src/scaling.c'],
+  include_directories: ['inc'],
+  dependencies: [m_dep],
+  build_by_default: false)
+test('scaling', test_scaling)
+
+test_transition = executable('test-transition',
+  ['tests/test_transition.c', 'src/transition.c'],
+  include_directories: ['inc'],
+  dependencies: [m_dep],
+  build_by_default: false)
+test('transition', test_transition)
+
+test_playlist = executable('test-playlist',
+  ['tests/test_playlist.c', 'src/playlist.c'],
+  include_directories: ['inc'],
+  build_by_default: false)
+test('playlist', test_playlist)

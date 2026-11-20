@@ -56,6 +56,21 @@ Automatically stop when wallpaper is hidden.
 gslapper -s -o "loop" DP-1 video.mp4
 ```
 
+Both options apply to videos. A static image uses no CPU once drawn, so gSlapper does not pause or stop it, and a slideshow keeps running.
+
+### `-n, --slideshow SECS`
+
+Cycle through images every SECS seconds. Give a directory or a playlist file (`.m3u`, `.m3u8` or `.txt`) as the path:
+
+- **Directory**: its image files, in name order. Other files are skipped.
+- **Playlist**: one path per line, in file order. Blank lines and lines starting with `#` are ignored; relative paths are resolved against the playlist's folder. gSlapper refuses to start if an entry is missing or is not a static image (videos and animated GIFs are not supported).
+
+```bash
+gslapper -n 300 --transition-type random -I /tmp/sock '*' ~/Pictures/wallpapers
+```
+
+The slideshow wraps around, uses the configured transition, and waits while playback is paused. An IPC `change` shows that image and restarts the timer; the next step continues from the list. State saving records the image on screen, not the slideshow, so `--restore` brings back that single image.
+
 ### `-r, --fps-cap FPS`
 
 Set frame rate cap. Available values: 30, 60, or 100 FPS.
@@ -146,10 +161,7 @@ gslapper -o "loop panscan=0.8" DP-1 video.mp4
 
 ### `--transition-type TYPE`
 
-Set transition effect type. Options:
-
-- `none` (default)
-- `fade`
+Set transition effect type: `none` (default), `fade`, `left`, `right`, `top`, `bottom`, `wipe`, `wave`, `grow`, `center`, `outer`, `any` or `random`. See [Transitions](../advanced/transitions).
 
 ```bash
 gslapper --transition-type fade -I /tmp/sock DP-1 image.jpg
@@ -161,6 +173,22 @@ Set transition duration in seconds (default: 0.5).
 
 ```bash
 gslapper --transition-type fade --transition-duration 2.0 -I /tmp/sock DP-1 image.jpg
+```
+
+### `--transition-angle DEG`
+
+Direction the edge travels for `wipe` and `wave`, in degrees clockwise: `0` moves left to right, `90` top to bottom (default: 45).
+
+```bash
+gslapper --transition-type wipe --transition-angle 90 -I /tmp/sock DP-1 image.jpg
+```
+
+### `--transition-pos POS`
+
+Circle origin for `grow` and `outer`: `x,y` fractions from the top-left corner, or `center`, `top`, `bottom`, `left`, `right`, `top-left`, `top-right`, `bottom-left`, `bottom-right` (default: `center`).
+
+```bash
+gslapper --transition-type grow --transition-pos 0.2,0.8 -I /tmp/sock DP-1 image.jpg
 ```
 
 ## Systemd Options

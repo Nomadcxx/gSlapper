@@ -53,18 +53,17 @@ See existing commands like `set-transition` or `change` for examples.
 
 ### Adding New Transition Effects
 
-1. **Add transition type** to `transition_type_t` enum
-2. **Implement transition function** (similar to `update_transition()`)
-3. **Update command parser** in IPC `set-transition` handler
-4. **Add command-line option** parsing in `parse_command_line()`
-5. **Test** with automated and visual tests
+1. **Add the type** to `transition_type_t` in `inc/transition.h` and its name to `type_names` in `src/transition.c`. The CLI and IPC parsers pick it up from there.
+2. **Map it to a shape** in `transition_resolve()`. Reuse an existing `transition_shape_t` with fixed parameters if you can (that is how `left` and `center` work).
+3. **For a new shape**, add a `transition_shape_t` value and a branch in `shape_mask()` in the transition fragment shader (`create_transition_shader_program()` in `src/main.c`). The mask returns 0 for the old image and 1 for the new one.
+4. **Test** with `meson test -C build transition` and `python3 tests/check_transitions.py build/gslapper`, adding a pixel check for the new type.
 
 ### Modifying Rendering Pipeline
 
 1. Locate rendering code in `render()` function
 2. Ensure EGL context is current before OpenGL calls
 3. Lock `video_mutex` when accessing `video_frame_data` or `transition_state`
-4. Update vertex data with `update_vertex_data()` for scaling changes
+4. Update vertex data with `update_vertex_data()` for scaling changes; the scale math lives in `compute_quad_scale()` (`src/scaling.c`) and is shared with the transition pass
 
 ## Testing
 

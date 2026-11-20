@@ -1,123 +1,81 @@
 ---
 title: Transitions
-description: "gSlapper supports smooth fade transitions between static images, providing a polished wallpaper switching experience."
+description: "Animated transitions between static images: fades, wipes, waves and circles."
 ---
 
-gSlapper supports smooth fade transitions between static images, providing a polished wallpaper switching experience.
-
-## Enabling Transitions
-
-Transitions are enabled via command-line options:
+gSlapper can animate the switch from one static image to the next. Pick a type when you start gSlapper or change it later over IPC; every `change` to another image then plays it.
 
 ```bash
-gslapper --transition-type fade --transition-duration 2.0 -I /tmp/gslapper.sock DP-1 image.jpg
-```
-
-### Options
-
-- `--transition-type TYPE` - Transition effect type
-  - `none` (default) - No transition
-  - `fade` - Smooth fade between images
-  
-- `--transition-duration SECS` - Transition duration in seconds (default: 0.5)
-
-## Requirements
-
-- **IPC must be enabled** - Transitions require the `-I` or `--ipc-socket` option
-- **Static images only** - Transitions work between images, not videos
-- **Same or different aspect ratios** - Both images will correctly fill the screen
-
-## Usage
-
-### Basic Fade Transition
-
-```bash
-# Start with first image
-gslapper --transition-type fade --transition-duration 2.0 -I /tmp/gslapper.sock DP-1 image1.jpg
-
-# Switch to second image (transition happens automatically)
+gslapper --transition-type wipe --transition-duration 1.5 -I /tmp/gslapper.sock DP-1 image1.jpg
 echo "change /path/to/image2.jpg" | nc -U /tmp/gslapper.sock
 ```
 
-### Different Aspect Ratios
+## Types
 
-Transitions handle images with different aspect ratios correctly:
+| Type | Effect |
+|------|--------|
+| `none` | Instant switch (default) |
+| `fade` | Crossfade |
+| `left`, `right`, `top`, `bottom` | Straight wipe; the new image enters from the named edge |
+| `wipe` | Straight wipe travelling at `--transition-angle` |
+| `wave` | Wipe with a wavy edge, travelling at `--transition-angle` |
+| `grow` | Circle of the new image grows from `--transition-pos` |
+| `center` | `grow` from the centre of the screen |
+| `outer` | Circle of the old image shrinks towards `--transition-pos` |
+| `any` | `grow` from a random position on each change |
+| `random` | A random type from `fade` to `any` on each change |
 
-```bash
-# 4:3 image -> 16:9 image
-gslapper --transition-type fade --transition-duration 1.5 -I /tmp/gslapper.sock DP-1 4x3_image.jpg
-echo "change /path/to/16x9_image.jpg" | nc -U /tmp/gslapper.sock
-```
+## Options
 
-Both images will fill the screen properly during the transition, with no letterboxing.
+- `--transition-type TYPE` - one of the types above.
+- `--transition-duration SECS` - length of each transition, more than 0 and at most 5 seconds (default 0.5).
+- `--transition-angle DEG` - direction the edge travels for `wipe` and `wave`, in degrees clockwise: `0` moves left to right, `90` top to bottom, `180` right to left, `270` bottom to top. Any number is accepted and wrapped into 0-360 (default 45).
+- `--transition-pos POS` - circle origin for `grow` and `outer`. Either `x,y` as fractions of the screen from the top-left corner (`0.25,0.75`), or one of `center`, `top`, `bottom`, `left`, `right`, `top-left`, `top-right`, `bottom-left`, `bottom-right` (default `center`).
 
-## How It Works
-
-1. **Capture** - When a transition starts, the current image is captured
-2. **Load** - The new image is loaded asynchronously
-3. **Resize** - Both images are resized to display resolution with fill mode
-4. **Blend** - Images are blended pixel-by-pixel using CPU-based alpha blending
-5. **Complete** - Transition completes when duration is reached
-
-## Supported Formats
-
-Transitions work with all supported image formats:
-- JPEG (.jpg, .jpeg)
-- PNG (.png)
-- WebP (.webp)
-- GIF (.gif) - First frame only
-
-## Performance
-
-- **CPU-based blending** - Uses efficient pixel blending similar to swww
-- **Display resolution** - Blends at logical display resolution for optimal performance
-- **Smooth animation** - Frame rate capped to ensure smooth transitions
-
-## Limitations
-
-- Transitions only work between static images
-- Video wallpapers do not support transitions
-- IPC socket must be enabled
-- Rapid transitions (multiple changes in quick succession) may cancel previous transitions
+The same settings are available over IPC: `set-transition`, `set-transition-duration`, `set-transition-angle`, `set-transition-pos` and `get-transition`. See [IPC Control](../user-guide/ipc-control).
 
 ## Examples
 
-### Slideshow Script
+```bash
+# Diagonal wipe from the top-left
+gslapper --transition-type wipe --transition-angle 45 -I /tmp/gslapper.sock '*' image.jpg
+
+# Circle growing from the bottom-right corner
+gslapper --transition-type grow --transition-pos bottom-right -I /tmp/gslapper.sock DP-1 image.jpg
+
+# Switch to a slow wave at runtime
+echo "set-transition wave" | nc -U /tmp/gslapper.sock
+echo "set-transition-duration 2" | nc -U /tmp/gslapper.sock
+echo "change /path/to/next.jpg" | nc -U /tmp/gslapper.sock
+```
+
+### Slideshow script
 
 ```bash
 #!/bin/bash
 SOCKET="/tmp/gslapper.sock"
-IMAGES=(
-    "/path/to/image1.jpg"
-    "/path/to/image2.png"
-    "/path/to/image3.webp"
-)
+IMAGES=(/path/to/image1.jpg /path/to/image2.png /path/to/image3.webp)
 
-# Start with first image
-gslapper --transition-type fade --transition-duration 2.0 -I "$SOCKET" DP-1 "${IMAGES[0]}" &
+gslapper --transition-type random --transition-duration 1.5 -I "$SOCKET" DP-1 "${IMAGES[0]}" &
 sleep 3
 
-# Cycle through images
 for img in "${IMAGES[@]:1}"; do
     echo "change $img" | nc -U "$SOCKET"
-    sleep 3
+    sleep 5
 done
 ```
 
-### Random Wallpaper with Transition
+## How it works
 
-```bash
-#!/bin/bash
-SOCKET="/tmp/gslapper.sock"
-WALLPAPER_DIR="/home/user/Pictures/wallpapers"
+Transitions run on the GPU. When a change starts, the current image's texture is kept and the new image is decoded into a second texture. A fragment shader draws both, each with its own scaling, so images with different aspect ratios keep their shape and letterbox bars stay black. A mask decides which image shows at each pixel. Masks are computed in screen pixels, so circles stay round on any monitor shape and scale.
 
-# Get random image
-RANDOM_IMG=$(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.webp" \) | shuf -n 1)
+The clock starts once the new image is on the GPU, so a large image that takes a while to decode still gets the whole transition. Wipes, waves and circles ease in and out; `fade` is linear.
 
-# Start or change wallpaper
-if pgrep -x gslapper > /dev/null; then
-    echo "change $RANDOM_IMG" | nc -U "$SOCKET"
-else
-    gslapper --transition-type fade --transition-duration 1.5 -I "$SOCKET" DP-1 "$RANDOM_IMG"
-fi
-```
+With several monitors, all of them play the same transition at the same time, each at its own resolution.
+
+## Limits
+
+- Transitions only run between static images. Changes to or from a video or an animated GIF switch instantly.
+- A `change` during a running transition finishes it immediately and starts the next one from that image.
+- If the new image fails to load, the old image stays on screen and gSlapper keeps running.
+- Settings changed over IPC are not saved in the state file. Put them on the command line or in your service file to keep them.

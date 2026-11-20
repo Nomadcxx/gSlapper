@@ -11,16 +11,6 @@ typedef struct ipc_command {
     struct ipc_command *next;
 } ipc_command_t;
 
-// Preloaded image cache entry
-typedef struct preload_entry {
-    char *path;
-    gpointer frame_data;
-    gsize frame_size;
-    gint width;
-    gint height;
-    struct preload_entry *next;
-} preload_entry_t;
-
 // Initialize IPC server with socket path
 // Returns true on success, false on failure
 bool ipc_init(const char *socket_path);
