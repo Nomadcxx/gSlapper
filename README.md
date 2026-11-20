@@ -1,5 +1,6 @@
 <div align="center">
   <img src="docs-site/public/brand/gslapper-wordmark.png" alt="gSlapper Logo" style="background: transparent;"/>
+  <img src="https://raw.githubusercontent.com/Nomadcxx/gSlapper/assets/demo/gslapper-demo.webp" alt="gSlapper switching wallpapers with wave, grow, center and wipe transitions, then playing a video wallpaper" width="100%"/>
 </div>
 
 <br>
