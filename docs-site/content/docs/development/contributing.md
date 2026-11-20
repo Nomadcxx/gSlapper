@@ -176,7 +176,7 @@ For every release `vX.Y.Z`, in order:
 
 ### Check Void packaging without releasing
 
-Run `gh workflow run release.yml --ref <branch>` and inspect the `gslapper-void-glibc` and `gslapper-void-musl` artifacts. Dispatch runs create no release. The native recipe lives in `packaging/void/`; `scripts/build-void-package.sh` fills its version and checksum from the checked-out commit, then runs pinned `xbps-src` tooling. `scripts/verify-void-package.sh` installs the result in a fresh root and checks both executables.
+Run `gh workflow run release.yml --ref <branch>` and inspect the `gslapper-void-glibc` and `gslapper-void-musl` artifacts. Dispatch runs create no release. The native recipe lives in `packaging/void/`; `scripts/build-void-package.sh` fills its version and checksum from the checked-out commit, then builds it with `xbps-src` from current void-packages master, which keeps the tree in step with the binary repository `binary-bootstrap` installs from. `scripts/verify-void-package.sh` installs the result in a fresh root and checks both executables.
 
 ## Questions?
 

@@ -14,13 +14,16 @@ source_dir=$(cd "$(dirname "$0")/.." && pwd)
 output=$(mkdir -p "${2:-dist/void}" && cd "${2:-dist/void}" && pwd)
 work=${VOID_BUILD_DIR:-$(mktemp -d /tmp/gslapper-void.XXXXXXXX)}
 repo=$work/void-packages
-void_revision=69f1e62affe9690848728b523f18620054a4e63b
 
 arch=$(xbps-uhelper arch)
 case "$arch" in x86_64|x86_64-musl) ;; *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; esac
 mkdir "$repo"
 git init -q "$repo"
-git -C "$repo" fetch -q --depth=1 https://github.com/void-linux/void-packages.git "$void_revision"
+# CHANGED 2026-11-20 - Build against current void-packages master instead of a pinned revision - Problem:
+# binary-bootstrap installs from the live binary repo, so a pinned tree drifts behind it within weeks;
+# its dependency versions are then missing as binaries and xbps-src rebuilds them from source, which
+# failed on the v1.6.0 tag (bluez on glibc, tar on musl)
+git -C "$repo" fetch -q --depth=1 https://github.com/void-linux/void-packages.git master
 git -C "$repo" checkout -q --detach FETCH_HEAD
 mkdir -p "$repo/srcpkgs/$pkgname"
 cp -R "$source_dir/packaging/void/." "$repo/srcpkgs/$pkgname/"
