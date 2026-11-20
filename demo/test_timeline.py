@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from demo.timeline import hold, link_sequence, resample, trim_transition
+from demo.timeline import distinct_frames, hold, link_sequence, resample, trim_transition
 
 
 class TimelineTest(unittest.TestCase):
@@ -42,6 +42,11 @@ class TimelineTest(unittest.TestCase):
         frames = self.frames([b"A", b"A", b"A"])
         with self.assertRaises(ValueError):
             trim_transition(frames)
+
+    def test_distinct_frames_collapses_repeat_grabs(self):
+        # each rendered frame was grabbed one to three times; only changes count
+        frames = self.frames([b"A", b"A", b"B", b"C", b"C", b"C", b"A", b"D"])
+        self.assertEqual(distinct_frames(frames), [0, 2, 3, 6, 7])
 
     def test_sequence_frame_count_exact(self):
         still, other = self.frames([b"S", b"T"])

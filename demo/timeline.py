@@ -35,6 +35,21 @@ def trim_transition(frames):
     raise ValueError("the transition never settled on the final frame")
 
 
+def distinct_frames(frames):
+    """Indices where the picture changes: the first grab of each rendered frame.
+
+    Used for the video segment, captured from a slowed copy of the clip so
+    every gSlapper frame is grabbed at least once."""
+    keep = []
+    previous = None
+    for i, frame in enumerate(frames):
+        data = frame.read_bytes()
+        if data != previous:
+            keep.append(i)
+            previous = data
+    return keep
+
+
 def hold(frame, seconds, fps=60):
     return [frame] * round(seconds * fps)
 
