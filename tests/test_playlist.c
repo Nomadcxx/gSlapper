@@ -66,6 +66,19 @@ static void test_playlist_file(void) {
     playlist_free(entries, count);
 }
 
+static void test_playlist_bom(void) {
+    // Editors that save .m3u8 as "UTF-8 with BOM" put EF BB BF before the first entry
+    touch("dir/bom.m3u8", "\xEF\xBB\xBF" "b.png\n");
+    char **entries = NULL;
+    size_t count = 0;
+    char err[256] = "";
+    EXPECT(playlist_load(at("dir/bom.m3u8"), accept_png, &entries, &count, err, sizeof(err)));
+    EXPECT(count == 1);
+    if (count == 1)
+        EXPECT(strcmp(entries[0], at("dir/b.png")) == 0);
+    playlist_free(entries, count);
+}
+
 static void test_rejected_entry(void) {
     touch("dir/clip.mp4", "");
     touch("dir/bad.txt", "a.png\nclip.mp4\n");
@@ -111,6 +124,7 @@ int main(void) {
 
     test_directory();
     test_playlist_file();
+    test_playlist_bom();
     test_rejected_entry();
     test_empty_directory();
     test_is_source();

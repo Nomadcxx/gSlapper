@@ -333,6 +333,9 @@ static void exit_cleanup() {
             pthread_cancel(threads[i]);
     }
 
+    // CHANGED 2026-11-20 - Cancel the transition before tearing down the texture manager - Problem: cancelling while waiting for the incoming frame hands the outgoing texture back to the manager, which leaked it once the manager was already cleaned up
+    cancel_transition();
+
     // Clean up texture manager
     cleanup_texture_manager();
 
@@ -343,7 +346,6 @@ static void exit_cleanup() {
     slideshow_count = 0;
 
     // Clean up transition resources
-    cancel_transition();
     if (transition_shader_program != 0) {
         glDeleteProgram(transition_shader_program);
         transition_shader_program = 0;
@@ -2285,7 +2287,8 @@ static void execute_ipc_commands(void) {
         else if (strcmp(cmd_name, "get-transition") == 0) {
             // CHANGED 2026-11-19 - Append angle and position after the original three fields - Problem: new parameters had no query
             char response[128];
-            snprintf(response, sizeof(response), "TRANSITION: %s %s %.2f angle=%.0f pos=%.2f,%.2f\n",
+            // CHANGED 2026-11-20 - Print the angle with %g - Problem: %.0f rounded 22.5 to 22
+            snprintf(response, sizeof(response), "TRANSITION: %s %s %.2f angle=%g pos=%.2f,%.2f\n",
                     transition_type_name(transition_state.type),
                     transition_state.enabled ? "enabled" : "disabled",
                     transition_state.duration, transition_state.angle_deg,
@@ -2312,7 +2315,8 @@ static void execute_ipc_commands(void) {
                 ipc_send_response(cmd->client_fd, "ERROR: invalid angle\n");
             } else {
                 char response[64];
-                snprintf(response, sizeof(response), "OK: angle set to %.0f\n", transition_state.angle_deg);
+                // CHANGED 2026-11-20 - Echo the angle with %g - Problem: %.0f echoed 22.5 back as 22
+                snprintf(response, sizeof(response), "OK: angle set to %g\n", transition_state.angle_deg);
                 ipc_send_response(cmd->client_fd, response);
             }
         }
@@ -3842,11 +3846,17 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
                     halt_info.auto_pause = 0;
                 }
                 break;
-            case 'n':
-                SLIDESHOW_TIME = atoi(optarg);
+            case 'n': {
+                // CHANGED 2026-11-20 - Parse with strtol and reject non-positive values - Problem: atoi("-5") wrapped the unsigned interval, so the slideshow silently never advanced
+                char *end = NULL;
+                errno = 0;
+                long secs = strtol(optarg, &end, 10);
+                SLIDESHOW_TIME = (errno == 0 && end != optarg && *end == '\0' && secs > 0 && secs <= UINT_MAX)
+                                 ? (uint)secs : 0;
                 if (SLIDESHOW_TIME == 0)
                     cflp_warning("0 or invalid time set for slideshow. Please use a positive integer");
                 break;
+            }
             case 'l':
                 layer_name = strdup(optarg);
                 if (layer_name == NULL) {
