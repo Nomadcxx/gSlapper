@@ -99,8 +99,13 @@ static bool load_file(const char *file_path, bool (*accept)(const char *), path_
 
     char line[PATH_MAX];
     bool ok = true;
+    bool first_line = true;
     while (ok && fgets(line, sizeof(line), file)) {
         char *start = line;
+        // CHANGED 2026-11-20 - Skip a UTF-8 BOM before the first entry - Problem: "UTF-8 with BOM" .m3u8 files turned the BOM into part of the first path and failed at startup
+        if (first_line && strncmp(start, "\xEF\xBB\xBF", 3) == 0)
+            start += 3;
+        first_line = false;
         while (isspace((unsigned char)*start))
             start++;
         char *end = start + strlen(start);
