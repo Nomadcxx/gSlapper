@@ -333,6 +333,9 @@ static void exit_cleanup() {
             pthread_cancel(threads[i]);
     }
 
+    // CHANGED 2026-11-20 - Cancel the transition before tearing down the texture manager - Problem: cancelling while waiting for the incoming frame hands the outgoing texture back to the manager, which leaked it once the manager was already cleaned up
+    cancel_transition();
+
     // Clean up texture manager
     cleanup_texture_manager();
 
@@ -343,7 +346,6 @@ static void exit_cleanup() {
     slideshow_count = 0;
 
     // Clean up transition resources
-    cancel_transition();
     if (transition_shader_program != 0) {
         glDeleteProgram(transition_shader_program);
         transition_shader_program = 0;

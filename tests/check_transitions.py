@@ -253,8 +253,27 @@ def check_ipc_contract():
         assert option in help_text, option
 
 
+def check_exit_mid_transition():
+    # The transition must be cancelled before the texture manager is torn down:
+    # cancelling can hand the outgoing texture back to the manager, which leaked
+    # it when the manager had already been cleaned up.
+    with HeadlessSway() as sway:
+        img = images(sway)
+        sock, player = start(sway, img["red"], "-v", "--transition-type", "fade",
+                             "--transition-duration", "5")
+        assert ipc(sock, f"change {img['blue']}").startswith("OK")
+        time.sleep(0.5)
+        ipc(sock, "quit")
+        player.wait(timeout=10)
+        log = sway.log("gslapper")
+        cancelled = log.find("Transition canceled")
+        cleaned = log.find("Cleaned up texture manager")
+        assert cancelled != -1 and cleaned != -1, log[-1500:]
+        assert cancelled < cleaned, "texture manager cleaned up before the transition was cancelled"
+
+
 CHECKS = [check_instant_change, check_two_outputs_instant_change, check_cached_image_pause,
-          check_auto_stop_image_stays, check_ipc_contract, check_left_wipe, check_center_round, check_outer,
+          check_auto_stop_image_stays, check_ipc_contract, check_exit_mid_transition, check_left_wipe, check_center_round, check_outer,
           check_fade_midway, check_old_image_aspect, check_no_black_flash,
           check_failed_change_keeps_image, check_rapid_changes, check_video_change_ignores_transition]
 
