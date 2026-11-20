@@ -242,6 +242,8 @@ def check_ipc_contract():
         assert ipc(sock, "set-transition wave") == "OK: wave transitions enabled\n"
         assert ipc(sock, "set-transition sparkle") == "ERROR: unknown transition type\n"
         assert ipc(sock, "set-transition-angle 120") == "OK: angle set to 120\n"
+        assert ipc(sock, "set-transition-angle 22.5") == "OK: angle set to 22.5\n"
+        assert ipc(sock, "set-transition-angle 120") == "OK: angle set to 120\n"
         assert ipc(sock, "set-transition-angle x") == "ERROR: invalid angle\n"
         assert ipc(sock, "set-transition-pos top-left") == "OK: position set to 0.00,0.00\n"
         assert ipc(sock, "set-transition-pos 2,2") == "ERROR: invalid position\n"

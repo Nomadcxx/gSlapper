@@ -2287,7 +2287,8 @@ static void execute_ipc_commands(void) {
         else if (strcmp(cmd_name, "get-transition") == 0) {
             // CHANGED 2026-11-19 - Append angle and position after the original three fields - Problem: new parameters had no query
             char response[128];
-            snprintf(response, sizeof(response), "TRANSITION: %s %s %.2f angle=%.0f pos=%.2f,%.2f\n",
+            // CHANGED 2026-11-20 - Print the angle with %g - Problem: %.0f rounded 22.5 to 22
+            snprintf(response, sizeof(response), "TRANSITION: %s %s %.2f angle=%g pos=%.2f,%.2f\n",
                     transition_type_name(transition_state.type),
                     transition_state.enabled ? "enabled" : "disabled",
                     transition_state.duration, transition_state.angle_deg,
@@ -2314,7 +2315,8 @@ static void execute_ipc_commands(void) {
                 ipc_send_response(cmd->client_fd, "ERROR: invalid angle\n");
             } else {
                 char response[64];
-                snprintf(response, sizeof(response), "OK: angle set to %.0f\n", transition_state.angle_deg);
+                // CHANGED 2026-11-20 - Echo the angle with %g - Problem: %.0f echoed 22.5 back as 22
+                snprintf(response, sizeof(response), "OK: angle set to %g\n", transition_state.angle_deg);
                 ipc_send_response(cmd->client_fd, response);
             }
         }
