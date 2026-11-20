@@ -142,10 +142,23 @@ def check_slideshow_with_transition():
         assert is_close(frame.pixel(600, 180), RED), f"right edge {frame.pixel(600, 180)}"
 
 
+def check_slideshow_negative_interval():
+    # A negative -n used to wrap the unsigned interval and silently never advance
+    with HeadlessSway() as sway:
+        image = sway.root / "red.png"
+        solid_png(image, RED)
+        start(sway, image, "-n", "-5")
+        time.sleep(0.5)
+        log = sway.log("gslapper")
+        assert "0 or invalid time set for slideshow" in log, log[-1500:]
+        expect_centre(sway, RED, "image still shown")
+
+
 CHECKS = [check_slideshow_cycle, check_slideshow_pause, check_slideshow_pause_after_wrap,
           check_slideshow_two_outputs, check_slideshow_auto_pause, check_slideshow_uncached,
           check_slideshow_ipc_change,
-          check_slideshow_rejects_video, check_slideshow_with_transition]
+          check_slideshow_rejects_video, check_slideshow_with_transition,
+          check_slideshow_negative_interval]
 
 if __name__ == "__main__":
     selected = sys.argv[2:]

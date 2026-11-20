@@ -3842,11 +3842,17 @@ static void parse_command_line(int argc, char **argv, struct wl_state *state) {
                     halt_info.auto_pause = 0;
                 }
                 break;
-            case 'n':
-                SLIDESHOW_TIME = atoi(optarg);
+            case 'n': {
+                // CHANGED 2026-11-20 - Parse with strtol and reject non-positive values - Problem: atoi("-5") wrapped the unsigned interval, so the slideshow silently never advanced
+                char *end = NULL;
+                errno = 0;
+                long secs = strtol(optarg, &end, 10);
+                SLIDESHOW_TIME = (errno == 0 && end != optarg && *end == '\0' && secs > 0 && secs <= UINT_MAX)
+                                 ? (uint)secs : 0;
                 if (SLIDESHOW_TIME == 0)
                     cflp_warning("0 or invalid time set for slideshow. Please use a positive integer");
                 break;
+            }
             case 'l':
                 layer_name = strdup(optarg);
                 if (layer_name == NULL) {
