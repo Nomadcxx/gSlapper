@@ -8,7 +8,8 @@ over duration, and the shader's only animated input is that progress, so the
 slowed run sped back up is frame-for-frame the real thing.
 
 Writes <out-dir>/<name>/NNNN.ppm and times.txt (capture time per frame,
-seconds, frame 0 = 0.0) for each transition, and <out-dir>/SCALE.
+seconds, frame 0 = 0.0) for each transition, <out-dir>/SCALE, and
+<out-dir>/ORDER listing the transitions in loop order.
 """
 import subprocess
 import sys
@@ -16,17 +17,20 @@ import time
 from pathlib import Path
 
 SCALE = 4.0
-ON_SCREEN = 1.2
+ON_SCREEN = 0.6
 WIDTH, HEIGHT = 1920, 1080
-LEAD, TAIL = 0.3, 0.6
+LEAD, TAIL = 0.15, 0.3
 
-IMAGES = ["19 - BaDWxwe.jpg", "wp14824417-1920x1080-wallpapers.webp", "148 - DJPJkF0.jpg"]
-# (name, type, extra IPC commands, image index shown after the change)
+IMAGES = ["Anime-Purple-eyes.png", "Comets-of-that-night.jpg", "purple-circle-mountain.jpeg",
+          "Purple-clouds-car-headlights.jpg", "Techno-Geek.png", "Night_City.png", "purpled-night.jpg"]
+# Transition n moves from IMAGES[n] to IMAGES[n + 1]: (name, type, extra IPC commands)
 TRANSITIONS = [
-    ("wave", "wave", ["set-transition-angle 30"], 1),
-    ("grow", "grow", ["set-transition-pos top-left"], 2),
-    ("center", "center", [], 0),
-    ("wipe", "wipe", ["set-transition-angle 30"], 1),
+    ("1-wave", "wave", ["set-transition-angle 30"]),
+    ("2-grow", "grow", ["set-transition-pos top-left"]),
+    ("3-center", "center", []),
+    ("4-wipe", "wipe", ["set-transition-angle 30"]),
+    ("5-outer", "outer", ["set-transition-pos center"]),
+    ("6-grow", "grow", ["set-transition-pos bottom-right"]),
 ]
 
 
@@ -45,6 +49,7 @@ def main():
     images = [media / name for name in IMAGES]
     out.mkdir(parents=True, exist_ok=True)
     (out / "SCALE").write_text(f"{SCALE}\n")
+    (out / "ORDER").write_text("".join(f"{t[0]}\n" for t in TRANSITIONS))
 
     with headless.HeadlessSway(width=WIDTH, height=HEIGHT) as sway:
         sock = sway.root / "demo.sock"
@@ -57,7 +62,7 @@ def main():
             assert reply.startswith("OK"), reply
         time.sleep(1.0)
 
-        for name, kind, extra, target in TRANSITIONS:
+        for target, (name, kind, extra) in enumerate(TRANSITIONS, start=1):
             for command in [f"set-transition {kind}", f"set-transition-duration {SCALE * ON_SCREEN}", *extra]:
                 reply = headless.ipc(sock, command)
                 assert reply.startswith("OK"), f"{command}: {reply}"

@@ -4,17 +4,33 @@ import os
 from pathlib import Path
 
 
-def resample(timestamps, scale, fps=60):
+def resample(timestamps, scale, fps=60, offset=0.0):
     """Pick one captured frame per output tick.
 
     timestamps[i] is when frame i was grabbed (seconds, ascending). The
     capture ran `scale` times slower than playback, so output tick k shows
-    capture time timestamps[0] + k * scale / fps, using the latest frame
-    grabbed at or before that moment.
+    capture time timestamps[0] + (k + offset) * scale / fps, using the latest
+    frame grabbed at or before that moment. offset=0.5 samples the middle of
+    each tick, which keeps grab jitter at frame boundaries from choosing the
+    wrong frame.
     """
     t0 = timestamps[0]
     ticks = round((timestamps[-1] - t0) / scale * fps)
-    return [bisect.bisect_right(timestamps, t0 + k * scale / fps) - 1 for k in range(ticks)]
+    return [bisect.bisect_right(timestamps, t0 + (k + offset) * scale / fps) - 1 for k in range(ticks)]
+
+
+def video_ticks(timestamps, slow, count, fps=60):
+    """Frame indices for `count` ticks of a video captured `slow` times slower.
+
+    timestamps are first-grab times of the distinct frames. Frame 0 was
+    already partway through its time on screen when capture began, so the
+    timeline is anchored on frame 1, the first complete frame; sampling tick
+    centres from there keeps each tick inside a single frame.
+    """
+    picks = resample(timestamps[1:], slow, fps, offset=0.5)
+    if len(picks) < count:
+        raise ValueError(f"{len(picks)} ticks captured, need {count}")
+    return [i + 1 for i in picks[:count]]
 
 
 def trim_transition(frames):

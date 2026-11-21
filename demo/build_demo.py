@@ -3,21 +3,22 @@
 Usage: build_demo.py <frames-dir> <out.webp> [--quality Q]
 
 <frames-dir> holds the output of capture_transitions.py and capture_video.py.
-Each transition is trimmed to its visible motion and resampled to 60 fps at
-the capture's SCALE; stills hold between transitions; the video segment is
-its distinct rendered frames, one per 60 fps tick.
+Each transition (in ORDER) is trimmed to its visible motion and resampled to
+60 fps at the capture's SCALE; stills hold between transitions. Each video
+segment is resampled from its kept frames' capture times at its SLOW factor,
+anchored on its first complete frame and sampling tick centres, so it plays at its real speed whatever its frame rate.
 """
 import argparse
 import shutil
 import subprocess
 from pathlib import Path
 
-from timeline import distinct_frames, hold, link_sequence, resample, trim_transition
+from timeline import hold, link_sequence, resample, trim_transition, video_ticks
 
 FPS = 60
-HOLD = 0.9
-VIDEO_SECONDS = 4.0
-TRANSITIONS = ["wave", "grow", "center", "wipe"]
+HOLD = 0.45
+VIDEO_SECONDS = 2.0
+VIDEOS = ["video-1", "video-2", "video-3"]
 
 
 def frames_and_times(directory):
@@ -32,7 +33,7 @@ def build_sequence(root):
     scale = float((root / "SCALE").read_text())
     sequence = []
     last = None
-    for name in TRANSITIONS:
+    for name in (root / "ORDER").read_text().split():
         frames, times = frames_and_times(root / name)
         start, end = trim_transition(frames)
         picks = resample(times[start:end + 1], scale, FPS)
@@ -42,13 +43,13 @@ def build_sequence(root):
         print(f"{name}: {len(picks)} frames ({len(picks) / FPS:.2f} s)")
     sequence += hold(last, HOLD, FPS)
 
-    video = sorted((root / "video").glob("*.ppm"))
     needed = round(VIDEO_SECONDS * FPS)
-    keep = distinct_frames(video)
-    if len(keep) < needed:
-        raise ValueError(f"video: {len(keep)} distinct frames, need {needed}")
-    sequence += [video[i] for i in keep[:needed]]
-    print(f"video: {needed} frames ({VIDEO_SECONDS:.2f} s)")
+    for name in VIDEOS:
+        frames, times = frames_and_times(root / name)
+        slow = float((root / name / "SLOW").read_text())
+        picks = video_ticks(times, slow, needed, FPS)
+        sequence += [frames[i] for i in picks]
+        print(f"{name}: {needed} frames ({VIDEO_SECONDS:.2f} s) from {len(set(picks))} distinct")
     return sequence
 
 
@@ -56,7 +57,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("frames", type=Path)
     parser.add_argument("out", type=Path)
-    parser.add_argument("--quality", type=int, default=95)
+    parser.add_argument("--quality", type=int, default=90)
     args = parser.parse_args()
 
     sequence = build_sequence(args.frames)
